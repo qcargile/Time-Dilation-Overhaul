@@ -1,0 +1,354 @@
+Items.TDO_Fusillade:
+  $type: gamedataItem_Record
+  animFeatureName: ItemData
+  animName: ui_garment_pose
+  animSetResource: ''
+  blueprint: Items.SandevistanBlueprint
+  canDrop: True
+  crosshair: Crosshairs.None
+  deprecated: False
+  enableNpcRPGData: False
+  entityName: cyberware_dummy
+  equipArea: EquipmentArea.SystemReplacementCW
+  friendlyName: ''
+  garmentOffset: 0
+  icon: UIIcon.ItemIcon
+  iconPath: cw_system_sandevistanc2
+  isCached: False
+  isCoreCW: True
+  isCustomizable: False
+  isGarment: False
+  isPart: False
+  isSingleInstance: False
+  itemCategory: ItemCategory.Cyberware
+  itemType: ItemType.Cyberware
+  localizedName: ''
+  mass: 1
+  minigameInstance: minigame_v2.DefaultItemMinigame
+  nextUpgradeItem: Items.TDO_FusilladePlus
+  powerLevelDeterminedByParent: False
+  quality: Quality.Rare
+  qualityRestrictedByParent: False
+  replicateWhenNotActive: False
+  upgradeCostMult: 1.5
+  useHeadgearGarmentAggregator: False
+  useNewSpawnMethod: False
+  usesVariants: True
+  savable: False
+  animationParameters: []
+  appearanceSuffixes: []
+  appearanceSuffixesOwnerOverride: []
+  attachmentSlots: []
+  buyPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.BuyPrice_StreetCred_Discount
+  cameraForward: {x: 0, y: 0, z: 0}
+  cameraUp: {x: 0, y: 0, z: 0}
+  connections: []
+  displayName: LocKey#Item-TDO-Fusillade-Name
+  equipAreas: []
+  equipPrereqs: []
+  gameplayRestrictions:
+    - GameplayRestriction.VehicleCombatNoInterruptions
+  hairSkinnedMeshComponents: []
+  localizedDescription: LocKey#Item-TDO-Fusillade-Flavor
+  OnAttach: []
+  OnEquip:
+    - Items.TDO_Fusillade_ActiveUI
+    - Items.TDO_Fusillade_ActiveEffectors
+    - Attunements.TDO_Fusillade
+  OnLooted: []
+  parts: []
+  placementSlots:
+    - AttachmentSlots.SystemReplacementCW
+  previewBBoxOverride: []
+  requiredSlots: []
+  sellPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.CyberwareSellMultiplier
+  slotPartList:
+    - Items.GenericRootSlotItem
+  slotPartListPreset: []
+  tags:
+    - Cyberware
+    - HideInBackpackUI
+    - Sandevistan
+    - TDO
+    - Fusillade
+  variants:
+    - Variants.Humanity30Cost
+  visualTags: []
+  effectors: []
+  weakspots: []
+  cyberwareType: Sandevistan
+  objectActions:
+    - CyberwareAction.DisableSandevistan
+    - CyberwareAction.DisableCorruptedSandevistan
+    - CyberwareAction.UseSandevistan
+    - CyberwareAction.UseCorruptedSandevistan
+  statModifierGroups: []
+  statModifiers:
+    - Items.TDO_Fusillade_Iconic
+    - Items.TDO_Fusillade_HasSandy
+    - Items.TDO_Fusillade_Duration
+    - Items.TDO_Fusillade_TimeScale
+    - Items.TDO_Fusillade_Recharge
+    - Items.TDO_Fusillade_CooldownBase
+    - Items.TDO_Fusillade_EnterCost
+  statPools: []
+
+Items.TDO_Fusillade_ActiveUI:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Items.TDO_Fusillade_ActiveUI_Data
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_Fusillade_ActiveUI_Data:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-Fusillade-Active-Desc
+  localizedName: ''
+  floatValues:
+    - 75
+    - 2.5
+    - 20
+    - 25
+    - 50
+    - 2
+    - 15
+  intValues: []
+  nameValues: []
+  stats: []
+
+Items.TDO_Fusillade_ActiveEffectors:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors:
+    - Items.TDO_Fusillade_SuppressEffector
+    - Items.TDO_Fusillade_RecoilEffector
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_Fusillade_SuppressEffector:
+  $type: gamedataApplyStatGroupEffector_Record
+  removeWithEffector: True
+  statGroup: Items.TDO_Fusillade_SuppressStatGroup
+  effectorClassName: ApplyStatGroupEffector
+  prereqRecord: Items.TDO_Fusillade_TDPrereq
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+
+Items.TDO_Fusillade_TDPrereq:
+  $type: gamedataIPrereq_Record
+  prereqClassName: TimeDilationPSMPrereq
+  stateName: Sandevistan
+  isInState: True
+  previousState: False
+
+Items.TDO_Fusillade_SuppressStatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - Items.TDO_Fusillade_SuppressCritChance
+    - Items.TDO_Fusillade_SuppressHeadshot
+    - Items.TDO_Fusillade_SuppressWeakspot
+
+Items.TDO_Fusillade_SuppressCritChance:
+  $type: gamedataConstantStatModifier_Record
+  value: 0
+  modifierType: Multiplier
+  statType: BaseStats.CritChance
+
+Items.TDO_Fusillade_SuppressHeadshot:
+  $type: gamedataConstantStatModifier_Record
+  value: 0
+  modifierType: Multiplier
+  statType: BaseStats.HeadshotDamageMultiplier
+
+Items.TDO_Fusillade_SuppressWeakspot:
+  $type: gamedataConstantStatModifier_Record
+  value: 0
+  modifierType: Multiplier
+  statType: BaseStats.WeakspotDamageMultiplier
+
+Items.TDO_Fusillade_RecoilEffector:
+  $type: gamedataApplyStatGroupEffector_Record
+  removeWithEffector: True
+  statGroup: Items.TDO_Fusillade_RecoilStatGroup
+  effectorClassName: ApplyStatGroupEffector
+  applicationTarget: Weapon
+  prereqRecord: Items.TDO_Fusillade_TDPrereq
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+
+Items.TDO_Fusillade_RecoilStatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - Items.TDO_Fusillade_RecoilKickMin
+    - Items.TDO_Fusillade_RecoilKickMax
+
+Items.TDO_Fusillade_RecoilKickMin:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.5
+  modifierType: AdditiveMultiplier
+  statType: BaseStats.RecoilKickMin
+
+Items.TDO_Fusillade_RecoilKickMax:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.5
+  modifierType: AdditiveMultiplier
+  statType: BaseStats.RecoilKickMax
+
+Items.TDO_Fusillade_Iconic:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.IsItemIconic
+
+Items.TDO_Fusillade_HasSandy:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.HasSandevistan
+
+Items.TDO_Fusillade_Duration:
+  $type: gamedataConstantStatModifier_Record
+  value: 2
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanDuration
+
+Items.TDO_Fusillade_TimeScale:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.25
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanTimeScale
+
+Items.TDO_Fusillade_Recharge:
+  $type: gamedataConstantStatModifier_Record
+  value: 15
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanRechargeDuration
+
+Items.TDO_FusilladePlus_Recharge:
+  $type: gamedataConstantStatModifier_Record
+  value: 10
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanRechargeDuration
+
+Items.TDO_Fusillade_CooldownBase:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanCooldownBase
+
+Items.TDO_Fusillade_EnterCost:
+  $type: gamedataConstantStatModifier_Record
+  value: -15
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanEnterCost
+
+Vendors.TDO_FusilladeStock:
+  $type: gamedataVendorItem_Record
+  item: Items.TDO_Fusillade
+  generationPrereqs:
+    - Prereqs.AfterFirstVisitAtVictor
+    - LootPrereqs.RareCWLevelAvailabilityAtVendor
+  quantity:
+    - Vendors.Always_Present
+
+Vendors.cz_monument_ripperdoc_farida.itemStock:
+  - !append Vendors.TDO_FusilladeStock
+
+Items.TDO_FusilladePlus:
+  $base: Items.TDO_Fusillade
+  nextUpgradeItem: None
+  quality: Quality.RarePlus
+  OnEquip:
+    - Items.TDO_FusilladePlus_ActiveUI
+    - Items.TDO_Fusillade_ActiveEffectors
+    - Attunements.TDO_Fusillade
+  statModifiers:
+    - Items.TDO_Fusillade_Iconic
+    - Items.TDO_Fusillade_HasSandy
+    - Items.TDO_FusilladePlus_Duration
+    - Items.TDO_Fusillade_TimeScale
+    - Items.TDO_FusilladePlus_Recharge
+    - Items.TDO_Fusillade_CooldownBase
+    - Items.TDO_Fusillade_EnterCost
+
+Items.TDO_FusilladePlus_ActiveUI:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Items.TDO_FusilladePlus_ActiveUI_Data
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_FusilladePlus_ActiveUI_Data:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-Fusillade-Active-Desc
+  localizedName: ''
+  floatValues:
+    - 75
+    - 2.5
+    - 25
+    - 25
+    - 50
+    - 2.5
+    - 10
+  intValues: []
+  nameValues: []
+  stats: []
+
+Items.TDO_FusilladePlus_Duration:
+  $type: gamedataConstantStatModifier_Record
+  value: 2.5
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanDuration
+
+Attunements.TDO_Fusillade:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Attunements.TDO_Fusillade_UI
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats: []
+
+Attunements.TDO_Fusillade_UI:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  iconPath: UIIcon.Reflexes
+  localizedName: LocKey#Attunement-TDO-Fusillade-Name
+  localizedDescription: LocKey#Attunement-TDO-Fusillade-Desc
+  floatValues:
+    - 2.5
+    - 0
+  intValues: []
+  nameValues: []
+  stats:
+    - BaseStats.AttunementHelper

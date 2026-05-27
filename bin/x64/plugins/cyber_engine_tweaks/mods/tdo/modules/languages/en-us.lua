@@ -1,0 +1,337 @@
+return {
+    nui = {
+        reloadWarning = "!!! NOTE: YOU NEED TO RELOAD YOUR SAVE AFTER MAKING CHANGES !!!",
+        DOT = {
+            header = "Sandevistan DOT (Biological Strain)",
+            enabled = {
+                opt = "Enabled",
+                des = "When enabled, activating a Sandevistan drains your health over time. Stronger slows drain faster; your attunement attribute reduces it.",
+            },
+            baseRatePct = {
+                opt = "Base DOT Rate",
+                optUnit = " (% of max HP per tick)",
+                des = "Percent of resting max HP drained per tick, before your attunement reduces it.",
+            },
+            slowThresholdPct = {
+                opt = "Slow % Threshold",
+                optUnit = " (%)",
+                des = "Minimum Slow % for DOT to apply. Sandys below this take no strain. Slow % = (1 - TimeScale) * 100.",
+            },
+            slowRangeMinPct = {
+                opt = "Tick Scaling Min Slow %",
+                optUnit = " (%)",
+                des = "Slow % that maps to the slowest tick rate. Lower Slow % = slower strain ticks.",
+            },
+            slowRangeMaxPct = {
+                opt = "Tick Scaling Max Slow %",
+                optUnit = " (%)",
+                des = "Slow % that maps to the fastest tick rate. Higher Slow % = faster strain ticks.",
+            },
+            tickMinInterval = {
+                opt = "Min Tick Interval (fastest)",
+                optUnit = " (s)",
+                des = "Tick interval at 90% slow (deepest). Lower = faster ticks.",
+            },
+            tickMaxInterval = {
+                opt = "Max Tick Interval (slowest)",
+                optUnit = " (s)",
+                des = "Tick interval at 10% slow (mildest). Higher = slower ticks.",
+            },
+            mitigationCap = {
+                opt = "Max Mitigation",
+                optUnit = " (0.0 - 1.0)",
+                des = "Cap on attunement mitigation. 0.75 = DOT never drops below 25% of base.",
+            },
+            mitigationRefStatCap = {
+                opt = "RefStat Value for Max Mitigation",
+                des = "Attribute value where mitigation maxes out. 15 = full cap at 15+.",
+            },
+            canKill = {
+                opt = "DOT Can Kill",
+                des = "When enabled, biological strain can kill you. When disabled, DOT stops at 1 HP.",
+            },
+        },
+        tanto = {
+            header = "Dynalar \"Tanto\" Phantom Strike",
+            enabled = {
+                opt = "Enabled",
+                des = "Master toggle for the Dynalar \"Tanto\" Sandevistan line (C2). When enabled, every C2 Tanto tier uses TDO's reworked stats, attunement, card text, and Phantom Strike. When disabled, all C2 Tanto tiers revert completely to vanilla stats, descriptions, and values. Toggling needs a save reload.",
+            },
+            teleportBaseRange = {
+                opt = "Teleport Range (Min)",
+                optUnit = " (m)",
+                des = "Phantom Strike teleport range at 0 Reflexes. Reflexes adds +1m per point, up to the Max. Default 20m.",
+            },
+            teleportMaxRange = {
+                opt = "Teleport Range (Max)",
+                optUnit = " (m)",
+                des = "Hard cap on Phantom Strike teleport range regardless of Reflexes. Default 40m.",
+            },
+        },
+        sandyVFX = {
+            header = "Sandevistan VFX Grading",
+            enabled = {
+                opt = "Enabled (TDO Graduated Gradient)",
+                des = "When OFF (default), the Sandevistan screen effect is removed entirely (on foot, in vehicles, everywhere). When ON, TDO's blue gradient plays, scaled to the Sandy's slow %: nothing at 40% or below, ramping to full at ~99%. Time dilation is never affected. Ignored if 'Use Vanilla Effect' is ON.",
+            },
+            useVanilla = {
+                opt = "Use Vanilla Effect",
+                des = "When ON, the vanilla Sandevistan blue screen plays and TDO leaves it alone. Overrides 'Enabled' above. When OFF (default), TDO controls it (off, or the graduated gradient). Toggling needs a save reload.",
+            },
+        },
+        apogee = {
+            header = "Apogee Biological Strain",
+            enabled = {
+                opt = "Enabled",
+                des = "Master toggle for the Apogee Sandevistan. When enabled, Apogee gains TDO's Biological Strain (each activation within 60s of the last stacks x2, decaying after 60s). When disabled, Apogee reverts completely to vanilla. Toggling needs a save reload.",
+            },
+            strainMultiplierCap = {
+                opt = "Strain Multiplier Cap",
+                optUnit = "x",
+                des = "Maximum cumulative strain multiplier reached after stacking. Default 8.0x (3 stacks at x2 per stack).",
+            },
+        },
+        fusillade = {
+            header = "Raven \"Fusillade\" Sandevistan",
+            timeScale = { opt = "Time Dilation Strength", optUnit = "", des = "World time scale while Fusillade Sandy is active. Lower = stronger slow. Default 0.25." },
+            durationMin = { opt = "Sandy Duration (Min Tier)", optUnit = " (s)", des = "Sandevistan window at the Rare tier. The RarePlus tier uses the Max. Default 2." },
+            durationMax = { opt = "Sandy Duration (Max Tier)", optUnit = " (s)", des = "Sandevistan window at the RarePlus tier. Default 2.5." },
+            cooldownMin = { opt = "Cooldown (Min)", optUnit = " (s)", des = "Shortest cooldown, at the RarePlus tier. Default 10." },
+            cooldownMax = { opt = "Cooldown (Max)", optUnit = " (s)", des = "Longest cooldown, at the Rare tier. Default 15." },
+            fireRateMult = { opt = "Fire Rate Multiplier", optUnit = " (x)", des = "How much faster weapons fire than normal while Fusillade Sandy is active. 1x = normal real-time rate. Default 2.5." },
+            rampStartMin = { opt = "Ramp Start Damage (Min Tier)", optUnit = "", des = "Damage fraction of the first hit at the Rare tier; ramps up per successive hit. 0.20 = 20%. Default 0.20." },
+            rampStartMax = { opt = "Ramp Start Damage (Max Tier)", optUnit = "", des = "Damage fraction of the first hit at the RarePlus tier. 0.25 = 25%. Default 0.25." },
+            rampStep = { opt = "Ramp Damage Per Hit", optUnit = "", des = "Damage fraction added per successive hit, up to 100%. Resets to zero on a miss. 0.25 = +25%. Default 0.25." },
+            recoil = { opt = "Recoil Increase", optUnit = "", des = "Added recoil while Fusillade Sandy is active (AdditiveMultiplier). 0.5 = +50%. Default 0.5." },
+            ammoRefillMaxChancePct = { opt = "Refill Chance Cap", optUnit = " (%)", des = "Hard ceiling on the ammo-refill chance (refund 1 round on ranged hit) regardless of Reflexes. Default 50." },
+        },
+        warpDancer = {
+            header = "QianT \"Warp Dancer\" Time Rewind",
+            enabled = {
+                opt = "Enabled",
+                des = "Master toggle for the QianT \"Warp Dancer\" Sandevistan line (C3). When enabled, every C3 Warp Dancer tier uses TDO's reworked stats, attunement, card text, and Time Rewind. When disabled, all C3 Warp Dancer tiers revert completely to vanilla stats, descriptions, and values. Toggling needs a save reload.",
+            },
+            moveSpeedMin = {
+                opt = "Move Speed Bonus (Lowest Tier)",
+                optUnit = " (%)",
+                des = "Movement speed bonus on the lowest tier (MK3) while Warp Dancer is active. Scales linearly up to the highest tier (MK5++). Default 5%.",
+            },
+            moveSpeedMax = {
+                opt = "Move Speed Bonus (Highest Tier)",
+                optUnit = " (%)",
+                des = "Movement speed bonus on the highest tier (MK5++) while Warp Dancer is active. Default 20%.",
+            },
+            rewindDurationSec = {
+                opt = "Rewind Duration",
+                optUnit = " (s)",
+                des = "Total time the rewind phase takes to play back from end to start of the recorded path. Default 3.0s.",
+            },
+            staggerDurationMinSec = {
+                opt = "Stagger Duration (MK5++)",
+                optUnit = " (s)",
+                des = "Stagger duration on the highest tier (MK5PlusPlus). Movement, sprint, jump, crouch, and weapon swap are locked for this many seconds after rewind. Lower = snappier recovery. Default 0.3s.",
+            },
+            staggerDurationMaxSec = {
+                opt = "Stagger Duration (MK3)",
+                optUnit = " (s)",
+                des = "Stagger duration on the lowest tier (MK3). Stagger linearly interpolates between MK3 (max) and MK5++ (min) across the 7 vanilla C3 tiers. Default 2.0s.",
+            },
+        },
+        zetatech = {
+            header = "Zetatech \"Shrike\" Mark & Execute",
+            enabled = {
+                opt = "Enabled",
+                des = "Master toggle for the Zetatech \"Shrike\" Sandevistan line (C1). When enabled, every C1 Shrike tier uses TDO's reworked stats, attunement, card text, and Mark & Execute. When disabled, all C1 Shrike tiers revert completely to vanilla stats, descriptions, and values. Toggling needs a save reload.",
+            },
+            markRange = {
+                opt = "Mark Range",
+                optUnit = " (m)",
+                des = "Maximum distance a target can be marked. Beyond this range, no mark even with line of sight.",
+            },
+            executeDmgTrash = { opt = "Damage vs Trash", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs Trash-tier enemies. 100 = instakill." },
+            executeDmgWeak = { opt = "Damage vs Weak", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs Weak-tier enemies." },
+            executeDmgNormal = { opt = "Damage vs Normal", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs Normal-tier enemies." },
+            executeDmgRare = { opt = "Damage vs Rare", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs Rare-tier enemies." },
+            executeDmgOfficer = { opt = "Damage vs Officer", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs Officer-tier enemies." },
+            executeDmgElite = { opt = "Damage vs Elite", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs Elite-tier enemies." },
+            executeDmgMaxTac = { opt = "Damage vs MaxTac", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs MaxTac-tier enemies." },
+            executeDmgBoss = { opt = "Damage vs Boss", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs Boss-tier enemies." },
+        },
+        falcon = {
+            header = "Militech \"Falcon\" Weapon-Type Bonus",
+            enabled = {
+                opt = "Enabled",
+                des = "Master toggle for the Militech \"Falcon\" Sandevistan line (C4). When enabled, every C4 Falcon tier uses TDO's reworked stats, attunement, card text, and weapon-type bonuses (Power ricochet, Tech phase round, Smart saturation lock). When disabled, all C4 Falcon tiers revert completely to vanilla stats, descriptions, and values. Toggling needs a save reload.",
+            },
+        },
+        kurosawa = {
+            header = "Fuyutsuki \"Kurosawa\" Sandevistan",
+            enemySlowMult = { opt = "Enemy Time Scale on Hit", optUnit = "", des = "World time scale applied to each enemy struck in melee (0.1 = 90% slow). Lower = stronger slow. Default 0.1." },
+            duration = { opt = "Sandy Duration", optUnit = " (s)", des = "How long the Kurosawa Sandevistan window lasts (both tiers). Default 8." },
+            cooldown = { opt = "Cooldown", optUnit = " (s)", des = "Time to recharge the Kurosawa Sandevistan after use (both tiers). Default 35." },
+            drMin = { opt = "Damage Reduction (Min Tier)", optUnit = " (%)", des = "Damage Reduction while active at the Epic tier. Default 15." },
+            drMax = { opt = "Damage Reduction (Max Tier)", optUnit = " (%)", des = "Damage Reduction while active at the Epic+ tier. Default 20." },
+            healMin = { opt = "POP Heal % (Min Tier)", optUnit = " (%)", des = "Percent of max HP healed when a slowed enemy is killed (POP), at the Epic tier. Default 5." },
+            healMax = { opt = "POP Heal % (Max Tier)", optUnit = " (%)", des = "Percent of max HP healed on POP at the Epic+ tier. Default 10." },
+        },
+        sogimsu = {
+            header = "Arasaka \"Sogimsu\" Operating System",
+            durationMin = { opt = "Watchdog Duration (Min Tier)", optUnit = " (s)", des = "Watchdog active duration at the lowest tier. Intermediate tiers scale up toward the Max." },
+            durationMax = { opt = "Watchdog Duration (Max Tier)", optUnit = " (s)", des = "Watchdog active duration at the highest tier." },
+            cooldownMin = { opt = "Cooldown (Min)", optUnit = " (s)", des = "Shortest cooldown, reached at the highest tier. Lower tiers scale up toward the Max." },
+            cooldownMax = { opt = "Cooldown (Max)", optUnit = " (s)", des = "Longest cooldown, at the lowest tier." },
+            interventionsMin = { opt = "Interventions (Min Tier)", des = "Watchdog interventions (auto memory-wipe + blind) per activation at the lowest tier. Intermediate tiers scale up toward the Max." },
+            interventionsMax = { opt = "Interventions (Max Tier)", des = "Watchdog interventions per activation at the highest tier." },
+            detSpeedMin = { opt = "Detection Speed Decrease (Min Tier)", optUnit = " (%)", des = "Passive Detection Speed Decrease at the lowest tier. Intermediate tiers scale up toward the Max." },
+            detSpeedMax = { opt = "Detection Speed Decrease (Max Tier)", optUnit = " (%)", des = "Passive Detection Speed Decrease at the highest tier." },
+            stealthDmgMin = { opt = "Stealth Hit Damage (Min Tier)", optUnit = " (%)", des = "Passive Stealth Hit Damage Bonus at the lowest tier. Intermediate tiers scale up toward the Max." },
+            stealthDmgMax = { opt = "Stealth Hit Damage (Max Tier)", optUnit = " (%)", des = "Passive Stealth Hit Damage Bonus at the highest tier." },
+        },
+        juggernaut = {
+            header = "Anvil Defense \"Juggernaut\" Operating System",
+            lockDurationMin = { opt = "Lock Duration (Min Tier)", optUnit = " (s)", des = "Absorb-window duration at the lowest tier. Intermediate tiers scale up toward the Max." },
+            lockDurationMax = { opt = "Lock Duration (Max Tier)", optUnit = " (s)", des = "Absorb-window duration at the highest tier." },
+            radiusMin = { opt = "Burst Radius (Min Tier)", optUnit = " (m)", des = "Kinetic-burst release radius at the lowest tier. Intermediate tiers scale up toward the Max." },
+            radiusMax = { opt = "Burst Radius (Max Tier)", optUnit = " (m)", des = "Kinetic-burst release radius at the highest tier." },
+            damageMultMin = { opt = "Burst Damage Multiplier (Min Tier)", des = "Outgoing burst damage = absorbed * this multiplier at the lowest tier. Intermediate tiers scale up toward the Max." },
+            damageMultMax = { opt = "Burst Damage Multiplier (Max Tier)", des = "Outgoing burst damage = absorbed * this multiplier at the highest tier." },
+            cooldownMin = { opt = "Cooldown (Min)", optUnit = " (s)", des = "Shortest cooldown, reached at the highest tier. Lower tiers scale up toward the Max." },
+            cooldownMax = { opt = "Cooldown (Max)", optUnit = " (s)", des = "Longest cooldown, at the lowest tier." },
+        },
+        pyrolith = {
+            header = "Wraith Munitions \"Pyrolith\" Operating System",
+            durationMin = { opt = "Active Duration (Min Tier)", optUnit = " (s)", des = "Bullet-explosion active duration at the lowest tier. Intermediate tiers scale up toward the Max." },
+            durationMax = { opt = "Active Duration (Max Tier)", optUnit = " (s)", des = "Bullet-explosion active duration at the highest tier." },
+            explosionDamageMin = { opt = "Bullet Explosion Damage (Min Tier)", des = "Thermal damage per bullet-impact explosion at the lowest tier. Intermediate tiers scale up toward the Max." },
+            explosionDamageMax = { opt = "Bullet Explosion Damage (Max Tier)", des = "Thermal damage per bullet-impact explosion at the highest tier." },
+            clusterCountMin = { opt = "Cluster Bomb Count (Min Tier)", des = "Cluster bombs per detonation at the lowest tier. Intermediate tiers scale up toward the Max." },
+            clusterCountMax = { opt = "Cluster Bomb Count (Max Tier)", des = "Cluster bombs per detonation at the highest tier." },
+            cooldownMin = { opt = "Cooldown (Min)", optUnit = " (s)", des = "Shortest cooldown, reached at the highest tier. Lower tiers scale up toward the Max." },
+            cooldownMax = { opt = "Cooldown (Max)", optUnit = " (s)", des = "Longest cooldown, at the lowest tier." },
+        },
+        quantum = {
+            header = "MoorE \"Quantum\" Sandevistan",
+            maxCharges = { opt = "Max Charges (Advanced Tier)", des = "Number of teleport activations Advanced Quantum banks before regen is needed. Default 2." },
+            plotFreezeStrength = { opt = "Plot Freeze Strength", optUnit = "", des = "World time scale while aiming the teleport (0.001 = ~99.9% slow). Lower = closer to a full freeze. Default 0.001." },
+            durationMin = { opt = "Teleport Window (Min Tier)", optUnit = " (s)", des = "Teleport-aim window at the lowest tier. Intermediate tiers scale up toward the Max." },
+            durationMax = { opt = "Teleport Window (Max Tier)", optUnit = " (s)", des = "Teleport-aim window at the highest tier." },
+            cooldownMin = { opt = "Cooldown / Charge Regen (Min)", optUnit = " (s)", des = "Shortest cooldown (base item) / per-charge regen (Advanced), reached at the highest tier. Lower tiers scale up toward the Max." },
+            cooldownMax = { opt = "Cooldown / Charge Regen (Max)", optUnit = " (s)", des = "Longest cooldown, at the lowest tier." },
+            teleportRangeMin = { opt = "Teleport Range (Min Tier)", optUnit = " (m)", des = "Teleport range base at the lowest tier; Cool adds on top. Intermediate tiers scale up toward the Max." },
+            teleportRangeMax = { opt = "Teleport Range (Max Tier)", optUnit = " (m)", des = "Teleport range base at the highest tier; Cool adds on top." },
+            malwareTargetsMin = { opt = "Malware Targets (Min Tier)", des = "Enemies the on-arrival malware can slow at the lowest tier. Intermediate tiers scale up toward the Max." },
+            malwareTargetsMax = { opt = "Malware Targets (Max Tier)", des = "Enemies the malware can slow at the highest tier." },
+            malwareFreezeDurMin = { opt = "Malware Freeze Duration (Min Tier)", optUnit = " (s)", des = "Enemy slow duration base at the lowest tier; Cool adds on top. Intermediate tiers scale up toward the Max." },
+            malwareFreezeDurMax = { opt = "Malware Freeze Duration (Max Tier)", optUnit = " (s)", des = "Enemy slow duration base at the highest tier; Cool adds on top." },
+        },
+        scanning = {
+            header = "Scanning Time Dilation",
+            enabled = {
+                opt = "Enabled",
+                des = "Master toggle for Scanning Time Dilation. When off, focus-mode time dilation is left vanilla (TDO does not gate it or override its strength).",
+            },
+            strengthAtMinInt = { opt = "TD Strength at 0 Intelligence", des = "Time dilation factor while scanning at low Intelligence. Lower = stronger slow (0.50 = 50% world speed)." },
+            strengthAtMaxInt = { opt = "TD Strength at 20 Intelligence", des = "Time dilation factor while scanning at max Intelligence. Lower = stronger slow (0.05 = 95% slow)." },
+            drainPerSec = { opt = "Resource Drain Per Second", des = "Fraction of the scanning bar drained per second while time dilation is active, at base Intelligence." },
+            rechargePerSec = { opt = "Resource Recharge Per Second", des = "Fraction of the scanning bar refilled per second while time dilation is inactive, at base Intelligence." },
+            intScaleMax = { opt = "Intelligence Duration/Recharge Multiplier", des = "At 20 Intelligence the bar lasts longer and recharges faster by up to this multiplier. 1.0 = no Intelligence benefit." },
+            barPosX = { opt = "Bar Screen Position X", optUnit = " (px)", des = "Horizontal position of the resource bar, on a 3840-wide virtual canvas scaled to your resolution." },
+            barPosY = { opt = "Bar Screen Position Y", optUnit = " (px)", des = "Vertical position of the resource bar, on a 2160-tall virtual canvas scaled to your resolution." },
+        },
+        vehicle = {
+            header = "Vehicle Time Dilation (Herbie)",
+            enabled = {
+                opt = "Enabled",
+                des = "Time dilation plus handling assist while driving with a Sandevistan active (you must be the driver). Cars get full grip control; bikes get a lighter turn assist so it doesn't fight their balance. Requires the Road Warrior perk. Excludes Sogimsu/Juggernaut/Pyrolith.",
+            },
+            worldScaleUncommon = { opt = "World Slowdown: Uncommon", des = "World time scale while driving with an Uncommon-tier Sandy. Lower = slower world (0.80 = 80% speed). You stay real-time. Better Sandys slow harder." },
+            worldScaleRare = { opt = "World Slowdown: Rare", des = "World time scale for a Rare-tier Sandy. Lower = slower world (0.70 = 70% speed)." },
+            worldScaleEpic = { opt = "World Slowdown: Epic", des = "World time scale for an Epic-tier Sandy. Lower = slower world (0.60 = 60% speed)." },
+            worldScaleLegendary = { opt = "World Slowdown: Legendary", des = "World time scale for a Legendary-tier Sandy. Lower = slower world (0.50 = half speed, strongest)." },
+            gripForce = { opt = "Grip Strength", des = "The main handling knob. How hard the car turns toward where you steer (speed kept, direction bent). Higher = snaps to your aim (on-rails, sharp turns); lower = looser, momentum carries you wider." },
+            damping = { opt = "Damping", des = "Smooths out sideways slip. Kills high-speed wobble and stops corrections overshooting. Higher = rock-steady but heavier; lower = livelier but can wobble." },
+            steerLead = { opt = "Steer Lead", des = "How far your steering aims past the car's nose. Higher = sharper turn-in, rotates tighter than the wheels alone; 0 = follows the car's forward only." },
+            slipThreshold = { opt = "Slip Threshold", des = "Slip deadzone (m/s). Below this much drift, no correction is applied. Higher = more free play, looser; lower = locked onto your steering (precise, can feel sticky)." },
+            maxImpulse = { opt = "Max Correction", des = "Cap on how hard the grip correction can pull per tick. Stops a violent snap out of big slides. Raise if slides aren't caught; lower if corrections feel jerky." },
+            downforce = { opt = "Downforce", des = "Optional extra downward push (0-1). The grip model already keeps you planted, so this is just extra glue for jumps/bumps. 0 = off (recommended)." },
+            bikeYaw = { opt = "Motorcycle Turn Strength", des = "Bikes only. How much extra turn-in bikes get under time dilation. Only fires while actively steering above walking speed, so it doesn't fight the bike's balance. Higher = sharper turns; 0 = no turn assist. Cars ignore this." },
+            bikeGrip = { opt = "Motorcycle Grip", des = "Bikes only. How hard sideways slide is killed while steering, so the bike carves instead of sliding sideways. Pairs with Turn Strength (which rotates the bike; Grip makes it follow). Higher = bites harder; 0 = no grip. Cars ignore this." },
+        },
+        debug = {
+            header = "Debug Logging",
+            enableDebugLog = {
+                opt = "Enable Debug Log",
+                des = "Master toggle for TDO's leveled debug log (writes to gamelog.log). When off, only ERROR-level lines emit. Leave off in normal play; turn on when reporting an issue.",
+            },
+            debugLogLevel = {
+                opt = "Debug Log Level",
+                des = "Verbosity ladder, each level adds to the ones below it. ERROR < WARNING < INFO < DEBUG < TRACE. INFO is a good level for a bug report; TRACE is very noisy (per-tick).",
+                sel = {
+                    [1] = "ERROR",
+                    [2] = "WARNING",
+                    [3] = "INFO",
+                    [4] = "DEBUG",
+                    [5] = "TRACE",
+                },
+            },
+        },
+        showHide = {
+            opt = "Show/Hide All Options",
+            des = "Show or Hide all options for this Sandevistan. Changes are still in effect while these options are hidden.",
+            button = "Show/Hide",
+            textSize = 45
+        },
+        
+        
+        
+        
+        
+        
+        calcDes ="Values for all Sandevistans between the minimum and maximum Tier are calculated automatically by linear interpolation.\\n\\n",
+        vanillaDes = "\\n\\nThe unmodified value for this option is {VALUE}.", 
+        TDODefaultDes = "\\n\\nThe TDO default value for this option is {VALUE}.", 
+        abilities = {
+            ts = {
+                opt = "Slow Time By",
+                optUnit = " (%)",
+                des = "Set how much this Sandevistan slows down time (larger number is slower).",
+            },
+            dur = {
+                opt = "Duration",
+                optUnit = " (sec)",
+                des = "Set how many seconds this Sandevistan version lasts.",
+            },
+            rchrg = {
+                opt = "Recharge",
+                optUnit = " (sec)",
+                des = "Set how many seconds this Sandevistan version takes to recharge from empty.",
+            },
+            critCh = {
+                opt = "Crit Chance",
+                optUnit = " (%)",
+                des = "Set how much this Sandevistan increases crit chance when active.",
+            },
+            critDmg = {
+                opt = "Crit Damage",
+                optUnit = " (%)",
+                des = "Set how much this Sandevistan increases crit damage when active.",
+            },
+        },
+    },
+    vendorDescriptions = {
+        [1] = "(Little China) Viktor's Clinic",
+        [2] = "(Northside) Cassius Ryder",
+        [3] = "(Kabuki) Instant Implants",
+        [4] = "(Kabuki) Buck's Clinic",
+        [5] = "(Kabuki) Dr. Chrome",
+        [6] = "(Japantown) Ripperdoc",
+        [7] = "(Japantown) Fingers M.D.",
+        [8] = "(Charter Hill) Kraviz's Clinic",
+        [9] = "(Rancho) Octavio's Clinic",
+        [10] = "(West Wind Estate) Ripperdoc",
+        [11] = "(Arroyo) Ripperdoc",
+        [12] = "(Badlands) Ripperdoc",
+        [13] = "(Wellsprings) Ripperdoc",
+        [14] = "(Downtown) Ripperdoc"
+    }
+}

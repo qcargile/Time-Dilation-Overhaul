@@ -1,0 +1,469 @@
+Items.TDO_Juggernaut$(tier):
+  $instances:
+    - { tier: Rare,              nextTier: Items.TDO_JuggernautEpic,              quality: Rare,              humanity: 18, lockDur: 4,  maxRadius: 15, absorbCap: 500,  cooldown: 60, dmgReduction: 5,  fallReduction: 20 }
+    - { tier: Epic,              nextTier: Items.TDO_JuggernautLegendary,         quality: Epic,              humanity: 20, lockDur: 6,  maxRadius: 20, absorbCap: 1000, cooldown: 50, dmgReduction: 7,  fallReduction: 25 }
+    - { tier: Legendary,         nextTier: Items.TDO_JuggernautLegendaryPlus,     quality: Legendary,         humanity: 25, lockDur: 8,  maxRadius: 25, absorbCap: 1500, cooldown: 45, dmgReduction: 10, fallReduction: 30 }
+    - { tier: LegendaryPlus,     nextTier: Items.TDO_JuggernautLegendaryPlusPlus, quality: LegendaryPlus,     humanity: 30, lockDur: 10, maxRadius: 30, absorbCap: 1500, cooldown: 40, dmgReduction: 12, fallReduction: 35 }
+    - { tier: LegendaryPlusPlus, nextTier: None,                                  quality: LegendaryPlusPlus, humanity: 35, lockDur: 12, maxRadius: 35, absorbCap: 1500, cooldown: 35, dmgReduction: 15, fallReduction: 40 }
+  $type: gamedataItem_Record
+  animFeatureName: ItemData
+  animName: ui_garment_pose
+  animSetResource: ''
+  blueprint: Items.SandevistanBlueprint
+  canDrop: True
+  crosshair: Crosshairs.None
+  deprecated: False
+  enableNpcRPGData: False
+  entityName: cyberware_dummy
+  equipArea: EquipmentArea.SystemReplacementCW
+  friendlyName: ''
+  garmentOffset: 0
+  icon: UIIcon.ItemIcon
+  iconPath: cwf_sandevistan4
+  isCached: False
+  isCoreCW: True
+  isCustomizable: False
+  isGarment: False
+  isPart: False
+  isSingleInstance: False
+  itemCategory: ItemCategory.Cyberware
+  itemType: ItemType.Cyberware
+  localizedName: ''
+  mass: 1
+  minigameInstance: minigame_v2.DefaultItemMinigame
+  nextUpgradeItem: $(nextTier)
+  powerLevelDeterminedByParent: False
+  quality: Quality.$(quality)
+  qualityRestrictedByParent: False
+  replicateWhenNotActive: False
+  upgradeCostMult: 1.5
+  useHeadgearGarmentAggregator: False
+  useNewSpawnMethod: False
+  usesVariants: True
+  savable: False
+  animationParameters: []
+  appearanceSuffixes: []
+  appearanceSuffixesOwnerOverride: []
+  attachmentSlots: []
+  buyPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.BuyPrice_StreetCred_Discount
+  cameraForward: {x: 0, y: 0, z: 0}
+  cameraUp: {x: 0, y: 0, z: 0}
+  connections: []
+  displayName: LocKey#Item-TDO-Juggernaut-Name
+  equipAreas: []
+  equipPrereqs: []
+  gameplayRestrictions:
+    - GameplayRestriction.VehicleCombatNoInterruptions
+  hairSkinnedMeshComponents: []
+  localizedDescription: LocKey#Item-TDO-Juggernaut-Flavor
+  OnAttach: []
+  OnLooted: []
+  parts: []
+  placementSlots:
+    - AttachmentSlots.SystemReplacementCW
+  previewBBoxOverride: []
+  requiredSlots: []
+  sellPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.CyberwareSellMultiplier
+  slotPartList:
+    - Items.GenericRootSlotItem
+  slotPartListPreset: []
+  tags:
+    - Cyberware
+    - HideInBackpackUI
+    - Sandevistan
+    - TDO
+    - Juggernaut
+  variants:
+    - Variants.Humanity$(humanity)Cost
+  visualTags: []
+  effectors: []
+  weakspots: []
+  cyberwareType: Sandevistan
+  objectActions:
+    - CyberwareAction.DisableSandevistan
+    - CyberwareAction.DisableCorruptedSandevistan
+    - CyberwareAction.UseSandevistan
+    - CyberwareAction.UseCorruptedSandevistan
+  statModifierGroups: []
+  statModifiers:
+    - $type: gamedataConstantStatModifier_Record
+      value: 1
+      modifierType: Additive
+      statType: BaseStats.IsItemIconic
+    - $type: gamedataConstantStatModifier_Record
+      value: 1
+      modifierType: Additive
+      statType: BaseStats.HasSandevistan
+    - $type: gamedataConstantStatModifier_Record
+      value: 999
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanDuration
+    - $type: gamedataConstantStatModifier_Record
+      value: 1.0
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanTimeScale
+    - $type: gamedataConstantStatModifier_Record
+      value: $(cooldown)
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanRechargeDuration
+    - $type: gamedataConstantStatModifier_Record
+      value: 1
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanCooldownBase
+    - $type: gamedataConstantStatModifier_Record
+      value: -10
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanEnterCost
+    - $type: gamedataCombinedStatModifier_Record
+      modifierType: Additive
+      opSymbol: '*'
+      refObject: Player
+      refStat: BaseStats.Strength
+      statType: BaseStats.AttunementHelper
+      value: 0.02
+  statPools: []
+  OnEquip:
+    - $type: gamedataGameplayLogicPackage_Record
+      stackable: False
+      UIData:
+        $type: gamedataGameplayLogicPackageUIData_Record
+        localizedDescription: LocKey#Item-TDO-Juggernaut-Active-Desc
+        localizedName: ''
+        floatValues:
+          - $(lockDur)
+          - $(maxRadius)
+          - $(absorbCap)
+          - $(cooldown)
+        intValues: []
+        nameValues: []
+        stats: []
+      animationWrapperOverrides: []
+      effectors: []
+      items: []
+      statPools: []
+      stats:
+        - $type: gamedataCombinedStatModifier_Record
+          modifierType: Additive
+          opSymbol: '*'
+          refObject: Player
+          refStat: BaseStats.AttunementHelper
+          statType: BaseStats.DamageReduction
+          value: $(dmgReduction)
+        - $type: gamedataCombinedStatModifier_Record
+          modifierType: Additive
+          opSymbol: '*'
+          refObject: Player
+          refStat: BaseStats.AttunementHelper
+          statType: BaseStats.FallDamageReduction
+          value: $(fallReduction)
+    - $type: gamedataGameplayLogicPackage_Record
+      stackable: True
+      UIData:
+        $type: gamedataGameplayLogicPackageUIData_Record
+        iconPath: UIIcon.Body
+        localizedDescription: LocKey#Attunement-TDO-Juggernaut-Desc
+        localizedName: LocKey#Attunement-TDO-Juggernaut-Name
+        floatValues:
+          - 2
+          - 0
+        intValues: []
+        nameValues: []
+        stats:
+          - BaseStats.AttunementHelper
+      animationWrapperOverrides: []
+      effectors: []
+      items: []
+      statPools: []
+      stats: []
+
+StatusEffects.TDO_JuggernautActive:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_JuggernautActive_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: RTDB.StatusEffect_inline0
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.PassiveBuff
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - CyberwareBuff
+    - TDO
+    - JuggernautActive
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_JuggernautActive_Package
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-JuggernautActive-Name
+    description: LocKey#SE-TDO-JuggernautActive-Desc
+    iconPath: cwf_sandevistan4
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_JuggernautActive_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_JuggernautActive_DurMod
+
+StatusEffects.TDO_JuggernautActive_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: -1
+
+StatusEffects.TDO_JuggernautActive_Package:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_JuggernautActive_NoMovement
+    - StatusEffects.TDO_JuggernautActive_NoSprint
+    - StatusEffects.TDO_JuggernautActive_NoJump
+    - StatusEffects.TDO_JuggernautActive_NoSwitchWeapon
+    - StatusEffects.TDO_JuggernautActive_NoConsumables
+    - StatusEffects.TDO_JuggernautActive_NoGrenades
+    - StatusEffects.TDO_JuggernautActive_BleedingImm
+    - StatusEffects.TDO_JuggernautActive_BurningImm
+    - StatusEffects.TDO_JuggernautActive_ElectrocuteImm
+    - StatusEffects.TDO_JuggernautActive_EMPImm
+    - StatusEffects.TDO_JuggernautActive_KnockdownImm
+    - StatusEffects.TDO_JuggernautActive_PoisonImm
+    - StatusEffects.TDO_JuggernautActive_StunImm
+    - StatusEffects.TDO_JuggernautActive_BlindImm
+
+StatusEffects.TDO_JuggernautActive_NoMovement:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.MaxSpeed
+  value: 0.0
+
+StatusEffects.TDO_JuggernautActive_NoSprint:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.CanSprint
+  value: 0.0
+
+StatusEffects.TDO_JuggernautActive_NoJump:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.CanJump
+  value: 0.0
+
+StatusEffects.TDO_JuggernautActive_NoSwitchWeapon:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.CanSwitchWeapon
+  value: 0.0
+
+StatusEffects.TDO_JuggernautActive_NoConsumables:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.CanUseConsumables
+  value: 0.0
+
+StatusEffects.TDO_JuggernautActive_NoGrenades:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.CanUseGrenades
+  value: 0.0
+
+StatusEffects.TDO_JuggernautActive_BleedingImm:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.BleedingImmunity
+  value: 1.0
+
+StatusEffects.TDO_JuggernautActive_BurningImm:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.BurningImmunity
+  value: 1.0
+
+StatusEffects.TDO_JuggernautActive_ElectrocuteImm:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.ElectrocuteImmunity
+  value: 1.0
+
+StatusEffects.TDO_JuggernautActive_EMPImm:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.EMPImmunity
+  value: 1.0
+
+StatusEffects.TDO_JuggernautActive_KnockdownImm:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.KnockdownImmunity
+  value: 1.0
+
+StatusEffects.TDO_JuggernautActive_PoisonImm:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.PoisonImmunity
+  value: 1.0
+
+StatusEffects.TDO_JuggernautActive_StunImm:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.StunImmunity
+  value: 1.0
+
+StatusEffects.TDO_JuggernautActive_BlindImm:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.BlindImmunity
+  value: 1.0
+
+StatusEffects.TDO_JuggernautCooldown_T1:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_JuggernautCooldown_T1_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: True
+  isAffectedByTimeDilationPlayer: True
+  maxStacks: RTDB.StatusEffect_inline0
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: False
+  savable: True
+  statusEffectType: BaseStatusEffectTypes.PlayerCooldown
+  stopActiveSfxOnDeactivate: True
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - PlayerCyberwareCooldown
+  immunityStats: []
+  packages: []
+  SFX: []
+  VFX: []
+
+StatusEffects.TDO_JuggernautCooldown_T1_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_JuggernautCooldown_T1_DurMod
+
+StatusEffects.TDO_JuggernautCooldown_T1_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 60
+
+StatusEffects.TDO_JuggernautCooldown_T2:
+  $base: StatusEffects.TDO_JuggernautCooldown_T1
+  duration: StatusEffects.TDO_JuggernautCooldown_T2_Dur
+
+StatusEffects.TDO_JuggernautCooldown_T2_Dur:
+  $base: StatusEffects.TDO_JuggernautCooldown_T1_Dur
+  statModifiers:
+    - StatusEffects.TDO_JuggernautCooldown_T2_DurMod
+
+StatusEffects.TDO_JuggernautCooldown_T2_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 50
+
+StatusEffects.TDO_JuggernautCooldown_T3:
+  $base: StatusEffects.TDO_JuggernautCooldown_T1
+  duration: StatusEffects.TDO_JuggernautCooldown_T3_Dur
+
+StatusEffects.TDO_JuggernautCooldown_T3_Dur:
+  $base: StatusEffects.TDO_JuggernautCooldown_T1_Dur
+  statModifiers:
+    - StatusEffects.TDO_JuggernautCooldown_T3_DurMod
+
+StatusEffects.TDO_JuggernautCooldown_T3_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 45
+
+StatusEffects.TDO_JuggernautCooldown_T4:
+  $base: StatusEffects.TDO_JuggernautCooldown_T1
+  duration: StatusEffects.TDO_JuggernautCooldown_T4_Dur
+
+StatusEffects.TDO_JuggernautCooldown_T4_Dur:
+  $base: StatusEffects.TDO_JuggernautCooldown_T1_Dur
+  statModifiers:
+    - StatusEffects.TDO_JuggernautCooldown_T4_DurMod
+
+StatusEffects.TDO_JuggernautCooldown_T4_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 40
+
+StatusEffects.TDO_JuggernautCooldown_T5:
+  $base: StatusEffects.TDO_JuggernautCooldown_T1
+  duration: StatusEffects.TDO_JuggernautCooldown_T5_Dur
+
+StatusEffects.TDO_JuggernautCooldown_T5_Dur:
+  $base: StatusEffects.TDO_JuggernautCooldown_T1_Dur
+  statModifiers:
+    - StatusEffects.TDO_JuggernautCooldown_T5_DurMod
+
+StatusEffects.TDO_JuggernautCooldown_T5_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 35
+
+Vendors.TDO_JuggernautStock$(tier):
+  $instances:
+    - { tier: Rare }
+    - { tier: Epic }
+    - { tier: Legendary }
+  $type: gamedataVendorItem_Record
+  item: Items.TDO_Juggernaut$(tier)
+  generationPrereqs:
+    - Prereqs.AfterFirstVisitAtVictor
+    - LootPrereqs.$(tier)CWLevelAvailabilityAtVendor
+  quantity:
+    - Vendors.Always_Present
+
+Vendors.vik.itemStock:
+  - !append Vendors.TDO_JuggernautStockRare
+  - !append Vendors.TDO_JuggernautStockEpic
+
+Vendors.cct_cpz_ripdoc_01.itemStock:
+  - !append Vendors.TDO_JuggernautStockEpic
+  - !append Vendors.TDO_JuggernautStockLegendary
+
+Vendors.hey_spr_ripdoc_01.itemStock:
+  - !append Vendors.TDO_JuggernautStockLegendary

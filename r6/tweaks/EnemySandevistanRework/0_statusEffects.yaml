@@ -1,0 +1,349 @@
+BaseStats.ESR_Sandi_CD_Counter:
+  $type: Stat
+  enumName: ESR_Sandi_CD_Counter
+  flags: [ ]
+  decimalPlaces: 1
+  max: 500
+  min: 0
+
+BaseStatusEffect.ESR_Sandi_CD:
+  $type: StatusEffect
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxDuration
+        value: 1
+  gameplayTags: ["Debuff"]
+  isAffectedByTimeDilationNPC: true
+  isAffectedByTimeDilationPlayer: true
+  packages:
+    - $type: GameplayLogicPackage
+      stackable: true
+      stats:
+        - $type: ConstantStatModifier
+          modifierType: Additive
+          statType: BaseStats.ESR_Sandi_CD_Counter
+          value: 1
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 100
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+
+BaseStatusEffect.ESR_Sandi_Buff:
+  $type: StatusEffect
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxDuration
+        value: 0.1
+  gameplayTags: ["Debuff", "ESR_Sandi_Buff"]
+  isAffectedByTimeDilationNPC: false
+  isAffectedByTimeDilationPlayer: true
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 100
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+
+
+BaseStatusEffect.ESR_SVS_Buff:
+  $type: StatusEffect
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxDuration
+        value: 0.1
+  gameplayTags: ["Debuff", "ESR_Sandi_Buff"]
+  isAffectedByTimeDilationNPC: false
+  isAffectedByTimeDilationPlayer: true
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 100
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+
+  # Kerenzikov
+
+BaseStats.ESR_Kerenzikov_CD_Counter:
+  $type: Stat
+  enumName: ESR_Kerenzikov_CD_Counter
+  flags: [ ]
+  decimalPlaces: 1
+  max: 500
+  min: 0
+
+BaseStatusEffect.ESR_SVK_Buff:
+  $type: StatusEffect
+  VFX:
+    - $type: StatusEffectFX
+      name: fx_sandevistan_trails_smasher
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxDuration
+        value: 0.1
+  gameplayTags: ["Debuff", "ESR_Sandi_Buff", "ESR_Kerenzikov_Buff"]
+  isAffectedByTimeDilationNPC: false
+  isAffectedByTimeDilationPlayer: true
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 100
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+
+
+BaseStatusEffect.ESR_Kerenzikov_CD:
+  $type: StatusEffect
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxDuration
+        value: 1
+  gameplayTags: ["Debuff"]
+  isAffectedByTimeDilationNPC: true
+  isAffectedByTimeDilationPlayer: true
+  packages:
+    - $type: GameplayLogicPackage
+      stackable: true
+      stats:
+        - $type: ConstantStatModifier
+          modifierType: Additive
+          statType: BaseStats.ESR_Kerenzikov_CD_Counter
+          value: 1
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 100
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+
+
+BaseStatusEffect.ESR_Offensive_CD:
+  $type: StatusEffect
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxDuration
+        value: 1
+  gameplayTags: ["Debuff"]
+  isAffectedByTimeDilationNPC: true
+  isAffectedByTimeDilationPlayer: true
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 100
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+
+BaseStatusEffect.ESR_Defensive_CD:
+  $type: StatusEffect
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxDuration
+        value: 1
+  gameplayTags: ["Debuff"]
+  isAffectedByTimeDilationNPC: true
+  isAffectedByTimeDilationPlayer: true
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 100
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+
+# StimPack
+BaseStatusEffect.ESR_Stim_CDDuration:
+  $type: ConstantStatModifier
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 15
+
+BaseStatusEffect.ESR_Stim_CD:
+  $type: StatusEffect
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxDuration
+        value: 1
+  gameplayTags: ["Debuff"]
+  isAffectedByTimeDilationNPC: true
+  isAffectedByTimeDilationPlayer: true
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 1
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+
+BaseStatusEffect.ESR_Stim_Duration:
+  $type: ConstantStatModifier
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 15
+
+BaseStatusEffect.ESR_Stim_Buff:
+  $type: StatusEffect
+  SFX: 
+    - $type: StatusEffectFX
+      name: trail_chemical
+    - $type: StatusEffectFX
+      name: idle_chemical
+  VFX: 
+    - $type: StatusEffectFX
+      name: trail_chemical
+    - $type: StatusEffectFX
+      name: idle_chemical
+    - $type: StatusEffectFX
+      name: eye_glow_purple
+  packages:
+    - $type: GameplayLogicPackage
+      stackable: false
+      stats:
+        - $type: ConstantStatModifier
+          modifierType: Additive
+          statType: BaseStats.IMSABonusAccuracy
+          value: 0.1
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - BaseStatusEffect.ESR_Stim_Duration
+  gameplayTags: ["Debuff", "ESR_Sandi_Buff", "ESR_Stim_Buff"]
+  isAffectedByTimeDilationNPC: false
+  isAffectedByTimeDilationPlayer: true
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 1
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+  uiData: 
+    $type: StatusEffectUIData
+    iconPath: drugged_icon
+    priority: -1
+
+BaseStatusEffect.ESR_RhinoSandiDebuff:
+  $type: StatusEffect
+  gameplayTags: ["Buff"]
+  duration: BaseStats.InfiniteDuration
+  isAffectedByTimeDilationNPC: true
+  isAffectedByTimeDilationPlayer: true
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true
+
+BaseStats.ESR_RhinoBuffCounter:
+  $type: Stat
+  enumName: ESR_RhinoBuffCounter
+  flags: [ ]
+  decimalPlaces: 1
+  max: 40
+  min: 0
+
+BaseStatusEffect.ESR_RhinoSandiSWBuff:
+  $type: StatusEffect
+  gameplayTags: ["Buff"]
+  duration: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxDuration
+        value: 0.6
+  packages:
+    - $type: GameplayLogicPackage
+      stackable: true
+      stats:
+        - $type: ConstantStatModifier
+          modifierType: Additive
+          statType: BaseStats.ESR_RhinoBuffCounter
+          value: 1
+  maxStacks: 
+    $type: StatModifierGroup
+    statModsLimit: -1
+    statModifiers: 
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.MaxStacks
+        value: 40
+  isAffectedByTimeDilationNPC: true
+  isAffectedByTimeDilationPlayer: true
+  savable: true
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: true

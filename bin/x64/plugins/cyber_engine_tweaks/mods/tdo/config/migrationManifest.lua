@@ -1,0 +1,112 @@
+return {
+	{
+		version = 4.3,
+		resetKeys = {
+			"sandys",
+			"zetatech.hoverTime",
+			"zetatech.maxMarks",
+		}
+	},
+	{ version = 4.4, resetKeys = {"falcon.phaseRoundEnabled", "falcon.phaseRoundDamageMultiplier", "falcon.phaseRoundLineRadius"} },
+	{ version = 4.5, resetKeys = {"falcon.trickShotEnabled", "falcon.trickShotConeAngle", "falcon.trickShotRadius"} },
+	{ version = 4.6, resetKeys = {"falcon.saturationLockEnabled", "falcon.saturationLockMinTargets", "falcon.saturationLockRange", "falcon.saturationLockStagger"} },
+	{ version = 4.7, resetKeys = {"falcon.phaseRoundLineRadius"} },
+	{ version = 4.8, resetKeys = {"falcon.saturationLockStagger"} },
+	{ version = 4.9, resetKeys = {"falcon.phaseRoundSelfDamagePercent", "falcon.trickShotBlockReload", "falcon.saturationLockEMPSecondsPerShot"} },
+	{ version = 5.0, resetKeys = {
+		"sandys",
+		"juggernaut.enabled", "juggernaut.lockDuration_T1", "juggernaut.lockDuration_T2", "juggernaut.lockDuration_T3", "juggernaut.lockDuration_T4", "juggernaut.lockDuration_T5",
+		"juggernaut.baseRadius_T1", "juggernaut.baseRadius_T2", "juggernaut.baseRadius_T3", "juggernaut.baseRadius_T4", "juggernaut.baseRadius_T5",
+		"juggernaut.maxRadius_T1", "juggernaut.maxRadius_T2", "juggernaut.maxRadius_T3", "juggernaut.maxRadius_T4", "juggernaut.maxRadius_T5",
+		"juggernaut.damageMult_T1", "juggernaut.damageMult_T2", "juggernaut.damageMult_T3", "juggernaut.damageMult_T4", "juggernaut.damageMult_T5",
+		"juggernaut.maxBurstDamage",
+		"pyrolith.enabled", "pyrolith.activeDuration_T1", "pyrolith.activeDuration_T2", "pyrolith.activeDuration_T3", "pyrolith.activeDuration_T4", "pyrolith.activeDuration_T5",
+		"pyrolith.bulletExplosionDamageFraction_T1", "pyrolith.bulletExplosionDamageFraction_T2", "pyrolith.bulletExplosionDamageFraction_T3", "pyrolith.bulletExplosionDamageFraction_T4", "pyrolith.bulletExplosionDamageFraction_T5",
+		"pyrolith.bulletExplosionRadius_T1", "pyrolith.bulletExplosionRadius_T2", "pyrolith.bulletExplosionRadius_T3", "pyrolith.bulletExplosionRadius_T4", "pyrolith.bulletExplosionRadius_T5",
+		"quantum.maxCharges", "quantum.chargeRegenSeconds",
+		"sogimsu.enabled", "sogimsu.cloneDuration_T1", "sogimsu.cloneDuration_T2", "sogimsu.cloneDuration_T3", "sogimsu.cloneDuration_T4", "sogimsu.cloneDuration_T5",
+		"sogimsu.healthCost_T1", "sogimsu.healthCost_T2", "sogimsu.healthCost_T3", "sogimsu.healthCost_T4", "sogimsu.healthCost_T5",
+		"sogimsu.stimuliRange", "sogimsu.maxPlacementDistance",
+		"fusilladeShow", "juggernautShow", "kurosawaShow", "pyrolithShow", "quantumShow", "sogimsuShow",
+	} },
+	{ version = 5.1, resetKeys = {"fusillade.ammoRefillEnabled", "fusillade.ammoRefillPerReflexes", "fusillade.ammoRefillMaxChancePct"} },
+	{ version = 5.2, resetKeys = {"kurosawa.attunementPerPointPct", "kurosawa.attunementPerAttrCapPct", "kurosawa.attunementCombinedCapPct"} },
+	{ version = 5.3, resetKeys = {"kurosawa.baseRadius", "kurosawa.baseDamageThreshold", "kurosawa.radiusPerTier", "kurosawa.maxRadius"} },
+	{ version = 5.7, resetKeys = {
+		"pyrolith.activeDuration_T1", "pyrolith.activeDuration_T2", "pyrolith.activeDuration_T3", "pyrolith.activeDuration_T4", "pyrolith.activeDuration_T5",
+		"pyrolith.bulletExplosionRadius_T1", "pyrolith.bulletExplosionRadius_T2", "pyrolith.bulletExplosionRadius_T3", "pyrolith.bulletExplosionRadius_T4", "pyrolith.bulletExplosionRadius_T5",
+	} },
+	{ version = 5.8, resetKeys = {
+		"pyrolith.bulletExplosionDamage_T1", "pyrolith.bulletExplosionDamage_T2", "pyrolith.bulletExplosionDamage_T3", "pyrolith.bulletExplosionDamage_T4", "pyrolith.bulletExplosionDamage_T5",
+		"pyrolith.clusterCount_T1", "pyrolith.clusterCount_T2", "pyrolith.clusterCount_T3", "pyrolith.clusterCount_T4", "pyrolith.clusterCount_T5",
+		"pyrolith.clusterDamageScalar_T1", "pyrolith.clusterDamageScalar_T2", "pyrolith.clusterDamageScalar_T3", "pyrolith.clusterDamageScalar_T4", "pyrolith.clusterDamageScalar_T5",
+		"pyrolith.throwVelocityMultiplier_T1", "pyrolith.throwVelocityMultiplier_T2", "pyrolith.throwVelocityMultiplier_T3", "pyrolith.throwVelocityMultiplier_T4", "pyrolith.throwVelocityMultiplier_T5",
+	} },
+	{ version = 6.0, resetKeys = {
+		"scanning.enabled", "scanning.tickInterval", "scanning.drainPerSec", "scanning.rechargePerSec",
+		"scanning.strengthAtMinInt", "scanning.strengthAtMaxInt", "scanning.debugLog",
+		"scanning.barWidth", "scanning.barHeight", "scanning.barPosX", "scanning.barPosY", "scanning.intScaleMax",
+	} },
+	{ version = 6.2, resetKeys = {
+		"scanning.barWidth", "scanning.barHeight", "scanning.barPosX", "scanning.barPosY",
+	} },
+	{ version = 6.3, resetKeys = {
+		"vehicle.enabled", "vehicle.debugLog", "vehicle.tickInterval",
+		"vehicle.tdAtMinRarity", "vehicle.tdAtMaxRarity", "vehicle.gripStrength", "vehicle.downforceStrength",
+	} },
+	{ version = 6.4, resetKeys = {
+		"vehicle.enabled", "vehicle.debugLog", "vehicle.tickInterval",
+		"vehicle.fwdGain", "vehicle.fwdCap", "vehicle.grip", "vehicle.downforce",
+	} },
+	{ version = 6.5, resetKeys = {
+		"vehicle.enabled", "vehicle.debugLog", "vehicle.tickInterval", "vehicle.infiniteSandy",
+		"vehicle.worldScale", "vehicle.downforce", "vehicle.steerRate", "vehicle.yawInertia",
+		"vehicle.gripLat", "vehicle.gripLon", "vehicle.tireCoef", "vehicle.slipAngle",
+		"vehicle.slipRatio", "vehicle.surfLat", "vehicle.surfLon", "vehicle.turnAssist",
+		"vehicle.tierUncommon", "vehicle.tierRare", "vehicle.tierEpic", "vehicle.tierLegendary",
+	} },
+	{ version = 6.6, resetKeys = {
+		"vehicle.enabled", "vehicle.debugLog", "vehicle.tickInterval", "vehicle.infiniteSandy",
+		"vehicle.worldScale", "vehicle.gripForce",
+		"vehicle.tierUncommon", "vehicle.tierRare", "vehicle.tierEpic", "vehicle.tierLegendary",
+	} },
+	{ version = 6.7, resetKeys = {
+		"vehicle.enabled", "vehicle.debugLog", "vehicle.tickInterval", "vehicle.infiniteSandy",
+		"vehicle.worldScale", "vehicle.gripForce", "vehicle.slipThreshold", "vehicle.maxImpulse", "vehicle.downforce",
+		"vehicle.tierUncommon", "vehicle.tierRare", "vehicle.tierEpic", "vehicle.tierLegendary",
+	} },
+	{ version = 6.8, resetKeys = {
+		"vehicle.enabled", "vehicle.debugLog", "vehicle.tickInterval", "vehicle.infiniteSandy",
+		"vehicle.worldScale", "vehicle.gripForce", "vehicle.damping", "vehicle.steerLead", "vehicle.slipThreshold", "vehicle.maxImpulse", "vehicle.downforce",
+		"vehicle.tierUncommon", "vehicle.tierRare", "vehicle.tierEpic", "vehicle.tierLegendary",
+	} },
+	{ version = 6.9, resetKeys = {"vehicle.downforce"} },
+	{ version = 7.0, resetKeys = {
+		"vehicle.enabled", "vehicle.debugLog", "vehicle.tickInterval",
+		"vehicle.worldScaleUncommon", "vehicle.worldScaleRare", "vehicle.worldScaleEpic", "vehicle.worldScaleLegendary",
+		"vehicle.gripForce", "vehicle.damping", "vehicle.steerLead", "vehicle.slipThreshold", "vehicle.maxImpulse", "vehicle.downforce",
+	} },
+	{ version = 7.1, resetKeys = {"sandyVFX.enabled", "vehicle.bikeYaw"} },
+	{ version = 7.2, resetKeys = {"vehicle.bikeGrip"} },
+	{ version = 7.3, resetKeys = {"sandyVFX.enabled", "sandyVFX.useVanilla"} },
+	{ version = 7.4, resetKeys = {
+		"quantum.teleportEnabled", "quantum.plotFreezeStrength", "quantum.teleportMaxRange", "quantum.plotTickInterval", "quantum.markerLift",
+		"quantum.malwareEnabled", "quantum.malwareRadius", "quantum.malwareStrength", "quantum.malwareBaseDuration", "quantum.malwareCoolPerPoint", "quantum.malwareDurationCap",
+	} },
+	{ version = 7.5, resetKeys = {"quantum.malwareStrength", "quantum.teleportRangeBase", "quantum.teleportRangePerCool"} },
+	{ version = 7.6, resetKeys = {
+		"quantum.malwareRadius", "quantum.malwareRadiusBase", "quantum.malwareRadiusPerCool", "quantum.malwareRadiusCap",
+		"quantum.malwareMaxTargets_T1", "quantum.malwareMaxTargets_T2", "quantum.malwareMaxTargets_T3", "quantum.malwareMaxTargets_T4", "quantum.malwareMaxTargets_T5",
+	} },
+	{ version = 7.7, resetKeys = {
+		"quantum.teleportRangeBase",
+		"quantum.teleportRangeBase_T1", "quantum.teleportRangeBase_T2", "quantum.teleportRangeBase_T3", "quantum.teleportRangeBase_T4", "quantum.teleportRangeBase_T5",
+	} },
+	{ version = 7.8, resetKeys = {
+		"quantum.teleportRangeBase_T1", "quantum.teleportRangeBase_T2", "quantum.teleportRangeBase_T3", "quantum.teleportRangeBase_T4", "quantum.teleportRangeBase_T5",
+	} },
+	{ version = 7.9, resetKeys = {"quantum.malwareBaseDuration", "quantum.malwareCoolPerPoint", "quantum.malwareDurationCap"} },
+	{ version = 8.0, resetKeys = {"quantum.malwareRadiusBase", "quantum.malwareRadiusPerCool", "quantum.malwareRadiusCap"} },
+	{ version = 8.4, resetKeys = {"zetatech.markRange"} },
+	{ version = 8.5, resetKeys = {"quantum.dodgeWarpEnabled", "quantum.dodgeWarpTimeScale", "quantum.dodgeWarpDuration", "quantum.dodgeWarpCooldown"} },
+}

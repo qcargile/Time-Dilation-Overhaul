@@ -1,0 +1,300 @@
+# Ability.HasSandevistan_inline1
+# Ability.HasSandevistanTier2_inline1
+# Ability.HasSandevistanTier3_inline1
+# Ability.HasSandevistanTier4_inline1
+# Ability.HasSandevistanTier5_inline1
+
+BaseStats.HasSandevistanTier4:
+  $type: Stat
+  enumName: HasSandevistanTier4
+  flags: [ ]
+  decimalPlaces: 1
+  max: 1
+  min: 0
+
+BaseStats.HasSandevistanTier5:
+  $type: Stat
+  enumName: HasSandevistanTier5
+  flags: [ ]
+  decimalPlaces: 1
+  max: 1
+  min: 0
+
+Ability.ESR_MeleeSurvivalEffector:
+  $type: Effector
+  effectorClassName: Phoenicia.EnemySandevistanRework.Effectors.SurvivalEffector
+  removeAfterActionCall: true
+  prereqRecord: 
+    $type: MultiPrereq
+    prereqClassName: gameMultiPrereq
+    aggregationType: AND
+    nestedPrereqs: 
+      - $type: HitPrereq
+        callbackType: HitReceived
+        conditions: 
+          - $type: HitPrereqCondition
+            type: Prereqs.WeaponType
+            weaponType: Ranged       
+        ignoreSelfInflictedPressureWave: true
+        isSynchronous: true
+        pipelineStage: Process
+        pipelineType: Damage
+        prereqClassName: HitReceivedPrereq
+
+
+Ability.ESR_MeleeDefenseEffector:
+  $type: Effector
+  effectorClassName: Phoenicia.EnemySandevistanRework.Effectors.MeleeDefenseEffector
+  removeAfterActionCall: true
+  prereqRecord: 
+    $type: MultiPrereq
+    prereqClassName: gameMultiPrereq
+    aggregationType: AND
+    nestedPrereqs: 
+      - $type: HitPrereq
+        callbackType: HitReceived
+        conditions: 
+          - $type: HitPrereqCondition
+            type: Prereqs.WeaponType
+            weaponType: Melee       
+        ignoreSelfInflictedPressureWave: true
+        isSynchronous: true
+        pipelineStage: Process
+        pipelineType: Damage
+        prereqClassName: HitReceivedPrereq
+
+Ability.ESR_EmptyAbilityGameplayPackage:
+  $type: GameplayLogicPackage
+
+Ability.HasSandevistanTier1_inline1: 
+  effectors:
+    - !append Ability.ESR_MeleeDefenseEffector
+    - !append Ability.ESR_MeleeSurvivalEffector
+
+Ability.ESR_HasSandevistanTier1:
+  $type: GameplayAbility
+  abilityPackage: Ability.HasSandevistanTier1_inline1
+  loc_key_desc: LocKey#Gameplay-NPC-Abilities-HasSandevistanTier1Desc
+  loc_key_name: LocKey#enemySandevistanRework_s1_name
+  showInCodex: true
+  prereqsForUse: 
+    - Ability.HasSandevistanTier1_inline0
+
+UIIcon.Ability.ESR_HasSandevistanTier1:
+  $base: UIIcon.Ability.HasSandevistanTier1
+
+ESR_HasSandevistanTier1AbilityGroup:
+  $type: GameplayAbilityGroup
+  abilities: 
+    - Ability.ESR_HasSandevistanTier1
+
+Ability.ESR_HasSandevistanTier2:
+  $type: GameplayAbility
+  abilityPackage: Ability.HasSandevistanTier2_inline1
+  loc_key_desc: LocKey#Gameplay-NPC-Abilities-HasSandevistanTier2Desc
+  loc_key_name: LocKey#enemySandevistanRework_s2_name
+  showInCodex: true
+  prereqsForUse: 
+    - Ability.HasSandevistanTier2_inline0
+
+Ability.HasSandevistanTier2_inline1: 
+  effectors: 
+    - !append Ability.ESR_MeleeDefenseEffector
+    - !append Ability.ESR_MeleeSurvivalEffector
+
+UIIcon.Ability.ESR_HasSandevistanTier2:
+  $base: UIIcon.Ability.HasSandevistanTier2
+
+ESR_HasSandevistanTier2AbilityGroup:
+  $type: GameplayAbilityGroup
+  abilities: 
+    - Ability.ESR_HasSandevistanTier2
+
+Ability.ESR_HasSandevistanTier3:
+  $type: GameplayAbility
+  abilityPackage: Ability.HasSandevistanTier3_inline1
+  loc_key_desc: LocKey#Gameplay-NPC-Abilities-HasSandevistanTier3Desc
+  loc_key_name: LocKey#enemySandevistanRework_s3_name
+  showInCodex: true
+  prereqsForUse: 
+    - Ability.HasSandevistanTier3_inline0
+
+
+Ability.HasSandevistanTier3_inline1: 
+  effectors: 
+    - !append Ability.ESR_MeleeDefenseEffector
+    - !append Ability.ESR_MeleeSurvivalEffector
+
+UIIcon.Ability.ESR_HasSandevistanTier3:
+  $base: UIIcon.Ability.HasSandevistanTier3
+
+ESR_HasSandevistanTier3AbilityGroup:
+  $type: GameplayAbilityGroup
+  abilities: 
+    - Ability.ESR_HasSandevistanTier3
+
+Ability.ESR_HasSandevistanTier4:
+  $type: GameplayAbility
+  abilityPackage: 
+    $type: GameplayLogicPackage
+    stats:
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.HasSandevistanTier4
+        value: 1
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.HasSandevistan
+        value: 1
+  loc_key_desc: LocKey#enemySandevistanRework_s4_description
+  loc_key_name: LocKey#enemySandevistanRework_s4_name
+  showInCodex: true
+  prereqsForUse: 
+    - $type: StatPrereq
+      comparisonType: Greater
+      objectToCheck: Owner
+      prereqClassName: StatPrereq
+      statType: HasSandevistanTier4
+      valueToCheck: 0
+    
+UIIcon.Ability.ESR_HasSandevistanTier4:
+  $type: UIIcon
+  atlasPartName: ICONS_HasSandevistan4
+  atlasResourcePath: phoenicia\enemysandevistanrework\icons\abilities.inkatlas
+
+ESR_HasSandevistanTier4AbilityGroup:
+  $type: GameplayAbilityGroup
+  abilities: 
+    - Ability.ESR_HasSandevistanTier4
+
+Ability.ESR_HasSandevistanTier5:
+  $type: GameplayAbility
+  abilityPackage: 
+    $type: GameplayLogicPackage
+    stats:
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.HasSandevistanTier5
+        value: 1
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.HasSandevistan
+        value: 1
+  loc_key_desc: LocKey#enemySandevistanRework_s5_description
+  loc_key_name: LocKey#enemySandevistanRework_s5_name
+  showInCodex: true
+  prereqsForUse: 
+    - $type: StatPrereq
+      comparisonType: Greater
+      objectToCheck: Owner
+      prereqClassName: StatPrereq
+      statType: HasSandevistanTier5
+      valueToCheck: 0
+
+UIIcon.Ability.ESR_HasSandevistanTier5:
+  $type: UIIcon
+  atlasPartName: ICONS_HasSandevistan4
+  atlasResourcePath: phoenicia\enemysandevistanrework\icons\abilities.inkatlas
+
+ESR_HasSandevistanTier5AbilityGroup:
+  $type: GameplayAbilityGroup
+  abilities: 
+    - Ability.ESR_HasSandevistanTier5
+
+Ability.ESR_HasKerenzikov:
+  $type: GameplayAbility
+  abilityPackage: Ability.HasKerenzikov_inline2
+  loc_key_desc: LocKey#Gameplay-NPC-Abilities-HasKerenzikovDesc
+  loc_key_name: LocKey#enemySandevistanRework_kerenzikov_name
+  prereqsForUIValidation:
+    - Ability.HasKerenzikov_inline1
+  prereqsForUse: 
+    - Ability.HasKerenzikov_inline0
+  showInCodex: true
+
+UIIcon.Ability.ESR_HasKerenzikov:
+  $base: UIIcon.Ability.HasKerenzikov
+
+ESR_HasKerenzikovAbilityGroup:
+  $type: GameplayAbilityGroup
+  abilities: 
+    - Ability.ESR_HasKerenzikov
+
+# Stim Pack
+BaseStats.ESR_HasStimPack:
+  $type: Stat
+  enumName: ESR_HasStimPack
+  flags: [ ]
+  decimalPlaces: 1
+  max: 1
+  min: 0
+
+Ability.ESR_HasStimPack:
+  $type: GameplayAbility
+  abilityPackage: 
+    $type: GameplayLogicPackage
+    stats:
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.ESR_HasStimPack
+        value: 1
+  loc_key_desc: LocKey#enemySandevistanRework_stim_description
+  loc_key_name: LocKey#enemySandevistanRework_stim_name
+  showInCodex: true
+
+ESR_HasStimPackAbilityGroup:
+  $type: GameplayAbilityGroup
+  abilities: 
+    - Ability.ESR_HasStimPack
+
+UIIcon.Ability.ESR_HasStimPack:
+  $type: UIIcon
+  atlasPartName: drugged_icon
+  atlasResourcePath: base\gameplay\gui\widgets\healthbar\atlas_buffinfo.inkatlas
+
+# Second Wind
+BaseStats.ESR_HasSecondWind:
+  $type: Stat
+  enumName: ESR_HasSecondWind
+  flags: [ ]
+  decimalPlaces: 1
+  max: 1
+  min: 0
+
+Ability.ESR_HasSecondWind:
+  $type: GameplayAbility
+  abilityPackage: 
+    $type: GameplayLogicPackage
+    effectors:
+      - Ability.ESR_SecondWindDefenseEffector
+    stats:
+      - $type: ConstantStatModifier
+        modifierType: Additive
+        statType: BaseStats.ESR_HasSecondWind
+        value: 1
+  loc_key_desc: LocKey#enemySandevistanRework_secondWind_description
+  loc_key_name: LocKey#enemySandevistanRework_secondWind_name
+  showInCodex: true
+
+
+UIIcon.Ability.ESR_HasSecondWind:
+  $type: UIIcon
+  atlasPartName: ICONS_HasSandevistan
+  atlasResourcePath: base\gameplay\gui\common\icons\abilities_tooltips_icons.inkatlas
+
+Ability.ESR_SecondWindDefenseEffector:
+  $type: Effector
+  effectorClassName: Phoenicia.EnemySandevistanRework.Effectors.SecondWindEffector
+  removeAfterActionCall: true
+  prereqRecord: 
+    $type: HitPrereq
+    callbackType: HitReceived
+    conditions: 
+      - $type: HitPrereqCondition
+        type: Prereqs.WeaponType
+        weaponType: Melee       
+    ignoreSelfInflictedPressureWave: true
+    isSynchronous: true
+    pipelineStage: Process
+    pipelineType: Damage
+    prereqClassName: HitReceivedPrereq
