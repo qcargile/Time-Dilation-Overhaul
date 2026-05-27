@@ -60,8 +60,8 @@ Slows time, you aren't slowed, and adapts to the weapon in your hands:
 ### Raven "Fusillade" - Metalstorm
 Slows time, you aren't slowed. Your weapons fire several times faster than their mechanical limit, with no crits or weakspot damage. Each hit ramps damage up toward +100%, and a miss resets the ramp to zero. Recoil climbs hard as the price. (Reflexes-attuned: a hit-driven ammo refill that builds with your ramp.)
 
-### Fuyutsuki "Kurosawa" - Katana Skillsoft
-No world time dilation, melee only. Hitting an enemy slows that enemy for the rest of the activation. Kill a slowed enemy and it dismembers a beat later, heals you, and refunds duration. A finisher on a slowed enemy works at any health and doubles the heal and refund. (Body-attuned: duration refund per kill.)
+### Fuyutsuki "Kurosawa" - 
+No world time dilation, melee only. Hitting an enemy slows that enemy for the rest of the activation. Kill a slowed enemy and it dismembers 1s later, heals you, and refunds duration. A finisher on a slowed enemy works at any health and doubles the heal and refund. (Body-attuned: duration refund per kill.)
 
 ### MoorE "Quantum" - Teleport & Malware
 Slows time by 99%, and you're slowed too. While slowed, aim a teleport marker and warp to it; you can't act until you commit or cancel. On arrival it implants Quantum Malware into the nearest enemies, freezing each of them in their own dilated time. Passively makes you harder to hit outside dilation. The **Advanced** model banks two teleport charges back to back. (Cool-attuned: freeze duration and teleport range.)
@@ -100,7 +100,7 @@ Everything is configured from **Mods → TDO** in the game menu.
 - [ArchiveXL](https://www.nexusmods.com/cyberpunk2077/mods/4198)
 - [TweakXL](https://www.nexusmods.com/cyberpunk2077/mods/4197)
 - [Native Settings UI](https://www.nexusmods.com/cyberpunk2077/mods/3518)
-- Audioware (used by the bundled Enemy Sandevistan Rework for its sounds)
+- [Audioware](https://www.nexusmods.com/cyberpunk2077/mods/12001) 
 
 ## Installation
 
