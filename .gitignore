@@ -1,0 +1,22 @@
+# Nexus/Vortex packaging artifacts
+*.rar
+*.zip
+*.7z
+meta.ini
+
+# Redscript build artifacts
+r6/cache/
+r6/logs/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+*.swp
+.vscode/
+.idea/
+
+native/build/
+
+# Python bytecode
+__pycache__/
+*.pyc

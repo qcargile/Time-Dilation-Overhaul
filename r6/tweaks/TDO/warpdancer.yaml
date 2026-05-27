@@ -1,0 +1,736 @@
+Attunements.TDO_WarpDancer:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Attunements.TDO_WarpDancer_UI
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - $type: CombinedStatModifier
+      opSymbol: '*'
+      refObject: Self
+      refStat: BaseStats.Cool
+      value: 0.05
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanDuration
+    - $type: CombinedStatModifier
+      opSymbol: '*'
+      refObject: Self
+      refStat: BaseStats.Cool
+      value: 0.0165
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanCooldownReduction
+
+Attunements.TDO_WarpDancer_UI:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  iconPath: UIIcon.Cool
+  localizedName: LocKey#Attunement-TDO-WarpDancer-Name
+  localizedDescription: LocKey#Attunement-TDO-WarpDancer-Desc
+  floatValues:
+    - 0.05
+    - 0
+    - 1.65
+    - 0
+  intValues: []
+  nameValues: []
+  stats:
+    - BaseStats.AttunementHelper
+
+Attunements.TDO_WarpDancerLoc:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-WarpDancer-Active-Desc
+  floatValues: []
+  intValues: []
+  nameValues: []
+  stats: []
+
+StatusEffects.TDO_WarpDancerMoveSpeed_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_DurMod
+
+StatusEffects.TDO_WarpDancerMoveSpeed_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 99999.0
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK3_Mod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.MaxSpeed
+  value: 1.05
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK3Plus_Mod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.MaxSpeed
+  value: 1.075
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK4_Mod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.MaxSpeed
+  value: 1.10
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK4Plus_Mod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.MaxSpeed
+  value: 1.125
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK5_Mod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.MaxSpeed
+  value: 1.15
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK5Plus_Mod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.MaxSpeed
+  value: 1.175
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK5PlusPlus_Mod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.MaxSpeed
+  value: 1.20
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK3_Pkg:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK3_Mod
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK3Plus_Pkg:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK3Plus_Mod
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK4_Pkg:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK4_Mod
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK4Plus_Pkg:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK4Plus_Mod
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK5_Pkg:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK5_Mod
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK5Plus_Pkg:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK5Plus_Mod
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK5PlusPlus_Pkg:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK5PlusPlus_Mod
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK3:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerMoveSpeed_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK3_Pkg
+  SFX: []
+  VFX: []
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK3Plus:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerMoveSpeed_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK3Plus_Pkg
+  SFX: []
+  VFX: []
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK4:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerMoveSpeed_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK4_Pkg
+  SFX: []
+  VFX: []
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK4Plus:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerMoveSpeed_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK4Plus_Pkg
+  SFX: []
+  VFX: []
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK5:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerMoveSpeed_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK5_Pkg
+  SFX: []
+  VFX: []
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK5Plus:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerMoveSpeed_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK5Plus_Pkg
+  SFX: []
+  VFX: []
+
+StatusEffects.TDO_WarpDancerMoveSpeed_MK5PlusPlus:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerMoveSpeed_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerMoveSpeed_MK5PlusPlus_Pkg
+  SFX: []
+  VFX: []
+
+StatusEffects.TDO_WarpDancerStagger_Package:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_WarpDancerStagger_NoMovement
+    - StatusEffects.TDO_WarpDancerStagger_NoSprint
+    - StatusEffects.TDO_WarpDancerStagger_NoJump
+    - StatusEffects.TDO_WarpDancerStagger_NoCrouch
+    - StatusEffects.TDO_WarpDancerStagger_NoSwitchWeapon
+
+StatusEffects.TDO_WarpDancerStagger_NoMovement:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.MaxSpeed
+  value: 0.0
+
+StatusEffects.TDO_WarpDancerStagger_NoSprint:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.CanSprint
+  value: 0.0
+
+StatusEffects.TDO_WarpDancerStagger_NoJump:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.CanJump
+  value: 0.0
+
+StatusEffects.TDO_WarpDancerStagger_NoCrouch:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.CanCrouch
+  value: 0.0
+
+StatusEffects.TDO_WarpDancerStagger_NoSwitchWeapon:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.CanSwitchWeapon
+  value: 0.0
+
+StatusEffects.TDO_WarpDancerStagger_MK3:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerStagger_MK3_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerStagger_Package
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-WarpDancerStagger-Name
+    description: LocKey#SE-TDO-WarpDancerStagger-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_WarpDancerStagger_MK3_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_WarpDancerStagger_MK3_DurMod
+
+StatusEffects.TDO_WarpDancerStagger_MK3_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 2.0
+
+StatusEffects.TDO_WarpDancerStagger_MK3Plus:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerStagger_MK3Plus_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerStagger_Package
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-WarpDancerStagger-Name
+    description: LocKey#SE-TDO-WarpDancerStagger-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_WarpDancerStagger_MK3Plus_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_WarpDancerStagger_MK3Plus_DurMod
+
+StatusEffects.TDO_WarpDancerStagger_MK3Plus_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 1.72
+
+StatusEffects.TDO_WarpDancerStagger_MK4:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerStagger_MK4_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerStagger_Package
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-WarpDancerStagger-Name
+    description: LocKey#SE-TDO-WarpDancerStagger-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_WarpDancerStagger_MK4_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_WarpDancerStagger_MK4_DurMod
+
+StatusEffects.TDO_WarpDancerStagger_MK4_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 1.43
+
+StatusEffects.TDO_WarpDancerStagger_MK4Plus:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerStagger_MK4Plus_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerStagger_Package
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-WarpDancerStagger-Name
+    description: LocKey#SE-TDO-WarpDancerStagger-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_WarpDancerStagger_MK4Plus_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_WarpDancerStagger_MK4Plus_DurMod
+
+StatusEffects.TDO_WarpDancerStagger_MK4Plus_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 1.15
+
+StatusEffects.TDO_WarpDancerStagger_MK5:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerStagger_MK5_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerStagger_Package
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-WarpDancerStagger-Name
+    description: LocKey#SE-TDO-WarpDancerStagger-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_WarpDancerStagger_MK5_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_WarpDancerStagger_MK5_DurMod
+
+StatusEffects.TDO_WarpDancerStagger_MK5_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 0.87
+
+StatusEffects.TDO_WarpDancerStagger_MK5Plus:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerStagger_MK5Plus_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerStagger_Package
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-WarpDancerStagger-Name
+    description: LocKey#SE-TDO-WarpDancerStagger-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_WarpDancerStagger_MK5Plus_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_WarpDancerStagger_MK5Plus_DurMod
+
+StatusEffects.TDO_WarpDancerStagger_MK5Plus_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 0.58
+
+StatusEffects.TDO_WarpDancerStagger_MK5PlusPlus:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_WarpDancerStagger_MK5PlusPlus_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_WarpDancerStagger_Package
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-WarpDancerStagger-Name
+    description: LocKey#SE-TDO-WarpDancerStagger-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_WarpDancerStagger_MK5PlusPlus_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_WarpDancerStagger_MK5PlusPlus_DurMod
+
+StatusEffects.TDO_WarpDancerStagger_MK5PlusPlus_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 0.3

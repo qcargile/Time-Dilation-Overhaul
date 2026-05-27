@@ -1,0 +1,692 @@
+public class TDOConfig {
+
+  public static func LerpTier(v1: Float, vTop: Float, tier: Int32, totalTiers: Int32) -> Float {
+    if totalTiers <= 1 {
+      return v1;
+    }
+    let t: Float = Cast<Float>(tier - 1) / Cast<Float>(totalTiers - 1);
+    if t < 0.0 { t = 0.0; }
+    if t > 1.0 { t = 1.0; }
+    return v1 + (vTop - v1) * t;
+  }
+
+
+  public static func SandevistanGracePeriodSeconds() -> Float {
+    return 0.10;
+  }
+
+  
+  public static func FusilladeFireRateRealTimeEnabled() -> Bool {
+    return true;
+  }
+
+  
+  public static func FusilladeAmmoRefillEnabled() -> Bool {
+    return true;
+  }
+
+  public static func FusilladeAmmoRefillPerReflexes() -> Float {
+    return 2.5;
+  }
+
+  public static func FusilladeAmmoRefillMaxChancePct() -> Float {
+    return 50.0;
+  }
+
+  
+  public static func QuantumMaxCharges() -> Int32 {
+    return 2;
+  }
+
+  public static func QuantumCooldownMin() -> Float {
+    return 7.0;
+  }
+
+  public static func QuantumCooldownMax() -> Float {
+    return 15.0;
+  }
+
+  public static func QuantumDurationMin() -> Float { return 2.0; }
+  public static func QuantumDurationMax() -> Float { return 5.0; }
+
+  
+  public static func DOTEnabled() -> Bool {
+    return true;
+  }
+
+  public static func DOTBaseRatePct() -> Float {
+    return 1.0;
+  }
+
+  public static func DOTSlowThresholdPct() -> Float {
+    return 40.0;
+  }
+
+  public static func DOTSlowRangeMinPct() -> Float {
+    return 10.0;
+  }
+
+  public static func DOTSlowRangeMaxPct() -> Float {
+    return 90.0;
+  }
+
+  public static func DOTTickMinInterval() -> Float {
+    return 0.5;
+  }
+
+  public static func DOTTickMaxInterval() -> Float {
+    return 1.5;
+  }
+
+  public static func DOTMitigationCap() -> Float {
+    return 0.75;
+  }
+
+  public static func DOTMitigationRefStatCap() -> Float {
+    return 15.0;
+  }
+
+  public static func DOTCanKill() -> Bool {
+    return true;
+  }
+
+  
+  public static func KurosawaEnabled() -> Bool {
+    return true;
+  }
+
+  public static func KurosawaAttunementPerPointPct() -> Float {
+    return 0.75;
+  }
+
+  public static func KurosawaAttunementPerAttrCapPct() -> Float {
+    return 15.0;
+  }
+
+
+  public static func KurosawaIndividualSlowMult() -> Float {
+    return 0.1;
+  }
+
+  public static func KurosawaSlowDuration() -> Float {
+    return 60.0;
+  }
+
+  public static func KurosawaPOPDelay() -> Float {
+    return 1.0;
+  }
+
+  public static func KurosawaPOPRefundBase() -> Float {
+    return 1.0;
+  }
+
+  public static func KurosawaPOPRefundAttunementBonus() -> Float {
+    return 1.0;
+  }
+
+  public static func KurosawaPOPHealPctBase() -> Float {
+    return 5.0;
+  }
+
+  public static func KurosawaPOPHealPctPlus() -> Float {
+    return 10.0;
+  }
+
+
+  public static func ApogeeEnabled() -> Bool {
+    return false;
+  }
+
+  public static func ApogeeStrainMultiplierCap() -> Float {
+    return 8.0;
+  }
+
+  public static func SandyVFXEnabled() -> Bool {
+    return false;
+  }
+
+  public static func SandyVFXUseVanilla() -> Bool {
+    return false;
+  }
+
+  
+  public static func TantoEnabled() -> Bool {
+    return true;
+  }
+
+  public static func TantoTeleportBaseRange() -> Float {
+    return 20.0;
+  }
+
+  public static func TantoTeleportRangePerReflexes() -> Float {
+    return 1.0;
+  }
+
+  public static func TantoTeleportMaxRange() -> Float {
+    return 40.0;
+  }
+
+  public static func TantoTeleportBehindOffset() -> Float {
+    return 1.5;
+  }
+
+  
+  public static func ShrikeEnabled() -> Bool {
+    return true;
+  }
+
+  public static func ShrikeHoverTime() -> Float {
+    return 0.0;
+  }
+
+  public static func ShrikeMarkRange() -> Float {
+    return 30.0;
+  }
+
+  public static func ShrikeExecuteDmgTrash() -> Float {
+    return 100.0;
+  }
+
+  public static func ShrikeExecuteDmgWeak() -> Float {
+    return 100.0;
+  }
+
+  public static func ShrikeExecuteDmgNormal() -> Float {
+    return 100.0;
+  }
+
+  public static func ShrikeExecuteDmgRare() -> Float {
+    return 95.0;
+  }
+
+  public static func ShrikeExecuteDmgOfficer() -> Float {
+    return 90.0;
+  }
+
+  public static func ShrikeExecuteDmgElite() -> Float {
+    return 75.0;
+  }
+
+  public static func ShrikeExecuteDmgMaxTac() -> Float {
+    return 15.0;
+  }
+
+  public static func ShrikeExecuteDmgBoss() -> Float {
+    return 15.0;
+  }
+
+  
+  public static func FalconEnabled() -> Bool {
+    return true;
+  }
+
+  
+  public static func FalconPhaseRoundEnabled() -> Bool {
+    return true;
+  }
+
+  public static func FalconPhaseRoundDamageMultiplier() -> Float {
+    return 1.5;
+  }
+
+  public static func FalconPhaseRoundLineRadius() -> Float {
+    return 2.0;
+  }
+
+  public static func FalconPhaseRoundSelfDamagePercent() -> Float {
+    return 0.15;
+  }
+
+  
+  public static func FalconTrickShotEnabled() -> Bool {
+    return true;
+  }
+
+  public static func FalconTrickShotBlockReload() -> Bool {
+    return true;
+  }
+
+  
+  public static func FalconSaturationLockEnabled() -> Bool {
+    return true;
+  }
+
+  public static func FalconSaturationLockMinTargets() -> Int32 {
+    return 3;
+  }
+
+  public static func FalconSaturationLockRange() -> Float {
+    return 60.0;
+  }
+
+  public static func FalconSaturationLockStagger() -> Float {
+    return 0.02;
+  }
+
+  public static func FalconSaturationLockEMPSecondsPerShot() -> Float {
+    return 0.5;
+  }
+
+  
+  public static func WarpDancerEnabled() -> Bool {
+    return true;
+  }
+
+  public static func WarpDancerDilationStrength() -> Float {
+    return 0.01;
+  }
+
+  public static func WarpDancerRecordIntervalSec() -> Float {
+    return 0.033;
+  }
+
+  public static func WarpDancerRewindIntervalSec() -> Float {
+    return 0.020;
+  }
+
+  public static func WarpDancerRewindDurationSec() -> Float {
+    return 3.0;
+  }
+
+  public static func WarpDancerPostRewindPauseSec() -> Float {
+    return 1.0;
+  }
+
+  public static func WarpDancerStaggerDurationMinSec() -> Float {
+    return 0.3;
+  }
+
+  public static func WarpDancerStaggerDurationMaxSec() -> Float {
+    return 2.0;
+  }
+
+  public static func WarpDancerRewindGlitchEnabled() -> Bool {
+    return true;
+  }
+
+  
+  public static func SogimsuEnabled() -> Bool {
+    return true;
+  }
+
+  public static func SogimsuDurationMin() -> Float {
+    return 15.0;
+  }
+
+  public static func SogimsuDurationMax() -> Float {
+    return 40.0;
+  }
+
+  public static func SogimsuInterventionsMin() -> Float {
+    return 3.0;
+  }
+
+  public static func SogimsuInterventionsMax() -> Float {
+    return 7.0;
+  }
+
+  public static func SogimsuDetectionDecreaseMin() -> Float {
+    return 20.0;
+  }
+
+  public static func SogimsuDetectionDecreaseMax() -> Float {
+    return 100.0;
+  }
+
+  public static func SogimsuStealthHitDamageMin() -> Float {
+    return 10.0;
+  }
+
+  public static func SogimsuStealthHitDamageMax() -> Float {
+    return 60.0;
+  }
+
+  public static func SogimsuWatchdogCamoBase() -> Float {
+    return 5.0;
+  }
+
+  public static func SogimsuWatchdogDetectionThreshold() -> Float {
+    return 0.5;
+  }
+
+  public static func SogimsuWatchdogRadius() -> Float {
+    return 30.0;
+  }
+
+  public static func SogimsuWatchdogTickInterval() -> Float {
+    return 0.1;
+  }
+
+  
+  public static func JuggernautEnabled() -> Bool {
+    return true;
+  }
+
+  public static func JuggernautLockDurationMin() -> Float {
+    return 4.0;
+  }
+
+  public static func JuggernautLockDurationMax() -> Float {
+    return 12.0;
+  }
+
+  public static func JuggernautRadiusMin() -> Float {
+    return 15.0;
+  }
+
+  public static func JuggernautRadiusMax() -> Float {
+    return 35.0;
+  }
+
+  public static func JuggernautDamageMultMin() -> Float {
+    return 1.5;
+  }
+
+  public static func JuggernautDamageMultMax() -> Float {
+    return 2.5;
+  }
+
+  public static func JuggernautMaxBurstDamage() -> Float {
+    return 5000.0;
+  }
+
+  
+  public static func PyrolithEnabled() -> Bool {
+    return true;
+  }
+
+  public static func PyrolithDurationMin() -> Float {
+    return 10.0;
+  }
+
+  public static func PyrolithDurationMax() -> Float {
+    return 20.0;
+  }
+
+  public static func PyrolithExplosionDamageMin() -> Float {
+    return 25.0;
+  }
+
+  public static func PyrolithExplosionDamageMax() -> Float {
+    return 125.0;
+  }
+
+  public static func PyrolithBulletExplosionRadius_T1() -> Float {
+    return 2.0;
+  }
+
+  public static func PyrolithBulletExplosionRadius_T2() -> Float {
+    return 3.0;
+  }
+
+  public static func PyrolithBulletExplosionRadius_T3() -> Float {
+    return 4.0;
+  }
+
+  public static func PyrolithBulletExplosionRadius_T4() -> Float {
+    return 5.0;
+  }
+
+  public static func PyrolithBulletExplosionRadius_T5() -> Float {
+    return 6.0;
+  }
+
+  public static func PyrolithClusterCountMin() -> Float {
+    return 1.0;
+  }
+
+  public static func PyrolithClusterCountMax() -> Float {
+    return 3.0;
+  }
+
+  public static func PyrolithClusterDamageScalar_T1() -> Float {
+    return 0.15;
+  }
+
+  public static func PyrolithClusterDamageScalar_T2() -> Float {
+    return 0.20;
+  }
+
+  public static func PyrolithClusterDamageScalar_T3() -> Float {
+    return 0.25;
+  }
+
+  public static func PyrolithClusterDamageScalar_T4() -> Float {
+    return 0.25;
+  }
+
+  public static func PyrolithClusterDamageScalar_T5() -> Float {
+    return 0.25;
+  }
+
+  public static func PyrolithThrowVelocityMultiplier_T1() -> Float {
+    return 1.5;
+  }
+
+  public static func PyrolithThrowVelocityMultiplier_T2() -> Float {
+    return 1.75;
+  }
+
+  public static func PyrolithThrowVelocityMultiplier_T3() -> Float {
+    return 2.0;
+  }
+
+  public static func PyrolithThrowVelocityMultiplier_T4() -> Float {
+    return 2.0;
+  }
+
+  public static func PyrolithThrowVelocityMultiplier_T5() -> Float {
+    return 2.0;
+  }
+
+
+  public static func ScanningEnabled() -> Bool {
+    return true;
+  }
+
+  public static func ScanningTickInterval() -> Float {
+    return 0.1;
+  }
+
+  public static func ScanningDrainPerSec() -> Float {
+    return 0.10;
+  }
+
+  public static func ScanningRechargePerSec() -> Float {
+    return 0.15;
+  }
+
+  public static func ScanningStrengthAtMinInt() -> Float {
+    return 0.50;
+  }
+
+  public static func ScanningStrengthAtMaxInt() -> Float {
+    return 0.05;
+  }
+
+  public static func ScanningBarWidth() -> Float {
+    return 320.0;
+  }
+
+  public static func ScanningBarHeight() -> Float {
+    return 16.0;
+  }
+
+  public static func ScanningBarPosX() -> Float {
+    return 1820.0;
+  }
+
+  public static func ScanningBarPosY() -> Float {
+    return 1740.0;
+  }
+
+  public static func ScanningIntScaleMax() -> Float {
+    return 2.0;
+  }
+
+  public static func HerbieEnabled() -> Bool {
+    return true;
+  }
+
+  public static func EnableDebugLog() -> Bool {
+    return false;
+  }
+
+  public static func DebugLogLevel() -> Int32 {
+    return 2;
+  }
+
+  public static func HerbieTickInterval() -> Float {
+    return 0.05;
+  }
+
+  public static func HerbieWorldScaleUncommon() -> Float {
+    return 0.80; // world time scale, Uncommon Sandy
+  }
+
+  public static func HerbieWorldScaleRare() -> Float {
+    return 0.70;
+  }
+
+  public static func HerbieWorldScaleEpic() -> Float {
+    return 0.60;
+  }
+
+  public static func HerbieWorldScaleLegendary() -> Float {
+    return 0.50;
+  }
+
+  public static func HerbieGripForce() -> Float {
+    return 2.0; // velocity-slew gain toward steered heading
+  }
+
+  public static func HerbieDamping() -> Float {
+    return 0.25; // derivative damping on lateral-slip rate
+  }
+
+  public static func HerbieSteerLead() -> Float {
+    return 0.10; // steering-input lead toward target heading
+  }
+
+  public static func HerbieSlipThreshold() -> Float {
+    return 0.5; // m/s heading error allowed before correcting
+  }
+
+  public static func HerbieMaxImpulse() -> Float {
+    return 1000.0; // per-tick correction clamp
+  }
+
+  public static func HerbieDownforce() -> Float {
+    return 0.10; // optional supplemental plant, range 0-1
+  }
+
+  public static func HerbieBikeYaw() -> Float {
+    return 1.0; // motorcycle steer-gated yaw-couple strength
+  }
+
+  public static func HerbieBikeGrip() -> Float {
+    return 0.5; // motorcycle lateral-slip grip while steering
+  }
+
+
+  public static func QuantumTeleportEnabled() -> Bool {
+    return true;
+  }
+
+  public static func QuantumPlotFreezeStrength() -> Float {
+    return 0.001; // world time scale during plot freeze (~99.9% slow)
+  }
+
+  public static func QuantumTeleportMaxRange() -> Float {
+    return 50.0; // teleport range cap, meters
+  }
+
+  public static func QuantumTeleportRangeMin() -> Float {
+    return 5.0;
+  }
+
+  public static func QuantumTeleportRangeMax() -> Float {
+    return 10.0;
+  }
+
+  public static func QuantumTeleportRangePerCool() -> Float {
+    return 1.75; // added teleport range per Cool point, meters
+  }
+
+  public static func QuantumPlotTickInterval() -> Float {
+    return 0.05; // marker reposition tick, real-time seconds
+  }
+
+  public static func QuantumMarkerLift() -> Float {
+    return 0.1; // teleport landing lift off hit surface, meters
+  }
+
+
+  public static func QuantumMalwareEnabled() -> Bool {
+    return true;
+  }
+
+  public static func QuantumMalwareRadiusBase() -> Float {
+    return 2.0; // malware radius at 0 Cool, meters
+  }
+
+  public static func QuantumMalwareRadiusPerCool() -> Float {
+    return 0.4; // added malware radius per Cool point, meters
+  }
+
+  public static func QuantumMalwareRadiusCap() -> Float {
+    return 10.0; // max malware radius, meters
+  }
+
+  public static func QuantumMalwareTargetsMin() -> Float {
+    return 2.0;
+  }
+
+  public static func QuantumMalwareTargetsMax() -> Float {
+    return 5.0;
+  }
+
+  public static func QuantumMalwareStrength() -> Float {
+    return 0.01; // enemy individual time scale (0.01 = enemies frozen, ~99% slow)
+  }
+
+  public static func QuantumMalwareFreezeDurMin() -> Float {
+    return 1.5;
+  }
+
+  public static func QuantumMalwareFreezeDurMax() -> Float {
+    return 3.0;
+  }
+
+  public static func QuantumMalwareCoolPerPoint() -> Float {
+    return 0.075; // added duration seconds per Cool point (reaches +1.5s at Cool 20)
+  }
+
+  public static func QuantumMalwareDurationCap() -> Float {
+    return 3.0; // max enemy slow duration, seconds
+  }
+
+  public static func JuggernautCooldownMin() -> Float { return 35.0; }
+  public static func JuggernautCooldownMax() -> Float { return 60.0; }
+
+  public static func SogimsuCooldownMin() -> Float { return 30.0; }
+  public static func SogimsuCooldownMax() -> Float { return 60.0; }
+
+  public static func PyrolithCooldownMin() -> Float { return 35.0; }
+  public static func PyrolithCooldownMax() -> Float { return 60.0; }
+
+  public static func FusilladeTimeScale() -> Float { return 0.25; }
+  public static func FusilladeDurationMin() -> Float { return 2.0; }
+  public static func FusilladeDurationMax() -> Float { return 2.5; }
+  public static func FusilladeCooldownMin() -> Float { return 10.0; }
+  public static func FusilladeCooldownMax() -> Float { return 15.0; }
+  public static func FusilladeFireRateMult() -> Float { return 2.5; }
+  public static func FusilladeRampStartMin() -> Float { return 0.20; }
+  public static func FusilladeRampStartMax() -> Float { return 0.25; }
+  public static func FusilladeRampStep() -> Float { return 0.25; }
+  public static func FusilladeRecoilAmount() -> Float { return 0.5; }
+  public static func KurosawaDuration() -> Float { return 8.0; }
+  public static func KurosawaRecharge() -> Float { return 35.0; }
+  public static func KurosawaDamageReductionMin() -> Float { return 15.0; }
+  public static func KurosawaDamageReductionMax() -> Float { return 20.0; }
+}

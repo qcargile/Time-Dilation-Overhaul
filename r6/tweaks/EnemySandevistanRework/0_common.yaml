@@ -1,0 +1,8 @@
+
+BaseStats.IMSABonusAccuracy:
+  $type: Stat
+  enumName: IMSABonusAccuracy
+  flags: [ ]
+  decimalPlaces: 2
+  max: 1
+  min: -1

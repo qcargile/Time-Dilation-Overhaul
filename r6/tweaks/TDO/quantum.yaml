@@ -1,0 +1,739 @@
+Items.TDO_Quantum:
+  $type: gamedataItem_Record
+  animFeatureName: ItemData
+  animName: ui_garment_pose
+  animSetResource: ''
+  blueprint: Items.SandevistanBlueprint
+  canDrop: True
+  crosshair: Crosshairs.None
+  deprecated: False
+  enableNpcRPGData: False
+  entityName: cyberware_dummy
+  equipArea: EquipmentArea.SystemReplacementCW
+  friendlyName: ''
+  garmentOffset: 0
+  icon: UIIcon.ItemIcon
+  iconPath: cwf_sandevistan3
+  isCached: False
+  isCoreCW: True
+  isCustomizable: False
+  isGarment: False
+  isPart: False
+  isSingleInstance: False
+  itemCategory: ItemCategory.Cyberware
+  itemType: ItemType.Cyberware
+  localizedName: ''
+  mass: 1
+  minigameInstance: minigame_v2.DefaultItemMinigame
+  nextUpgradeItem: Items.TDO_QuantumPlus
+  powerLevelDeterminedByParent: False
+  quality: Quality.Epic
+  qualityRestrictedByParent: False
+  replicateWhenNotActive: False
+  upgradeCostMult: 1.5
+  useHeadgearGarmentAggregator: False
+  useNewSpawnMethod: False
+  usesVariants: True
+  savable: False
+  animationParameters: []
+  appearanceSuffixes: []
+  appearanceSuffixesOwnerOverride: []
+  attachmentSlots: []
+  buyPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.BuyPrice_StreetCred_Discount
+  cameraForward: {x: 0, y: 0, z: 0}
+  cameraUp: {x: 0, y: 0, z: 0}
+  connections: []
+  displayName: LocKey#Item-TDO-Quantum-Name
+  equipAreas: []
+  equipPrereqs: []
+  gameplayRestrictions:
+    - GameplayRestriction.VehicleCombatNoInterruptions
+  hairSkinnedMeshComponents: []
+  localizedDescription: LocKey#Item-TDO-Quantum-Flavor
+  OnAttach: []
+  OnEquip:
+    - Items.TDO_Quantum_ActiveUI
+    - Items.TDO_Quantum_ActiveEffectors
+    - Attunements.TDO_Quantum
+  OnLooted: []
+  parts: []
+  placementSlots:
+    - AttachmentSlots.SystemReplacementCW
+  previewBBoxOverride: []
+  requiredSlots: []
+  sellPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.CyberwareSellMultiplier
+  slotPartList:
+    - Items.GenericRootSlotItem
+  slotPartListPreset: []
+  tags:
+    - Cyberware
+    - HideInBackpackUI
+    - Sandevistan
+    - TDO
+    - Quantum
+  variants:
+    - Variants.Humanity30Cost
+  visualTags: []
+  effectors: []
+  weakspots: []
+  cyberwareType: Sandevistan
+  objectActions:
+    - CyberwareAction.DisableSandevistan
+    - CyberwareAction.DisableCorruptedSandevistan
+    - CyberwareAction.UseSandevistan
+    - CyberwareAction.UseCorruptedSandevistan
+  statModifierGroups: []
+  statModifiers:
+    - Items.TDO_Quantum_Iconic
+    - Items.TDO_Quantum_HasSandy
+    - Items.TDO_Quantum_Duration
+    - Items.TDO_Quantum_TimeScale
+    - Items.TDO_Quantum_Recharge
+    - Items.TDO_Quantum_CooldownBase
+    - Items.TDO_Quantum_EnterCost
+  statPools: []
+
+Items.TDO_Quantum_ActiveUI:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Items.TDO_Quantum_ActiveUI_Data
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_Quantum_ActiveUI_Data:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-Quantum-Active-Desc
+  localizedName: ''
+  floatValues:
+    - 5
+    - 2
+    - 2
+    - 1.5
+    - 2
+    - 15
+  intValues: []
+  nameValues: []
+  stats: []
+
+Items.TDO_Quantum_ActiveEffectors:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors:
+    - Items.TDO_Quantum_CritEffector
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_Quantum_CritEffector:
+  $type: gamedataApplyStatGroupEffector_Record
+  removeWithEffector: True
+  statGroup: Items.TDO_Quantum_CritStatGroup
+  effectorClassName: ApplyStatGroupEffector
+  prereqRecord: Items.TDO_Quantum_TDPrereq
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+
+Items.TDO_Quantum_TDPrereq:
+  $type: gamedataIPrereq_Record
+  prereqClassName: TimeDilationPSMPrereq
+  stateName: Sandevistan
+  isInState: True
+  previousState: False
+
+Items.TDO_Quantum_CritStatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - Items.TDO_Quantum_CritChance
+    - Items.TDO_Quantum_CritDamage
+
+Items.TDO_Quantum_CritChance:
+  $type: gamedataConstantStatModifier_Record
+  value: 10
+  modifierType: Additive
+  statType: BaseStats.CritChance
+
+Items.TDO_Quantum_CritDamage:
+  $type: gamedataConstantStatModifier_Record
+  value: 10
+  modifierType: Additive
+  statType: BaseStats.CritDamage
+
+Items.TDO_Quantum_Iconic:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.IsItemIconic
+
+Items.TDO_Quantum_HasSandy:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.HasSandevistan
+
+Items.TDO_Quantum_Duration:
+  $type: gamedataConstantStatModifier_Record
+  value: 2
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanDuration
+
+Items.TDO_QuantumPlus_Duration:
+  $type: gamedataConstantStatModifier_Record
+  value: 2.75
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanDuration
+
+Items.TDO_Quantum_TimeScale:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.5
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanTimeScale
+
+Items.TDO_Quantum_Recharge:
+  $type: gamedataConstantStatModifier_Record
+  value: 15
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanRechargeDuration
+
+Items.TDO_QuantumPlus_Recharge:
+  $type: gamedataConstantStatModifier_Record
+  value: 12.5
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanRechargeDuration
+
+Items.TDO_Quantum_CooldownBase:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanCooldownBase
+
+Items.TDO_Quantum_EnterCost:
+  $type: gamedataConstantStatModifier_Record
+  value: -12
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanEnterCost
+
+Vendors.TDO_QuantumStock:
+  $type: gamedataVendorItem_Record
+  item: Items.TDO_Quantum
+  generationPrereqs:
+    - Prereqs.AfterFirstVisitAtVictor
+    - LootPrereqs.EpicCWLevelAvailabilityAtVendor
+  quantity:
+    - Vendors.Always_Present
+
+Vendors.pac_wwd_ripperdoc_01.itemStock:
+  - !append Vendors.TDO_QuantumStock
+
+Items.TDO_QuantumAdvanced:
+  $type: gamedataItem_Record
+  animFeatureName: ItemData
+  animName: ui_garment_pose
+  animSetResource: ''
+  blueprint: Items.SandevistanBlueprint
+  canDrop: True
+  crosshair: Crosshairs.None
+  deprecated: False
+  enableNpcRPGData: False
+  entityName: cyberware_dummy
+  equipArea: EquipmentArea.SystemReplacementCW
+  friendlyName: ''
+  garmentOffset: 0
+  icon: UIIcon.ItemIcon
+  iconPath: cwf_sandevistan3
+  isCached: False
+  isCoreCW: True
+  isCustomizable: False
+  isGarment: False
+  isPart: False
+  isSingleInstance: False
+  itemCategory: ItemCategory.Cyberware
+  itemType: ItemType.Cyberware
+  localizedName: ''
+  mass: 1
+  minigameInstance: minigame_v2.DefaultItemMinigame
+  nextUpgradeItem: Items.TDO_QuantumAdvancedPlus
+  powerLevelDeterminedByParent: False
+  quality: Quality.Legendary
+  qualityRestrictedByParent: False
+  replicateWhenNotActive: False
+  upgradeCostMult: 1.5
+  useHeadgearGarmentAggregator: False
+  useNewSpawnMethod: False
+  usesVariants: True
+  savable: False
+  animationParameters: []
+  appearanceSuffixes: []
+  appearanceSuffixesOwnerOverride: []
+  attachmentSlots: []
+  buyPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.BuyPrice_StreetCred_Discount
+  cameraForward: {x: 0, y: 0, z: 0}
+  cameraUp: {x: 0, y: 0, z: 0}
+  connections: []
+  displayName: LocKey#Item-TDO-QuantumAdvanced-Name
+  equipAreas: []
+  equipPrereqs: []
+  gameplayRestrictions:
+    - GameplayRestriction.VehicleCombatNoInterruptions
+  hairSkinnedMeshComponents: []
+  localizedDescription: LocKey#Item-TDO-QuantumAdvanced-Flavor
+  OnAttach: []
+  OnEquip:
+    - Items.TDO_QuantumAdvanced_ActiveUI
+    - Items.TDO_QuantumAdvanced_ActiveEffectors
+    - Attunements.TDO_QuantumAdvanced
+  OnLooted: []
+  parts: []
+  placementSlots:
+    - AttachmentSlots.SystemReplacementCW
+  previewBBoxOverride: []
+  requiredSlots: []
+  sellPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.CyberwareSellMultiplier
+  slotPartList:
+    - Items.GenericRootSlotItem
+  slotPartListPreset: []
+  tags:
+    - Cyberware
+    - HideInBackpackUI
+    - Sandevistan
+    - TDO
+    - Quantum
+    - QuantumAdvanced
+  variants:
+    - Variants.Humanity30Cost
+  visualTags: []
+  effectors: []
+  weakspots: []
+  cyberwareType: Sandevistan
+  objectActions:
+    - CyberwareAction.DisableSandevistan
+    - CyberwareAction.DisableCorruptedSandevistan
+    - CyberwareAction.UseSandevistan
+    - CyberwareAction.UseCorruptedSandevistan
+  statModifierGroups: []
+  statModifiers:
+    - Items.TDO_QuantumAdvanced_Iconic
+    - Items.TDO_QuantumAdvanced_HasSandy
+    - Items.TDO_QuantumAdvanced_Duration
+    - Items.TDO_QuantumAdvanced_TimeScale
+    - Items.TDO_QuantumAdvanced_Recharge
+    - Items.TDO_QuantumAdvanced_CooldownBase
+    - Items.TDO_QuantumAdvanced_EnterCost
+  statPools: []
+
+Items.TDO_QuantumAdvanced_ActiveUI:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Items.TDO_QuantumAdvanced_ActiveUI_Data
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_QuantumAdvanced_ActiveUI_Data:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-QuantumAdvanced-Active-Desc
+  localizedName: ''
+  floatValues:
+    - 7
+    - 4
+    - 2
+    - 1.5
+    - 3.5
+    - 10
+  intValues: []
+  nameValues: []
+  stats: []
+
+Items.TDO_QuantumAdvanced_ActiveEffectors:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors:
+    - Items.TDO_QuantumAdvanced_CritEffector
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_QuantumAdvanced_CritEffector:
+  $type: gamedataApplyStatGroupEffector_Record
+  removeWithEffector: True
+  statGroup: Items.TDO_QuantumAdvanced_CritStatGroup
+  effectorClassName: ApplyStatGroupEffector
+  prereqRecord: Items.TDO_QuantumAdvanced_TDPrereq
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+
+Items.TDO_QuantumAdvanced_TDPrereq:
+  $type: gamedataIPrereq_Record
+  prereqClassName: TimeDilationPSMPrereq
+  stateName: Sandevistan
+  isInState: True
+  previousState: False
+
+Items.TDO_QuantumAdvanced_CritStatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - Items.TDO_QuantumAdvanced_CritChance
+    - Items.TDO_QuantumAdvanced_CritDamage
+
+Items.TDO_QuantumAdvanced_CritChance:
+  $type: gamedataConstantStatModifier_Record
+  value: 15
+  modifierType: Additive
+  statType: BaseStats.CritChance
+
+Items.TDO_QuantumAdvanced_CritDamage:
+  $type: gamedataConstantStatModifier_Record
+  value: 15
+  modifierType: Additive
+  statType: BaseStats.CritDamage
+
+Items.TDO_QuantumAdvanced_Iconic:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.IsItemIconic
+
+Items.TDO_QuantumAdvanced_HasSandy:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.HasSandevistan
+
+Items.TDO_QuantumAdvanced_Duration:
+  $type: gamedataConstantStatModifier_Record
+  value: 3.5
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanDuration
+
+Items.TDO_QuantumAdvancedPlus_Duration:
+  $type: gamedataConstantStatModifier_Record
+  value: 4.25
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanDuration
+
+Items.TDO_QuantumAdvancedPlusPlus_Duration:
+  $type: gamedataConstantStatModifier_Record
+  value: 5
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanDuration
+
+Items.TDO_QuantumAdvanced_TimeScale:
+  $type: gamedataConstantStatModifier_Record
+  value: 0.5
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanTimeScale
+
+Items.TDO_QuantumAdvanced_Recharge:
+  $type: gamedataConstantStatModifier_Record
+  value: 10
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanRechargeDuration
+
+Items.TDO_QuantumAdvancedPlus_Recharge:
+  $type: gamedataConstantStatModifier_Record
+  value: 8.5
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanRechargeDuration
+
+Items.TDO_QuantumAdvancedPlusPlus_Recharge:
+  $type: gamedataConstantStatModifier_Record
+  value: 7.0
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanRechargeDuration
+
+Items.TDO_QuantumAdvanced_CooldownBase:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanCooldownBase
+
+Items.TDO_QuantumAdvanced_EnterCost:
+  $type: gamedataConstantStatModifier_Record
+  value: -12
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanEnterCost
+
+Vendors.TDO_QuantumAdvancedStock:
+  $type: gamedataVendorItem_Record
+  item: Items.TDO_QuantumAdvanced
+  generationPrereqs:
+    - Prereqs.AfterFirstVisitAtVictor
+    - LootPrereqs.LegendaryCWLevelAvailabilityAtVendor
+  quantity:
+    - Vendors.Always_Present
+
+Vendors.cz_monument_ripperdoc_farida.itemStock:
+  - !append Vendors.TDO_QuantumAdvancedStock
+
+Items.TDO_QuantumPlus:
+  $base: Items.TDO_Quantum
+  nextUpgradeItem: None
+  quality: Quality.EpicPlus
+  statModifiers:
+    - Items.TDO_Quantum_Iconic
+    - Items.TDO_Quantum_HasSandy
+    - Items.TDO_QuantumPlus_Duration
+    - Items.TDO_Quantum_TimeScale
+    - Items.TDO_QuantumPlus_Recharge
+    - Items.TDO_Quantum_CooldownBase
+    - Items.TDO_Quantum_EnterCost
+
+Items.TDO_QuantumAdvancedPlus:
+  $base: Items.TDO_QuantumAdvanced
+  nextUpgradeItem: Items.TDO_QuantumAdvancedPlusPlus
+  quality: Quality.LegendaryPlus
+  statModifiers:
+    - Items.TDO_QuantumAdvanced_Iconic
+    - Items.TDO_QuantumAdvanced_HasSandy
+    - Items.TDO_QuantumAdvancedPlus_Duration
+    - Items.TDO_QuantumAdvanced_TimeScale
+    - Items.TDO_QuantumAdvancedPlus_Recharge
+    - Items.TDO_QuantumAdvanced_CooldownBase
+    - Items.TDO_QuantumAdvanced_EnterCost
+
+Items.TDO_QuantumAdvancedPlusPlus:
+  $base: Items.TDO_QuantumAdvanced
+  nextUpgradeItem: None
+  quality: Quality.LegendaryPlusPlus
+  statModifiers:
+    - Items.TDO_QuantumAdvanced_Iconic
+    - Items.TDO_QuantumAdvanced_HasSandy
+    - Items.TDO_QuantumAdvancedPlusPlus_Duration
+    - Items.TDO_QuantumAdvanced_TimeScale
+    - Items.TDO_QuantumAdvancedPlusPlus_Recharge
+    - Items.TDO_QuantumAdvanced_CooldownBase
+    - Items.TDO_QuantumAdvanced_EnterCost
+
+StatusEffects.TDO_QuantumSpareCharge:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_QuantumSpareCharge_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: StatusEffects.TDO_QuantumSpareCharge_Max
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages: []
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-QuantumSpareCharge-Name
+    description: LocKey#SE-TDO-QuantumSpareCharge-Desc
+    iconPath: cwf_sandevistan3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_QuantumSpareCharge_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_QuantumSpareCharge_DurMod
+
+StatusEffects.TDO_QuantumSpareCharge_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: -1
+
+StatusEffects.TDO_QuantumSpareCharge_Max:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_QuantumSpareCharge_MaxMod
+
+StatusEffects.TDO_QuantumSpareCharge_MaxMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxStacks
+  value: 2
+
+StatusEffects.TDO_QuantumMalware:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_QuantumMalware_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: StatusEffects.TDO_QuantumMalware_Max
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+    - TDO_TDSuppress
+  immunityStats: []
+  packages: []
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-QuantumMalware-Name
+    description: LocKey#SE-TDO-QuantumMalware-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_QuantumMalware_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_QuantumMalware_DurMod
+
+StatusEffects.TDO_QuantumMalware_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: -1
+
+StatusEffects.TDO_QuantumMalware_Max:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_QuantumMalware_MaxMod
+
+StatusEffects.TDO_QuantumMalware_MaxMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxStacks
+  value: 1
+
+Attunements.TDO_Quantum:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Attunements.TDO_Quantum_UI
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - $type: CombinedStatModifier
+      opSymbol: '*'
+      refObject: Player
+      refStat: BaseStats.Cool
+      value: 0
+      modifierType: Additive
+      statType: BaseStats.AttunementHelper
+
+Attunements.TDO_Quantum_UI:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  iconPath: UIIcon.Cool
+  localizedName: LocKey#Attunement-TDO-Quantum-Name
+  localizedDescription: LocKey#Attunement-TDO-Quantum-Desc
+  floatValues:
+    - 0.075
+    - 0
+    - 1.75
+    - 0
+  intValues: []
+  nameValues: []
+  stats:
+    - BaseStats.AttunementHelper
+
+Attunements.TDO_QuantumAdvanced:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Attunements.TDO_QuantumAdvanced_UI
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - $type: CombinedStatModifier
+      opSymbol: '*'
+      refObject: Player
+      refStat: BaseStats.Cool
+      value: 0
+      modifierType: Additive
+      statType: BaseStats.AttunementHelper
+
+Attunements.TDO_QuantumAdvanced_UI:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  iconPath: UIIcon.Cool
+  localizedName: LocKey#Attunement-TDO-QuantumAdvanced-Name
+  localizedDescription: LocKey#Attunement-TDO-QuantumAdvanced-Desc
+  floatValues:
+    - 0.075
+    - 0
+    - 1.75
+    - 0
+  intValues: []
+  nameValues: []
+  stats:
+    - BaseStats.AttunementHelper
+

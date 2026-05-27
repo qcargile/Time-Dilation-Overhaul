@@ -1,0 +1,207 @@
+Attunements.TDO_TantoLoc:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-C2Tanto-Active-Desc
+  floatValues: []
+  intValues: []
+  nameValues: []
+  stats: []
+
+Attunements.TDO_Tanto:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Attunements.TDO_Tanto_UI
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - $type: CombinedStatModifier
+      opSymbol: '*'
+      refObject: Self
+      refStat: BaseStats.Reflexes
+      value: 0.25
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanDuration
+
+Attunements.TDO_Tanto_UI:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  iconPath: UIIcon.Reflexes
+  localizedName: LocKey#Attunement-TDO-Tanto-Name
+  localizedDescription: LocKey#Attunement-TDO-Tanto-Desc
+  floatValues:
+    - 0.25
+    - 0
+    - 1
+    - 0
+  intValues: []
+  nameValues: []
+  stats:
+    - BaseStats.AttunementHelper
+
+StatusEffects.TDO_TantoTeleportCrit:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_TantoTeleportCrit_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages:
+    - StatusEffects.TDO_TantoTeleportCrit_Package
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-TantoTeleportCrit-Name
+    description: LocKey#SE-TDO-TantoTeleportCrit-Desc
+    iconPath: TDO_TantoDash
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_TantoTeleportCrit_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_TantoTeleportCrit_DurMod
+
+StatusEffects.TDO_TantoTeleportCrit_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 8.0
+
+StatusEffects.TDO_TantoTeleportCrit_Package:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - StatusEffects.TDO_TantoTeleportCrit_CritMod
+
+StatusEffects.TDO_TantoTeleportCrit_CritMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.CritChance
+  value: 100.0
+
+StatusEffects.TDO_TantoChargeIndicator:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_TantoChargeIndicator_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: True
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+    - TDO
+  immunityStats: []
+  packages: []
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-TantoCharge-Name
+    description: LocKey#SE-TDO-TantoCharge-Desc
+    iconPath: TDO_TantoDash
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_TantoChargeIndicator_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_TantoChargeIndicator_DurMod
+
+StatusEffects.TDO_TantoChargeIndicator_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 99999.0
+
+StatusEffects.TDO_TantoCritChargeUsed:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_TantoCritChargeUsed_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: 1
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: True
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - TDO
+  immunityStats: []
+  packages: []
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-TantoCritUsed-Name
+    description: LocKey#SE-TDO-TantoCritUsed-Desc
+    iconPath: TDO_TantoDash
+    priority: 0
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_TantoCritChargeUsed_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_TantoCritChargeUsed_DurMod
+
+StatusEffects.TDO_TantoCritChargeUsed_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: 99999.0
+
+UIIcon.TDO_TantoDash:
+  $type: gamedataUIIcon_Record
+  atlasPartName: dash
+  atlasResourcePath: base\gameplay\gui\widgets\healthbar\atlas_buffinfo.inkatlas

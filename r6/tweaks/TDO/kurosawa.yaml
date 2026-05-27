@@ -1,0 +1,512 @@
+Items.TDO_Kurosawa:
+  $type: gamedataItem_Record
+  animFeatureName: ItemData
+  animName: ui_garment_pose
+  animSetResource: ''
+  blueprint: Items.SandevistanBlueprint
+  canDrop: True
+  crosshair: Crosshairs.None
+  deprecated: False
+  enableNpcRPGData: False
+  entityName: cyberware_dummy
+  equipArea: EquipmentArea.SystemReplacementCW
+  friendlyName: ''
+  garmentOffset: 0
+  icon: UIIcon.ItemIcon
+  iconPath: cw_system_sandevistanc3
+  isCached: False
+  isCoreCW: True
+  isCustomizable: False
+  isGarment: False
+  isPart: False
+  isSingleInstance: False
+  itemCategory: ItemCategory.Cyberware
+  itemType: ItemType.Cyberware
+  localizedName: ''
+  mass: 1
+  minigameInstance: minigame_v2.DefaultItemMinigame
+  nextUpgradeItem: Items.TDO_KurosawaPlus
+  powerLevelDeterminedByParent: False
+  quality: Quality.Epic
+  qualityRestrictedByParent: False
+  replicateWhenNotActive: False
+  upgradeCostMult: 1.5
+  useHeadgearGarmentAggregator: False
+  useNewSpawnMethod: False
+  usesVariants: True
+  savable: False
+  animationParameters: []
+  appearanceSuffixes: []
+  appearanceSuffixesOwnerOverride: []
+  attachmentSlots: []
+  buyPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.BuyPrice_StreetCred_Discount
+  cameraForward: {x: 0, y: 0, z: 0}
+  cameraUp: {x: 0, y: 0, z: 0}
+  connections: []
+  displayName: LocKey#Item-TDO-Kurosawa-Name
+  equipAreas: []
+  equipPrereqs: []
+  gameplayRestrictions:
+    - GameplayRestriction.VehicleCombatNoInterruptions
+  hairSkinnedMeshComponents: []
+  localizedDescription: LocKey#Item-TDO-Kurosawa-Flavor
+  OnAttach: []
+  OnEquip:
+    - Items.TDO_Kurosawa_ActiveUI
+    - Items.TDO_Kurosawa_ActiveEffectors
+    - Attunements.TDO_Kurosawa_Body
+  OnLooted: []
+  parts: []
+  placementSlots:
+    - AttachmentSlots.SystemReplacementCW
+  previewBBoxOverride: []
+  requiredSlots: []
+  sellPrice:
+    - Price.BaseCyberwarePrice
+    - Price.ItemQualityMultiplier
+    - Price.PlusTierMultiplier
+    - Price.CyberwareMultiplier
+    - Price.CyberwareSellMultiplier
+  slotPartList:
+    - Items.GenericRootSlotItem
+  slotPartListPreset: []
+  tags:
+    - Cyberware
+    - HideInBackpackUI
+    - Sandevistan
+    - TDO
+    - Kurosawa
+  variants:
+    - Variants.Humanity30Cost
+  visualTags: []
+  effectors: []
+  weakspots: []
+  cyberwareType: Sandevistan
+  objectActions:
+    - CyberwareAction.DisableSandevistan
+    - CyberwareAction.DisableCorruptedSandevistan
+    - CyberwareAction.UseSandevistan
+    - CyberwareAction.UseCorruptedSandevistan
+  statModifierGroups: []
+  statModifiers:
+    - Items.TDO_Kurosawa_Iconic
+    - Items.TDO_Kurosawa_HasSandy
+    - Items.TDO_Kurosawa_Duration
+    - Items.TDO_Kurosawa_TimeScale
+    - Items.TDO_Kurosawa_Recharge
+    - Items.TDO_Kurosawa_CooldownBase
+    - Items.TDO_Kurosawa_EnterCost
+  statPools: []
+
+Items.TDO_Kurosawa_ActiveUI:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Items.TDO_Kurosawa_ActiveUI_Data
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_Kurosawa_ActiveUI_Data:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-Kurosawa-Active-Desc
+  localizedName: ''
+  floatValues:
+    - 90
+    - 15
+    - 5
+    - 8
+    - 35
+  intValues: []
+  nameValues: []
+  stats: []
+
+Items.TDO_Kurosawa_ActiveEffectors:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors:
+    - Items.TDO_Kurosawa_CritEffector
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_Kurosawa_CritEffector:
+  $type: gamedataApplyStatGroupEffector_Record
+  removeWithEffector: True
+  statGroup: Items.TDO_Kurosawa_CritStatGroup
+  effectorClassName: ApplyStatGroupEffector
+  prereqRecord: Items.TDO_Kurosawa_TDPrereq
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+
+Items.TDO_Kurosawa_TDPrereq:
+  $type: gamedataIPrereq_Record
+  prereqClassName: TimeDilationPSMPrereq
+  stateName: Sandevistan
+  isInState: True
+  previousState: False
+
+Items.TDO_Kurosawa_CritStatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - Items.TDO_Kurosawa_DamageReduction
+    - Items.TDO_Kurosawa_FinisherUnlockReflex
+    - Items.TDO_Kurosawa_FinisherUnlockBlunt
+    - Items.TDO_Kurosawa_FinisherUnlockMonowire
+    - Items.TDO_Kurosawa_FinisherThreshold
+    - Items.TDO_Kurosawa_FinisherHealthReflex
+    - Items.TDO_Kurosawa_FinisherHealthBlunt
+    - Items.TDO_Kurosawa_FinisherHealthMonowire
+    - Items.TDO_Kurosawa_FinisherThresholdBlunt
+
+Items.TDO_Kurosawa_DamageReduction:
+  $type: gamedataConstantStatModifier_Record
+  value: 15
+  modifierType: Additive
+  statType: BaseStats.DamageReduction
+
+Items.TDO_Kurosawa_FinisherUnlockReflex:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.CanPerformReflexFinisher
+
+Items.TDO_Kurosawa_FinisherUnlockBlunt:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.CanPerformBluntFinisher
+
+Items.TDO_Kurosawa_FinisherUnlockMonowire:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.CanPerformMonowireFinisher
+
+Items.TDO_Kurosawa_FinisherThreshold:
+  $type: gamedataConstantStatModifier_Record
+  value: 100
+  modifierType: Additive
+  statType: BaseStats.FinisherHealthThresholdIncrease
+
+Items.TDO_Kurosawa_FinisherHealthReflex:
+  $type: gamedataConstantStatModifier_Record
+  value: 100
+  modifierType: Additive
+  statType: BaseStats.NewPerkFinisherReflexes_TargetHealthMax
+
+Items.TDO_Kurosawa_FinisherHealthBlunt:
+  $type: gamedataConstantStatModifier_Record
+  value: 100
+  modifierType: Additive
+  statType: BaseStats.NewPerkFinisherBlunt_TargetHealthMax
+
+Items.TDO_Kurosawa_FinisherHealthMonowire:
+  $type: gamedataConstantStatModifier_Record
+  value: 100
+  modifierType: Additive
+  statType: BaseStats.NewPerkFinisherMonowire_TargetHealthMax
+
+Items.TDO_Kurosawa_FinisherThresholdBlunt:
+  $type: gamedataConstantStatModifier_Record
+  value: 100
+  modifierType: Additive
+  statType: BaseStats.BluntFinisherHealthThresholdIncrease
+
+Items.TDO_Kurosawa_Iconic:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.IsItemIconic
+
+Items.TDO_Kurosawa_HasSandy:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.HasSandevistan
+
+Items.TDO_Kurosawa_Duration:
+  $type: gamedataConstantStatModifier_Record
+  value: 999 # buff cap
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanDuration
+
+Items.TDO_Kurosawa_TimeScale:
+  $type: gamedataConstantStatModifier_Record
+  value: 1.0
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanTimeScale
+
+Items.TDO_Kurosawa_Recharge:
+  $type: gamedataConstantStatModifier_Record
+  value: 35
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanRechargeDuration
+
+Items.TDO_Kurosawa_CooldownBase:
+  $type: gamedataConstantStatModifier_Record
+  value: 1
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanCooldownBase
+
+Items.TDO_Kurosawa_EnterCost:
+  $type: gamedataConstantStatModifier_Record
+  value: -12
+  modifierType: Additive
+  statType: BaseStats.TimeDilationSandevistanEnterCost
+
+Vendors.TDO_KurosawaStock:
+  $type: gamedataVendorItem_Record
+  item: Items.TDO_Kurosawa
+  generationPrereqs:
+    - Prereqs.AfterFirstVisitAtVictor
+    - LootPrereqs.EpicCWLevelAvailabilityAtVendor
+  quantity:
+    - Vendors.Always_Present
+
+Vendors.wbr_jpn_ripdoc_01.itemStock:
+  - !append Vendors.TDO_KurosawaStock
+
+Items.TDO_KurosawaPlus:
+  $base: Items.TDO_Kurosawa
+  nextUpgradeItem: None
+  quality: Quality.EpicPlus
+  OnEquip:
+    - Items.TDO_KurosawaPlus_ActiveUI
+    - Items.TDO_KurosawaPlus_ActiveEffectors
+    - Attunements.TDO_Kurosawa_Body
+
+Items.TDO_KurosawaPlus_ActiveUI:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Items.TDO_KurosawaPlus_ActiveUI_Data
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_KurosawaPlus_ActiveUI_Data:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-Kurosawa-Active-Desc
+  localizedName: ''
+  floatValues:
+    - 90
+    - 20
+    - 10
+    - 8
+    - 35
+  intValues: []
+  nameValues: []
+  stats: []
+
+Items.TDO_KurosawaPlus_ActiveEffectors:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors:
+    - Items.TDO_KurosawaPlus_CritEffector
+  items: []
+  statPools: []
+  stats: []
+
+Items.TDO_KurosawaPlus_CritEffector:
+  $type: gamedataApplyStatGroupEffector_Record
+  removeWithEffector: True
+  statGroup: Items.TDO_KurosawaPlus_CritStatGroup
+  effectorClassName: ApplyStatGroupEffector
+  prereqRecord: Items.TDO_Kurosawa_TDPrereq
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+
+Items.TDO_KurosawaPlus_CritStatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - Items.TDO_KurosawaPlus_DamageReduction
+    - Items.TDO_Kurosawa_FinisherUnlockReflex
+    - Items.TDO_Kurosawa_FinisherUnlockBlunt
+    - Items.TDO_Kurosawa_FinisherUnlockMonowire
+    - Items.TDO_Kurosawa_FinisherThreshold
+    - Items.TDO_Kurosawa_FinisherHealthReflex
+    - Items.TDO_Kurosawa_FinisherHealthBlunt
+    - Items.TDO_Kurosawa_FinisherHealthMonowire
+    - Items.TDO_Kurosawa_FinisherThresholdBlunt
+
+Items.TDO_KurosawaPlus_DamageReduction:
+  $type: gamedataConstantStatModifier_Record
+  value: 20
+  modifierType: Additive
+  statType: BaseStats.DamageReduction
+
+StatusEffects.TDO_KurosawaSlowMark:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_KurosawaSlowMark_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: StatusEffects.TDO_KurosawaSlowMark_Max
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+    - TDO_TDSuppress
+  immunityStats: []
+  packages: []
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-KurosawaMark-Name
+    description: LocKey#SE-TDO-KurosawaMark-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_KurosawaSlowMark_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_KurosawaSlowMark_DurMod
+
+StatusEffects.TDO_KurosawaSlowMark_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: -1
+
+StatusEffects.TDO_KurosawaSlowMark_Max:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_KurosawaSlowMark_MaxMod
+
+StatusEffects.TDO_KurosawaSlowMark_MaxMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxStacks
+  value: 1
+
+Attunements.TDO_Kurosawa_Body:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Attunements.TDO_Kurosawa_Body_UI
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats: []
+
+Attunements.TDO_Kurosawa_Body_UI:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  iconPath: UIIcon.Body
+  localizedName: LocKey#Attunement-TDO-Kurosawa-Body-Name
+  localizedDescription: LocKey#Attunement-TDO-Kurosawa-Body-Desc
+  floatValues:
+    - 0.05
+    - 0
+  intValues: []
+  nameValues: []
+  stats:
+    - BaseStats.AttunementHelper
+
+StatusEffects.TDO_KurosawaMark:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_KurosawaMark_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: StatusEffects.TDO_KurosawaMark_Max
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+  immunityStats: []
+  packages: []
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-KurosawaMark-Name
+    description: LocKey#SE-TDO-KurosawaMark-Desc
+    iconPath: cw_system_sandevistanc3
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_KurosawaMark_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_KurosawaMark_DurMod
+
+StatusEffects.TDO_KurosawaMark_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: -1
+
+StatusEffects.TDO_KurosawaMark_Max:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_KurosawaMark_MaxMod
+
+StatusEffects.TDO_KurosawaMark_MaxMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxStacks
+  value: 99

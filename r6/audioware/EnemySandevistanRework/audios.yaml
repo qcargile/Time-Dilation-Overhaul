@@ -1,0 +1,10 @@
+version: 1.0.0
+sfx:
+  stim1: 
+    file: stim1.mp3
+    settings:
+      volume: 1.0
+  stim2: 
+    file: stim2.mp3
+    settings:
+      volume: 1.0

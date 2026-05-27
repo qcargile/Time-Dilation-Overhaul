@@ -1,0 +1,277 @@
+Attunements.TDO_FalconLoc:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-Falcon-Active-Desc
+  floatValues: []
+  intValues: []
+  nameValues: []
+  stats: []
+
+Items.TDO_Falcon_TDPrereq:
+  $type: gamedataIPrereq_Record
+  prereqClassName: TimeDilationPSMPrereq
+  stateName: Sandevistan
+  isInState: True
+  previousState: False
+
+Items.TDO_Falcon_WeaponBonus_Package:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  animationWrapperOverrides: []
+  effectors:
+    - $base: Perks.ApplyEffectorOnPlayer
+      prereqRecord: Items.TDO_Falcon_TDPrereq
+      effectorToApply:
+        $base: Perks.ApplyStatGroupOnWeapon
+        prereqRecord: Prereqs.PowerWeaponHeldPrereq
+        statGroup:
+          $type: StatModifierGroup
+          statModifiers:
+            - StatusEffects.TDO_FalconRangedBuff_RicochetDamageMod
+            - StatusEffects.TDO_FalconRangedBuff_WeakspotMod
+            - StatusEffects.TDO_FalconRangedBuff_ArmorPierceMod
+            - StatusEffects.TDO_FalconRangedBuff_RicochetCount
+            - StatusEffects.TDO_FalconRangedBuff_RicochetChance
+            - StatusEffects.TDO_FalconRangedBuff_RicochetAngle
+            - StatusEffects.TDO_FalconRangedBuff_RicochetVisuals
+    - $base: Perks.ApplyEffectorOnPlayer
+      prereqRecord: Items.TDO_Falcon_TDPrereq
+      effectorToApply:
+        $base: Perks.ApplyStatGroupOnWeapon
+        prereqRecord: Prereqs.TechWeaponHeldPrereq
+        statGroup:
+          $type: StatModifierGroup
+          statModifiers:
+            - StatusEffects.TDO_FalconRangedBuff_ChargeTimeMod
+            - StatusEffects.TDO_FalconRangedBuff_PierceDamageMod
+            - StatusEffects.TDO_FalconRangedBuff_TechAlwaysPierceMod
+    - $base: Perks.ApplyEffectorOnPlayer
+      prereqRecord: Items.TDO_Falcon_TDPrereq
+      effectorToApply:
+        $base: Perks.ApplyStatGroupOnWeapon
+        prereqRecord: Prereqs.SmartWeaponHeldPrereq
+        statGroup:
+          $type: StatModifierGroup
+          statModifiers:
+            - StatusEffects.TDO_FalconRangedBuff_SmartGunAdsMod
+            - StatusEffects.TDO_FalconRangedBuff_SmartGunHipMod
+            - StatusEffects.TDO_FalconRangedBuff_HitProbMod
+            - StatusEffects.TDO_FalconRangedBuff_SmartAdsTargetsMod
+            - StatusEffects.TDO_FalconRangedBuff_SmartHipTargetsMod
+  items: []
+  statPools: []
+  stats: []
+
+StatusEffects.TDO_FalconRangedBuff_RicochetDamageMod:
+  $type: gamedataCombinedStatModifier_Record
+  modifierType: Additive
+  opSymbol: '*'
+  refObject: Player
+  refStat: BaseStats.AttunementHelper
+  statType: BaseStats.BonusRicochetDamage
+  value: 0.10
+
+StatusEffects.TDO_FalconRangedBuff_WeakspotMod:
+  $type: gamedataCombinedStatModifier_Record
+  modifierType: Additive
+  opSymbol: '*'
+  refObject: Player
+  refStat: BaseStats.AttunementHelper
+  statType: BaseStats.WeakspotDamageMultiplier
+  value: 0.10
+
+StatusEffects.TDO_FalconRangedBuff_ArmorPierceMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.ArmorPenetrationBonus
+  value: 1.0
+
+StatusEffects.TDO_FalconRangedBuff_RicochetCount:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.RicochetCount
+  value: 60.0
+
+StatusEffects.TDO_FalconRangedBuff_RicochetChance:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.RicochetChance
+  value: 100.0
+
+StatusEffects.TDO_FalconRangedBuff_RicochetAngle:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.RicochetMaxAngle
+  value: 180.0
+
+StatusEffects.TDO_FalconRangedBuff_RicochetVisuals:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.CanSeeRicochetVisuals
+  value: 1.0
+
+StatusEffects.TDO_FalconRangedBuff_ChargeTimeMod:
+  $type: gamedataCombinedStatModifier_Record
+  modifierType: Additive
+  opSymbol: '*'
+  refObject: Player
+  refStat: BaseStats.AttunementHelper
+  statType: BaseStats.ChargeTime
+  value: -0.10
+
+StatusEffects.TDO_FalconRangedBuff_PierceDamageMod:
+  $type: gamedataCombinedStatModifier_Record
+  modifierType: Additive
+  opSymbol: '*'
+  refObject: Player
+  refStat: BaseStats.AttunementHelper
+  statType: BaseStats.TechPierceDamageFactor
+  value: 0.10
+
+StatusEffects.TDO_FalconRangedBuff_TechAlwaysPierceMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.TechPierceEnabled
+  value: 1.0
+
+StatusEffects.TDO_FalconRangedBuff_SmartGunAdsMod:
+  $type: gamedataCombinedStatModifier_Record
+  modifierType: Additive
+  opSymbol: '*'
+  refObject: Player
+  refStat: BaseStats.AttunementHelper
+  statType: BaseStats.SmartGunAdsTimeToLock
+  value: -0.10
+
+StatusEffects.TDO_FalconRangedBuff_HitProbMod:
+  $type: gamedataCombinedStatModifier_Record
+  modifierType: Additive
+  opSymbol: '*'
+  refObject: Player
+  refStat: BaseStats.AttunementHelper
+  statType: BaseStats.SmartGunHitProbability
+  value: 0.10
+
+StatusEffects.TDO_FalconRangedBuff_SmartAdsTargetsMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.SmartGunAdsMaxLockedTargets
+  value: 3.0
+
+StatusEffects.TDO_FalconRangedBuff_SmartHipTargetsMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.SmartGunHipMaxLockedTargets
+  value: 3.0
+
+StatusEffects.TDO_FalconRangedBuff_SmartGunHipMod:
+  $type: gamedataCombinedStatModifier_Record
+  modifierType: Additive
+  opSymbol: '*'
+  refObject: Player
+  refStat: BaseStats.AttunementHelper
+  statType: BaseStats.SmartGunHipTimeToLock
+  value: -0.10
+
+StatusEffects.TDO_FalconLockMarker:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_FalconLockMarker_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: StatusEffects.TDO_FalconLockMarker_Max
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Debuff
+    - TDO
+  immunityStats: []
+  packages: []
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#SE-TDO-FalconLockMarker-Name
+    description: LocKey#SE-TDO-FalconLockMarker-Desc
+    iconPath: cw_system_sandevistanc4
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_FalconLockMarker_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_FalconLockMarker_DurMod
+
+StatusEffects.TDO_FalconLockMarker_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: -1
+
+StatusEffects.TDO_FalconLockMarker_Max:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_FalconLockMarker_MaxMod
+
+StatusEffects.TDO_FalconLockMarker_MaxMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxStacks
+  value: 1
+
+Attunements.TDO_Falcon:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Attunements.TDO_Falcon_UI
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - $type: CombinedStatModifier
+      opSymbol: '*'
+      refObject: Self
+      refStat: BaseStats.TechnicalAbility
+      value: 0.1
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanDuration
+    - $type: CombinedStatModifier
+      opSymbol: '*'
+      refObject: Player
+      refStat: BaseStats.TechnicalAbility
+      value: 0.005
+      modifierType: Additive
+      statType: BaseStats.AttunementHelper
+
+Attunements.TDO_Falcon_UI:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  iconPath: UIIcon.TechnicalAbility
+  localizedName: LocKey#Attunement-TDO-Falcon-Name
+  localizedDescription: LocKey#Attunement-TDO-Falcon-Desc
+  floatValues:
+    - 0.1
+    - 0
+    - 0.5
+    - 0
+  intValues: []
+  nameValues: []
+  stats:
+    - BaseStats.AttunementHelper

@@ -1,0 +1,37 @@
+Attunements.TDO_ShrikeLoc:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-C1Shrike-Active-Desc
+  floatValues: []
+  intValues: []
+  nameValues: []
+  stats: []
+
+Attunements.TDO_Shrike:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Attunements.TDO_Shrike_UI
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - $type: CombinedStatModifier
+      opSymbol: '*'
+      refObject: Self
+      refStat: BaseStats.Reflexes
+      value: 0.1
+      modifierType: Additive
+      statType: BaseStats.TimeDilationSandevistanDuration
+
+Attunements.TDO_Shrike_UI:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  iconPath: UIIcon.Reflexes
+  localizedName: LocKey#Attunement-TDO-Shrike-Name
+  localizedDescription: LocKey#Attunement-TDO-Shrike-Desc
+  floatValues:
+    - 0.1
+    - 0
+  intValues: []
+  nameValues: []
+  stats:
+    - BaseStats.AttunementHelper
