@@ -16,7 +16,7 @@ local Initialized = false
 local ExternalMods = {}
 local TDOAbilityData = {}
 
-local TDO_VERSION = "d2026.4.7"
+local TDO_VERSION = "v0.3"
 local ESR_VERSION = "d2026.5.25"
 
 local function lerpTier(v1, vTop, tier, total)
