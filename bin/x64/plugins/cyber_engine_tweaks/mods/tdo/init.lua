@@ -10,7 +10,7 @@ local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
 
-local TDO_VERSION = "v0.3"
+local TDO_VERSION = "v0.4"
 local ESR_VERSION = "d2026.5.25"
 
 local function lerpTier(v1, vTop, tier, total)
