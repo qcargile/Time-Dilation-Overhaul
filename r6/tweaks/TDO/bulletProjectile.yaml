@@ -1,0 +1,43 @@
+Attacks.PhysicalBullet:
+  playerTimeDilated: Attacks.PowerBullets_Projectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.PhysicalStatusEffectBullet:
+  playerTimeDilated: Attacks.BleedingBulletProjectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.ThermalBullet:
+  playerTimeDilated: Attacks.ThermalBulletProjectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.ThermalStatusEffectBullet:
+  playerTimeDilated: Attacks.BurningBulletProjectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.ChemicalBullet:
+  playerTimeDilated: Attacks.ChemicalBulletProjectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.ChemicalStatusEffectBullet:
+  playerTimeDilated: Attacks.PoisonBulletProjectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.ElectricBullet:
+  playerTimeDilated: Attacks.ElectricBulletProjectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.ElectricStatusEffectBullet:
+  playerTimeDilated: Attacks.ElectricBulletProjectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.PowerRoundsBullet:
+  playerTimeDilated: Attacks.PowerRounds_Projectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.PowerBuckshotsBullet:
+  playerTimeDilated: Attacks.PowerBuckshots_Projectile
+  $type: gamedataRangedAttack_Record
+
+Attacks.PowerBulletsBullet:
+  playerTimeDilated: Attacks.PowerBullets_Projectile
+  $type: gamedataRangedAttack_Record

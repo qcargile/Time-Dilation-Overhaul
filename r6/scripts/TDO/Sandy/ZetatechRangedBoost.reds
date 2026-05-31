@@ -49,6 +49,9 @@ public let m_tdoShrikeMarkTickID: DelayID;
 @addField(PlayerPuppet)
 public let m_tdoShrikeLastDeniedTarget: EntityID;
 
+@addField(PlayerPuppet)
+public let m_tdoShrikePendingHitscanBullets: Int32;
+
 public func TDO_Shrike_IsSandyActive(player: ref<PlayerPuppet>) -> Bool {
   let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
   if !IsDefined(bb) {
@@ -234,6 +237,7 @@ public func TDO_Shrike_ApplyMarkHighlight(player: ref<PlayerPuppet>, target: ref
   highlightData.outTransitionTime = 0.3;
   highlightData.highlightType = EFocusForcedHighlightType.DISTRACTION;
   highlightData.outlineType = EFocusOutlineType.DISTRACTION;
+  highlightData.isRevealed = true;
 
   let evt: ref<ForceVisionApperanceEvent> = new ForceVisionApperanceEvent();
   evt.forcedHighlight = highlightData;
@@ -265,6 +269,7 @@ public func TDO_Shrike_ClearMarks(player: ref<PlayerPuppet>) -> Void {
     i += 1;
   }
   ArrayClear(player.m_tdoShrikeMarkedNPCs);
+  player.m_tdoShrikePendingHitscanBullets = 0;
   player.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
   player.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
 }
@@ -455,6 +460,7 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
   }
 
   TDO_Shrike_ConsumeMark(player, bestIdx);
+  player.m_tdoShrikePendingHitscanBullets += 1;
 }
 
 @wrapMethod(SandevistanEvents)
@@ -489,6 +495,7 @@ protected final func OnForcedExit(stateContext: ref<StateContext>, scriptInterfa
 protected cb func OnGameAttached() -> Bool {
   let result: Bool = wrappedMethod();
   ArrayClear(this.m_tdoShrikeMarkedNPCs);
+  this.m_tdoShrikePendingHitscanBullets = 0;
   this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
   this.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
   if TDOConfig.ShrikeEnabled() {

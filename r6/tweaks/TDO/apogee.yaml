@@ -1,0 +1,7 @@
+Attunements.TDO_ApogeeLoc:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  localizedDescription: LocKey#Item-TDO-Apogee-Active-Desc
+  floatValues: []
+  intValues: []
+  nameValues: []
+  stats: []

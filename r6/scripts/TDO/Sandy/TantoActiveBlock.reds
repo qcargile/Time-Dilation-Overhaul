@@ -102,7 +102,7 @@ private final func ProcessBlockAndDeflect(hitEvent: ref<gameHitEvent>) -> Void {
     return;
   }
   if system.TryAddCharge(player) {
-    GameObject.PlaySoundEventWithParams(player, n"w_melee_perk_finisher_ready", audioAudioEventFlags.Music, audioEventActionType.Play);
+    GameObject.PlaySoundEventWithParams(player, n"lcm_cyb_speedboost", audioAudioEventFlags.Music, audioEventActionType.Play);
     StatusEffectHelper.ApplyStatusEffect(player, t"StatusEffects.TDO_TantoChargeIndicator");
   }
 }
@@ -237,7 +237,7 @@ private final func ProcessHitReaction(hitEvent: ref<gameHitEvent>) -> Void {
               ArrayPush(player.m_tdoTantoCritMarkedNPCs, npcVictim.GetEntityID());
             }
           }
-          GameObject.PlaySoundEventWithParams(player, n"w_melee_perk_finisher_ready", audioAudioEventFlags.Music, audioEventActionType.Play);
+          GameObject.PlaySoundEventWithParams(player, n"lcm_cyb_speedboost", audioAudioEventFlags.Music, audioEventActionType.Play);
           StatusEffectHelper.ApplyStatusEffect(player, t"StatusEffects.TDO_TantoChargeIndicator");
         }
       }

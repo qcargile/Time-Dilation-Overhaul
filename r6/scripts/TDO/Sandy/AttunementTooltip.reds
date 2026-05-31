@@ -175,6 +175,7 @@ public func TDO_Juggernaut_InjectActiveCardLiveValues(itemTDB: TweakDBID, dataPa
   }
   fv[0] = TDO_Juggernaut_LockDurForTier(tier);
   fv[1] = TDO_Juggernaut_MaxRadiusForTier(tier);
+  fv[2] = TDOConfig.JuggernautMaxBurstDamage();
   fv[3] = TDO_Juggernaut_CooldownForTier(tier);
   dataPackage.floatValues = fv;
   dataPackage.InvalidateTextParams();
@@ -296,7 +297,7 @@ public func TDO_Quantum_InjectActiveCardLiveValues(game: GameInstance, itemTDB: 
     dataPackage.InvalidateTextParams();
     return;
   }
-  while ArraySize(fv) < 6 { ArrayPush(fv, 0.0); }
+  while ArraySize(fv) < 8 { ArrayPush(fv, 0.0); }
   let maxTargets: Int32 = Cast<Int32>(TDOConfig.LerpTier(TDOConfig.QuantumMalwareTargetsMin(), TDOConfig.QuantumMalwareTargetsMax(), tier, 5) + 0.5);
   let radius: Float = TDOConfig.QuantumMalwareRadiusBase();
   let tpRange: Float = TDOConfig.QuantumTeleportRangeMin();
@@ -315,6 +316,8 @@ public func TDO_Quantum_InjectActiveCardLiveValues(game: GameInstance, itemTDB: 
   fv[3] = malwareDur;
   fv[4] = teleWindow;
   fv[5] = cooldown;
+  fv[6] = TDOConfig.QuantumPlayerSlowTimePct();
+  fv[7] = TDOConfig.QuantumMalwareSlowTimePct();
   dataPackage.floatValues = fv;
   dataPackage.InvalidateTextParams();
 }
@@ -440,11 +443,13 @@ public func TDO_Shrike_InjectActiveCardLiveValues(game: GameInstance, itemTDB: T
   let tier: Int32 = TDO_Shrike_TierForItemTDB(itemTDB);
   if tier <= 0 { return; }
   let fv: array<Float> = dataPackage.floatValues;
-  while ArraySize(fv) < 7 { ArrayPush(fv, 0.0); }
-  let t: Float = Cast<Float>(tier - 1) / 8.0;
-  fv[3] = 30.0 + (15.0 - 30.0) * t;
+  while ArraySize(fv) < 8 { ArrayPush(fv, 0.0); }
+  fv[0] = TDOConfig.LerpTier(TDOConfig.ShrikeSlowTimeMinPct(), TDOConfig.ShrikeSlowTimeMaxPct(), tier, 9);
+  fv[3] = TDOConfig.LerpTier(TDOConfig.ShrikeRechargeMin(), TDOConfig.ShrikeRechargeMax(), tier, 9);
+  fv[4] = TDOConfig.LerpTier(10.0, 30.0, tier, 9);
   fv[5] = Cast<Float>(TDO_Shrike_MarksForTier(tier));
-  fv[6] = 5.0 + (10.0 - 5.0) * t;
+  fv[6] = TDOConfig.LerpTier(TDOConfig.ShrikeDurationMin(), TDOConfig.ShrikeDurationMax(), tier, 9);
+  fv[7] = TDOConfig.ShrikeMarkRange();
   dataPackage.floatValues = fv;
   dataPackage.InvalidateTextParams();
 }
@@ -476,13 +481,12 @@ public func TDO_Tanto_InjectActiveCardLiveValues(game: GameInstance, itemTDB: Tw
   if tier <= 0 { return; }
   let fv: array<Float> = dataPackage.floatValues;
   while ArraySize(fv) < 7 { ArrayPush(fv, 0.0); }
-  let t: Float = Cast<Float>(tier - 1) / 8.0;
-  fv[0] = 60.0;
-  fv[1] = 5.0 + (15.0 - 5.0) * t;
-  fv[2] = 10.0 + (50.0 - 10.0) * t;
-  fv[3] = 10.0 + (15.0 - 10.0) * t;
+  fv[0] = TDOConfig.LerpTier(TDOConfig.TantoSlowTimeMinPct(), TDOConfig.TantoSlowTimeMaxPct(), tier, 9);
+  fv[1] = TDOConfig.LerpTier(TDOConfig.TantoCritChanceMin(), TDOConfig.TantoCritChanceMax(), tier, 9);
+  fv[2] = TDOConfig.LerpTier(TDOConfig.TantoCritDmgMin(), TDOConfig.TantoCritDmgMax(), tier, 9);
+  fv[3] = TDOConfig.LerpTier(TDOConfig.TantoDurationMin(), TDOConfig.TantoDurationMax(), tier, 9);
   fv[5] = Cast<Float>(TDO_Tanto_ChargesForTier(tier));
-  fv[6] = 50.0 + (25.0 - 50.0) * t;
+  fv[6] = TDOConfig.LerpTier(TDOConfig.TantoRechargeMin(), TDOConfig.TantoRechargeMax(), tier, 9);
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(game).GetLocalPlayerMainGameObject() as PlayerPuppet;
   if IsDefined(player) {
     let stats: ref<StatsSystem> = GameInstance.GetStatsSystem(game);
@@ -516,11 +520,11 @@ public func TDO_WarpDancer_InjectActiveCardLiveValues(itemTDB: TweakDBID, dataPa
   if tier <= 0 { return; }
   let fv: array<Float> = dataPackage.floatValues;
   while ArraySize(fv) < 9 { ArrayPush(fv, 0.0); }
-  let t: Float = Cast<Float>(tier - 1) / 6.0;
-  fv[4] = 5.0 + (9.0 - 5.0) * t;
-  fv[5] = 5.0 + (20.0 - 5.0) * t;
-  fv[6] = TDOConfig.WarpDancerStaggerDurationMaxSec() - (TDOConfig.WarpDancerStaggerDurationMaxSec() - TDOConfig.WarpDancerStaggerDurationMinSec()) * t;
-  fv[7] = 80.0 + (45.0 - 80.0) * t;
+  fv[0] = TDOConfig.LerpTier(TDOConfig.WarpDancerSlowTimeMinPct(), TDOConfig.WarpDancerSlowTimeMaxPct(), tier, 7);
+  fv[4] = TDOConfig.LerpTier(TDOConfig.WarpDancerDurationMin(), TDOConfig.WarpDancerDurationMax(), tier, 7);
+  fv[5] = TDOConfig.LerpTier(TDOConfig.WarpDancerMoveSpeedMin(), TDOConfig.WarpDancerMoveSpeedMax(), tier, 7);
+  fv[6] = TDOConfig.WarpDancerStaggerDurationMaxSec() - (TDOConfig.WarpDancerStaggerDurationMaxSec() - TDOConfig.WarpDancerStaggerDurationMinSec()) * (Cast<Float>(tier - 1) / 6.0);
+  fv[7] = TDOConfig.LerpTier(TDOConfig.WarpDancerRechargeMin(), TDOConfig.WarpDancerRechargeMax(), tier, 7);
   fv[8] = TDOConfig.WarpDancerRewindDurationSec();
   dataPackage.floatValues = fv;
   dataPackage.InvalidateTextParams();
@@ -542,10 +546,39 @@ public func TDO_Falcon_InjectActiveCardLiveValues(itemTDB: TweakDBID, dataPackag
   if tier <= 0 { return; }
   let fv: array<Float> = dataPackage.floatValues;
   while ArraySize(fv) < 8 { ArrayPush(fv, 0.0); }
-  let t: Float = Cast<Float>(tier - 1) / 4.0;
-  fv[0] = 40.0;
-  fv[6] = 12.0 + (16.0 - 12.0) * t;
-  fv[7] = 45.0 + (30.0 - 45.0) * t;
+  fv[0] = TDOConfig.LerpTier(TDOConfig.FalconSlowTimeMinPct(), TDOConfig.FalconSlowTimeMaxPct(), tier, 5);
+  fv[6] = TDOConfig.LerpTier(TDOConfig.FalconDurationMin(), TDOConfig.FalconDurationMax(), tier, 5);
+  fv[7] = TDOConfig.LerpTier(TDOConfig.FalconRechargeMin(), TDOConfig.FalconRechargeMax(), tier, 5);
+  dataPackage.floatValues = fv;
+  dataPackage.InvalidateTextParams();
+}
+
+public func TDO_Apogee_TierForItemTDB(itemTDB: TweakDBID) -> Int32 {
+  if Equals(itemTDB, t"Items.AdvancedSandevistanApogee") { return 1; }
+  if Equals(itemTDB, t"Items.AdvancedSandevistanApogeePlus") { return 2; }
+  if Equals(itemTDB, t"Items.AdvancedSandevistanApogeePlusPlus") { return 3; }
+  return 0;
+}
+
+public func TDO_Apogee_InjectActiveCardLiveValues(itemTDB: TweakDBID, dataPackage: ref<UILocalizationDataPackage>) -> Void {
+  if !IsDefined(dataPackage) { return; }
+  let tier: Int32 = TDO_Apogee_TierForItemTDB(itemTDB);
+  if tier <= 0 { return; }
+  let fv: array<Float> = dataPackage.floatValues;
+  if ArraySize(fv) == 1 {
+    fv[0] = TDOConfig.LerpTier(TDOConfig.ApogeeRechargeMin(), TDOConfig.ApogeeRechargeMax(), tier, 3);
+    dataPackage.floatValues = fv;
+    dataPackage.InvalidateTextParams();
+    return;
+  }
+  while ArraySize(fv) < 7 { ArrayPush(fv, 0.0); }
+  fv[0] = TDOConfig.LerpTier(TDOConfig.ApogeeSlowTimeMinPct(), TDOConfig.ApogeeSlowTimeMaxPct(), tier, 3);
+  fv[1] = TDOConfig.LerpTier(15.0, 20.0, tier, 3);
+  fv[2] = TDOConfig.LerpTier(15.0, 20.0, tier, 3);
+  fv[3] = TDOConfig.LerpTier(15.0, 20.0, tier, 3);
+  fv[4] = 10.0;
+  fv[5] = 22.0;
+  fv[6] = TDOConfig.LerpTier(TDOConfig.ApogeeDurationMin(), TDOConfig.ApogeeDurationMax(), tier, 3);
   dataPackage.floatValues = fv;
   dataPackage.InvalidateTextParams();
 }
@@ -580,6 +613,7 @@ private final func FetchModsDataPackages(inventoryItem: wref<UIInventoryItem>) -
         TDO_Tanto_InjectActiveCardLiveValues(game, itemTDB, modData.DataPackage);
         TDO_WarpDancer_InjectActiveCardLiveValues(itemTDB, modData.DataPackage);
         TDO_Falcon_InjectActiveCardLiveValues(itemTDB, modData.DataPackage);
+        TDO_Apogee_InjectActiveCardLiveValues(itemTDB, modData.DataPackage);
       }
     }
     i += 1;
@@ -612,6 +646,7 @@ public final static func GetModsDataPackages(itemData: wref<gameItemData>, itemR
         TDO_Tanto_InjectActiveCardLiveValues(game, itemTDB, modData.dataPackage);
         TDO_WarpDancer_InjectActiveCardLiveValues(itemTDB, modData.dataPackage);
         TDO_Falcon_InjectActiveCardLiveValues(itemTDB, modData.dataPackage);
+        TDO_Apogee_InjectActiveCardLiveValues(itemTDB, modData.dataPackage);
       }
     }
     i += 1;

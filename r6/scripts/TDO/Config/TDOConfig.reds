@@ -15,6 +15,17 @@ public class TDOConfig {
     return 0.10;
   }
 
+  public static func BulletTrailVelocityAt10() -> Float { return 95.0; }
+  public static func BulletTrailVelocityAt20() -> Float { return 85.0; }
+  public static func BulletTrailVelocityAt30() -> Float { return 75.0; }
+  public static func BulletTrailVelocityAt40() -> Float { return 65.0; }
+  public static func BulletTrailVelocityAt50() -> Float { return 55.0; }
+  public static func BulletTrailVelocityAt60() -> Float { return 45.0; }
+  public static func BulletTrailVelocityAt70() -> Float { return 35.0; }
+  public static func BulletTrailVelocityAt80() -> Float { return 25.0; }
+  public static func BulletTrailVelocityAt90() -> Float { return 15.0; }
+  public static func BulletTrailVelocityAt99() -> Float { return 5.0; }
+
   
   public static func FusilladeFireRateRealTimeEnabled() -> Bool {
     return true;
@@ -141,6 +152,30 @@ public class TDOConfig {
     return 8.0;
   }
 
+  public static func ApogeeSlowTimeMinPct() -> Float {
+    return 85.0;
+  }
+
+  public static func ApogeeSlowTimeMaxPct() -> Float {
+    return 90.0;
+  }
+
+  public static func ApogeeDurationMin() -> Float {
+    return 6.0;
+  }
+
+  public static func ApogeeDurationMax() -> Float {
+    return 10.0;
+  }
+
+  public static func ApogeeRechargeMin() -> Float {
+    return 30.0;
+  }
+
+  public static func ApogeeRechargeMax() -> Float {
+    return 20.0;
+  }
+
   public static func SandyVFXEnabled() -> Bool {
     return false;
   }
@@ -170,6 +205,46 @@ public class TDOConfig {
     return 1.5;
   }
 
+  public static func TantoSlowTimeMinPct() -> Float {
+    return 60.0;
+  }
+
+  public static func TantoSlowTimeMaxPct() -> Float {
+    return 60.0;
+  }
+
+  public static func TantoDurationMin() -> Float {
+    return 10.0;
+  }
+
+  public static func TantoDurationMax() -> Float {
+    return 15.0;
+  }
+
+  public static func TantoRechargeMin() -> Float {
+    return 50.0;
+  }
+
+  public static func TantoRechargeMax() -> Float {
+    return 25.0;
+  }
+
+  public static func TantoCritChanceMin() -> Float {
+    return 5.0;
+  }
+
+  public static func TantoCritChanceMax() -> Float {
+    return 15.0;
+  }
+
+  public static func TantoCritDmgMin() -> Float {
+    return 10.0;
+  }
+
+  public static func TantoCritDmgMax() -> Float {
+    return 50.0;
+  }
+
   
   public static func ShrikeEnabled() -> Bool {
     return true;
@@ -181,6 +256,30 @@ public class TDOConfig {
 
   public static func ShrikeMarkRange() -> Float {
     return 30.0;
+  }
+
+  public static func ShrikeSlowTimeMinPct() -> Float {
+    return 30.0;
+  }
+
+  public static func ShrikeSlowTimeMaxPct() -> Float {
+    return 60.0;
+  }
+
+  public static func ShrikeDurationMin() -> Float {
+    return 5.0;
+  }
+
+  public static func ShrikeDurationMax() -> Float {
+    return 10.0;
+  }
+
+  public static func ShrikeRechargeMin() -> Float {
+    return 30.0;
+  }
+
+  public static func ShrikeRechargeMax() -> Float {
+    return 15.0;
   }
 
   public static func ShrikeExecuteDmgTrash() -> Float {
@@ -267,6 +366,46 @@ public class TDOConfig {
     return 0.5;
   }
 
+  public static func FalconSlowTimeMinPct() -> Float {
+    return 40.0;
+  }
+
+  public static func FalconSlowTimeMaxPct() -> Float {
+    return 40.0;
+  }
+
+  public static func FalconDurationMin() -> Float {
+    return 12.0;
+  }
+
+  public static func FalconDurationMax() -> Float {
+    return 16.0;
+  }
+
+  public static func FalconRechargeMin() -> Float {
+    return 45.0;
+  }
+
+  public static func FalconRechargeMax() -> Float {
+    return 30.0;
+  }
+
+  public static func FalconCritChanceMin() -> Float {
+    return 5.0;
+  }
+
+  public static func FalconCritChanceMax() -> Float {
+    return 15.0;
+  }
+
+  public static func FalconCritDmgMin() -> Float {
+    return 10.0;
+  }
+
+  public static func FalconCritDmgMax() -> Float {
+    return 50.0;
+  }
+
   
   public static func WarpDancerEnabled() -> Bool {
     return true;
@@ -298,6 +437,38 @@ public class TDOConfig {
 
   public static func WarpDancerStaggerDurationMaxSec() -> Float {
     return 2.0;
+  }
+
+  public static func WarpDancerSlowTimeMinPct() -> Float {
+    return 99.0;
+  }
+
+  public static func WarpDancerSlowTimeMaxPct() -> Float {
+    return 99.0;
+  }
+
+  public static func WarpDancerDurationMin() -> Float {
+    return 5.0;
+  }
+
+  public static func WarpDancerDurationMax() -> Float {
+    return 9.0;
+  }
+
+  public static func WarpDancerRechargeMin() -> Float {
+    return 80.0;
+  }
+
+  public static func WarpDancerRechargeMax() -> Float {
+    return 45.0;
+  }
+
+  public static func WarpDancerMoveSpeedMin() -> Float {
+    return 5.0;
+  }
+
+  public static func WarpDancerMoveSpeedMax() -> Float {
+    return 20.0;
   }
 
   public static func WarpDancerRewindGlitchEnabled() -> Bool {
@@ -524,6 +695,10 @@ public class TDOConfig {
     return 2.0;
   }
 
+  public static func ScanningGracePeriodSec() -> Float {
+    return 1.0;
+  }
+
   public static func HerbieEnabled() -> Bool {
     return true;
   }
@@ -595,6 +770,14 @@ public class TDOConfig {
 
   public static func QuantumPlotFreezeStrength() -> Float {
     return 0.001; // world time scale during plot freeze (~99.9% slow)
+  }
+
+  public static func QuantumPlayerSlowTimePct() -> Float {
+    return 99.0;
+  }
+
+  public static func QuantumMalwareSlowTimePct() -> Float {
+    return 99.0;
   }
 
   public static func QuantumTeleportMaxRange() -> Float {
