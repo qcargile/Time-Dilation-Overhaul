@@ -30,11 +30,12 @@ public func TDO_BulletTrailVelocity_AtSlow(slowPct: Float) -> Float {
     let t: Float = (slowPct - 90.0) / 9.0;
     return LerpF(t, velLower, velUpper);
   }
-  let lower: Float = FloorF(slowPct / 10.0) * 10.0;
-  let upper: Float = lower + 10.0;
+  let lowerI: Int32 = FloorF(slowPct / 10.0) * 10;
+  let upperI: Int32 = lowerI + 10;
+  let lower: Float = Cast<Float>(lowerI);
   let t: Float = (slowPct - lower) / 10.0;
-  let velLower: Float = TDO_BulletTrailVelocity_GetSliderAt(Cast<Int32>(lower));
-  let velUpper: Float = TDO_BulletTrailVelocity_GetSliderAt(Cast<Int32>(upper));
+  let velLower: Float = TDO_BulletTrailVelocity_GetSliderAt(lowerI);
+  let velUpper: Float = TDO_BulletTrailVelocity_GetSliderAt(upperI);
   return LerpF(t, velLower, velUpper);
 }
 

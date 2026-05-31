@@ -10,7 +10,7 @@ local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
 
-local TDO_VERSION = "v0.4"
+local TDO_VERSION = "v0.4.1"
 local ESR_VERSION = "d2026.5.25"
 
 local function lerpTier(v1, vTop, tier, total)
@@ -306,6 +306,56 @@ local APOGEE_TIER_FLATS = {
 	[3] = { item="Items.AdvancedSandevistanApogeePlusPlus", dur="_inline18", ts="_inline19", rchrg="_inline20" },
 }
 
+local function refToString(ref)
+	if type(ref) ~= "userdata" then return tostring(ref) end
+	local ok, s = pcall(function() return TDBID.ToStringDEBUG(ref) end)
+	if ok and s ~= nil then return s end
+	return ""
+end
+
+local function stripSetBonusesContaminationFromApogee(itemPath)
+	local selfRefPattern = itemPath:gsub("([%%%.%+%-%*%?%[%]%(%)%^%$])", "%%%1") .. "%.statModifiers%$"
+	local statMods = TweakDB:GetFlat(itemPath .. ".statModifiers")
+	if statMods ~= nil then
+		local cleaned = {}
+		local removed = 0
+		for _, ref in ipairs(statMods) do
+			local refStr = refToString(ref)
+			local isContamination = refStr ~= "" and (
+				string.find(refStr, "^Items%.apart_") ~= nil
+				or refStr == "Quality.IconicItem"
+				or string.find(refStr, selfRefPattern) ~= nil
+			)
+			if isContamination then
+				removed = removed + 1
+			else
+				table.insert(cleaned, ref)
+			end
+		end
+		if removed > 0 then
+			TweakDB:SetFlat(itemPath .. ".statModifiers", cleaned)
+			print(string.format("[TDO] %s.statModifiers: stripped %d Set Bonuses contamination entr(ies)", itemPath, removed))
+		end
+	end
+	local onEquip = TweakDB:GetFlat(itemPath .. ".OnEquip")
+	if onEquip ~= nil then
+		local cleaned = {}
+		local removed = 0
+		for _, ref in ipairs(onEquip) do
+			local refStr = refToString(ref)
+			if refStr ~= "" and string.find(refStr, "^Items%.apart_") then
+				removed = removed + 1
+			else
+				table.insert(cleaned, ref)
+			end
+		end
+		if removed > 0 then
+			TweakDB:SetFlat(itemPath .. ".OnEquip", cleaned)
+			print(string.format("[TDO] %s.OnEquip: stripped %d Set Bonuses contamination entr(ies)", itemPath, removed))
+		end
+	end
+end
+
 local function applyApogeeTweaks(config)
 	if config.apogee == nil or config.apogee.enabled == false then return end
 	local totalTiers = 3
@@ -321,6 +371,8 @@ local function applyApogeeTweaks(config)
 		if apLocActive ~= nil then
 			TweakDB:SetFlat(flats.item .. "_inline1.localizedDescription", apLocActive)
 		end
+		stripSetBonusesContaminationFromApogee(flats.item)
+		TweakDB:Update(flats.item)
 	end
 end
 
@@ -1996,11 +2048,84 @@ function TDODumpFullTweakDB(typeFilter)
 	print("[TDO-FULLDUMP] DONE. " .. tostring(totalRecords) .. " records across " .. tostring(typesDumped) .. " types -> mods/tdo/" .. outPath)
 end
 
+function TDODumpApogeeConflict()
+	print("[TDO-APOGEE-DUMP] === BEGIN ===")
+	local apogeeItems = {
+		"Items.AdvancedSandevistanApogee",
+		"Items.AdvancedSandevistanApogeePlus",
+		"Items.AdvancedSandevistanApogeePlusPlus",
+	}
+	for _, itemPath in ipairs(apogeeItems) do
+		print("[TDO-APOGEE-DUMP] --- " .. itemPath .. " ---")
+		local rec = TweakDB:GetRecord(itemPath)
+		if rec == nil then
+			print("[TDO-APOGEE-DUMP]   RECORD NIL")
+		else
+			print("[TDO-APOGEE-DUMP]   record exists: " .. tostring(rec))
+		end
+		local statMods = TweakDB:GetFlat(itemPath .. ".statModifiers")
+		if statMods == nil then
+			print("[TDO-APOGEE-DUMP]   statModifiers: NIL")
+		else
+			print("[TDO-APOGEE-DUMP]   statModifiers count: " .. tostring(#statMods))
+			for i, ref in ipairs(statMods) do
+				local refStr = "nil"
+				if type(ref) == "userdata" then
+					local ok, s = pcall(function() return TDBID.ToStringDEBUG(ref) end)
+					if ok and s ~= nil and s ~= "" then refStr = s end
+				else
+					refStr = tostring(ref)
+				end
+				print(string.format("[TDO-APOGEE-DUMP]     [%d] %s", i, refStr))
+			end
+		end
+		local onEquip = TweakDB:GetFlat(itemPath .. ".OnEquip")
+		if onEquip == nil then
+			print("[TDO-APOGEE-DUMP]   OnEquip: NIL")
+		else
+			print("[TDO-APOGEE-DUMP]   OnEquip count: " .. tostring(#onEquip))
+			for i, ref in ipairs(onEquip) do
+				local refStr = "nil"
+				if type(ref) == "userdata" then
+					local ok, s = pcall(function() return TDBID.ToStringDEBUG(ref) end)
+					if ok and s ~= nil and s ~= "" then refStr = s end
+				else
+					refStr = tostring(ref)
+				end
+				print(string.format("[TDO-APOGEE-DUMP]     [%d] %s", i, refStr))
+			end
+		end
+		for _, suffix in ipairs({"_inline1", "_inline18", "_inline19", "_inline20", "_inline21"}) do
+			local inlinePath = itemPath .. suffix
+			local inlineRec = TweakDB:GetRecord(inlinePath)
+			if inlineRec == nil then
+				print("[TDO-APOGEE-DUMP]   " .. inlinePath .. ": RECORD NIL")
+			else
+				local val = TweakDB:GetFlat(inlinePath .. ".value")
+				local desc = TweakDB:GetFlat(inlinePath .. ".localizedDescription")
+				local statType = TweakDB:GetFlat(inlinePath .. ".statType")
+				local statTypeStr = "n/a"
+				if statType ~= nil then
+					if type(statType) == "userdata" then
+						local ok, s = pcall(function() return TDBID.ToStringDEBUG(statType) end)
+						if ok and s ~= nil and s ~= "" then statTypeStr = s end
+					else
+						statTypeStr = tostring(statType)
+					end
+				end
+				print(string.format("[TDO-APOGEE-DUMP]   %s: value=%s desc=%s statType=%s", inlinePath, tostring(val), tostring(desc), statTypeStr))
+			end
+		end
+	end
+	print("[TDO-APOGEE-DUMP] === END ===")
+end
+
 return {
 	TDODumpSandyStructure = TDODumpSandyStructure,
 	TDOZetatechDebug = TDOZetatechDebug,
 	TDODumpWeapon = TDODumpWeapon,
 	TDODumpRecord = TDODumpRecord,
 	TDODumpVanillaSandies = TDODumpVanillaSandies,
-	TDODumpFullTweakDB = TDODumpFullTweakDB
+	TDODumpFullTweakDB = TDODumpFullTweakDB,
+	TDODumpApogeeConflict = TDODumpApogeeConflict
 }
