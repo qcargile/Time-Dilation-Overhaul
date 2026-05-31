@@ -3,18 +3,12 @@ GameUI = require("modules/external/GameUI")
 GameSettings = require('CETKit/GameSettings.lua')
 Localizer = require("modules/localizedText.lua")
 require("modules/commonFunctions.lua")
-local sandyData = require("data/sandyData.lua")
-local AbilityDefs = require("definitions/abilities.lua")
-local SandyDefs = require("definitions/sandevistan.lua")
-local sandys = SandyDefs.Sandys:New()
 
 local config = {}
 local default = require("config/nUIDefaults.lua")
-local options = { sandys = {} }
 local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
-local TDOAbilityData = {}
 
 local TDO_VERSION = "v0.3"
 local ESR_VERSION = "d2026.5.25"
@@ -24,9 +18,44 @@ local function lerpTier(v1, vTop, tier, total)
 	return v1 + (vTop - v1) * (tier - 1) / (total - 1)
 end
 
+local SHRIKE_TIER_FLATS = {
+	[1] = { item="Items.AdvancedSandevistanC1MK1",         dur="_inline1",  ts="_inline2",  rchrg="_inline3"  },
+	[2] = { item="Items.AdvancedSandevistanC1MK1Plus",     dur="_inline1",  ts="_inline2",  rchrg="_inline3"  },
+	[3] = { item="Items.AdvancedSandevistanC1MK2",         dur="_inline25", ts="_inline26", rchrg="_inline27" },
+	[4] = { item="Items.AdvancedSandevistanC1MK2Plus",     dur="_inline25", ts="_inline26", rchrg="_inline27" },
+	[5] = { item="Items.AdvancedSandevistanC1MK3",         dur="_inline25", ts="_inline26", rchrg="_inline27" },
+	[6] = { item="Items.AdvancedSandevistanC1MK3Plus",     dur="_inline25", ts="_inline26", rchrg="_inline27" },
+	[7] = { item="Items.AdvancedSandevistanC1MK4",         dur="_inline25", ts="_inline26", rchrg="_inline27" },
+	[8] = { item="Items.AdvancedSandevistanC1MK4Plus",     dur="_inline25", ts="_inline26", rchrg="_inline27" },
+	[9] = { item="Items.AdvancedSandevistanC1MK4PlusPlus", dur="_inline25", ts="_inline26", rchrg="_inline27" },
+}
+
+local function applyShrikeTweaks(config)
+	if config.zetatech == nil or config.zetatech.enabled == false then return end
+	local totalTiers = 9
+	for tier, flats in ipairs(SHRIKE_TIER_FLATS) do
+		local slowPct = lerpTier(config.zetatech.slowTimeMinPct, config.zetatech.slowTimeMaxPct, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.ts .. ".value", 1.0 - slowPct / 100.0)
+		local durSec = lerpTier(config.zetatech.durationMin, config.zetatech.durationMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.dur .. ".value", durSec)
+		local rchrgSec = lerpTier(config.zetatech.rechargeMin, config.zetatech.rechargeMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.rchrg .. ".value", rchrgSec)
+	end
+end
+
 local function createShrikeMechanic(nativeSettings, path, nuiTxt, config, default)
 	local handles = {}
 	local cat = "zetatech"
+
+	applyShrikeTweaks(config)
+
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMinPct"]["opt"]..nuiTxt[cat]["slowTimeMinPct"]["optUnit"], nuiTxt[cat]["slowTimeMinPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.zetatech.slowTimeMinPct, default.zetatech.slowTimeMinPct, function(value) config.zetatech.slowTimeMinPct = value applyShrikeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMaxPct"]["opt"]..nuiTxt[cat]["slowTimeMaxPct"]["optUnit"], nuiTxt[cat]["slowTimeMaxPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.zetatech.slowTimeMaxPct, default.zetatech.slowTimeMaxPct, function(value) config.zetatech.slowTimeMaxPct = value applyShrikeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.zetatech.durationMin, default.zetatech.durationMin, function(value) config.zetatech.durationMin = value applyShrikeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 1.0, 30.0, 0.5, "%.1f", config.zetatech.durationMax, default.zetatech.durationMax, function(value) config.zetatech.durationMax = value applyShrikeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMin"]["opt"]..nuiTxt[cat]["rechargeMin"]["optUnit"], nuiTxt[cat]["rechargeMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.zetatech.rechargeMin, default.zetatech.rechargeMin, function(value) config.zetatech.rechargeMin = value applyShrikeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMax"]["opt"]..nuiTxt[cat]["rechargeMax"]["optUnit"], nuiTxt[cat]["rechargeMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.zetatech.rechargeMax, default.zetatech.rechargeMax, function(value) config.zetatech.rechargeMax = value applyShrikeTweaks(config) saveSettings(config) end))
+
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["markRange"]["opt"]..nuiTxt[cat]["markRange"]["optUnit"], nuiTxt[cat]["markRange"]["des"], 5.0, 30.0, 1.0, "%.0f", config.zetatech.markRange, default.zetatech.markRange, function(value)
 		config.zetatech.markRange = value
 		saveSettings(config)
@@ -44,9 +73,52 @@ local function createShrikeMechanic(nativeSettings, path, nuiTxt, config, defaul
 	return handles
 end
 
+local TANTO_TIER_FLATS = {
+	[1] = { item="Items.AdvancedSandevistanC2MK1",         dur="_inline1",  ts="_inline2",  rchrg="_inline3",  critCh="_inline14", critDmg="_inline15" },
+	[2] = { item="Items.AdvancedSandevistanC2MK1Plus",     dur="_inline1",  ts="_inline2",  rchrg="_inline3",  critCh="_inline14", critDmg="_inline15" },
+	[3] = { item="Items.AdvancedSandevistanC2MK2",         dur="_inline11", ts="_inline12", rchrg="_inline13", critCh="_inline8",  critDmg="_inline9"  },
+	[4] = { item="Items.AdvancedSandevistanC2MK2Plus",     dur="_inline11", ts="_inline12", rchrg="_inline13", critCh="_inline8",  critDmg="_inline9"  },
+	[5] = { item="Items.AdvancedSandevistanC2MK3",         dur="_inline11", ts="_inline12", rchrg="_inline13", critCh="_inline8",  critDmg="_inline9"  },
+	[6] = { item="Items.AdvancedSandevistanC2MK3Plus",     dur="_inline11", ts="_inline12", rchrg="_inline13", critCh="_inline8",  critDmg="_inline9"  },
+	[7] = { item="Items.AdvancedSandevistanC2MK4",         dur="_inline11", ts="_inline12", rchrg="_inline13", critCh="_inline8",  critDmg="_inline9"  },
+	[8] = { item="Items.AdvancedSandevistanC2MK4Plus",     dur="_inline11", ts="_inline12", rchrg="_inline13", critCh="_inline8",  critDmg="_inline9"  },
+	[9] = { item="Items.AdvancedSandevistanC2MK4PlusPlus", dur="_inline11", ts="_inline12", rchrg="_inline13", critCh="_inline8",  critDmg="_inline9"  },
+}
+
+local function applyTantoTweaks(config)
+	if config.tanto == nil or config.tanto.enabled == false then return end
+	local totalTiers = 9
+	for tier, flats in ipairs(TANTO_TIER_FLATS) do
+		local slowPct = lerpTier(config.tanto.slowTimeMinPct, config.tanto.slowTimeMaxPct, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.ts .. ".value", 1.0 - slowPct / 100.0)
+		local durSec = lerpTier(config.tanto.durationMin, config.tanto.durationMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.dur .. ".value", durSec)
+		local rchrgSec = lerpTier(config.tanto.rechargeMin, config.tanto.rechargeMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.rchrg .. ".value", rchrgSec)
+		local critChPct = lerpTier(config.tanto.critChanceMin, config.tanto.critChanceMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.critCh .. ".value", critChPct / 100.0)
+		local critDmgPct = lerpTier(config.tanto.critDmgMin, config.tanto.critDmgMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.critDmg .. ".value", critDmgPct / 100.0)
+	end
+end
+
 local function createTantoMechanic(nativeSettings, path, nuiTxt, config, default)
 	local handles = {}
 	local cat = "tanto"
+
+	applyTantoTweaks(config)
+
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMinPct"]["opt"]..nuiTxt[cat]["slowTimeMinPct"]["optUnit"], nuiTxt[cat]["slowTimeMinPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.tanto.slowTimeMinPct, default.tanto.slowTimeMinPct, function(value) config.tanto.slowTimeMinPct = value applyTantoTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMaxPct"]["opt"]..nuiTxt[cat]["slowTimeMaxPct"]["optUnit"], nuiTxt[cat]["slowTimeMaxPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.tanto.slowTimeMaxPct, default.tanto.slowTimeMaxPct, function(value) config.tanto.slowTimeMaxPct = value applyTantoTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.tanto.durationMin, default.tanto.durationMin, function(value) config.tanto.durationMin = value applyTantoTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 1.0, 30.0, 0.5, "%.1f", config.tanto.durationMax, default.tanto.durationMax, function(value) config.tanto.durationMax = value applyTantoTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMin"]["opt"]..nuiTxt[cat]["rechargeMin"]["optUnit"], nuiTxt[cat]["rechargeMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.tanto.rechargeMin, default.tanto.rechargeMin, function(value) config.tanto.rechargeMin = value applyTantoTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMax"]["opt"]..nuiTxt[cat]["rechargeMax"]["optUnit"], nuiTxt[cat]["rechargeMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.tanto.rechargeMax, default.tanto.rechargeMax, function(value) config.tanto.rechargeMax = value applyTantoTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critChanceMin"]["opt"]..nuiTxt[cat]["critChanceMin"]["optUnit"], nuiTxt[cat]["critChanceMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.tanto.critChanceMin, default.tanto.critChanceMin, function(value) config.tanto.critChanceMin = value applyTantoTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critChanceMax"]["opt"]..nuiTxt[cat]["critChanceMax"]["optUnit"], nuiTxt[cat]["critChanceMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.tanto.critChanceMax, default.tanto.critChanceMax, function(value) config.tanto.critChanceMax = value applyTantoTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critDmgMin"]["opt"]..nuiTxt[cat]["critDmgMin"]["optUnit"], nuiTxt[cat]["critDmgMin"]["des"], 0.0, 200.0, 1.0, "%.0f", config.tanto.critDmgMin, default.tanto.critDmgMin, function(value) config.tanto.critDmgMin = value applyTantoTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critDmgMax"]["opt"]..nuiTxt[cat]["critDmgMax"]["optUnit"], nuiTxt[cat]["critDmgMax"]["des"], 0.0, 200.0, 1.0, "%.0f", config.tanto.critDmgMax, default.tanto.critDmgMax, function(value) config.tanto.critDmgMax = value applyTantoTweaks(config) saveSettings(config) end))
+
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["teleportBaseRange"]["opt"]..nuiTxt[cat]["teleportBaseRange"]["optUnit"], nuiTxt[cat]["teleportBaseRange"]["des"], 5.0, 100.0, 1.0, "%.0f", config.tanto.teleportBaseRange, default.tanto.teleportBaseRange, function(value)
 		config.tanto.teleportBaseRange = value
 		saveSettings(config)
@@ -60,68 +132,104 @@ local function createTantoMechanic(nativeSettings, path, nuiTxt, config, default
 	return handles
 end
 
+local WARPDANCER_TIER_FLATS = {
+	[1] = { item="Items.AdvancedSandevistanC3MK3",         dur="_inline1",  ts="_inline2",  rchrg="_inline3"  },
+	[2] = { item="Items.AdvancedSandevistanC3MK3Plus",     dur="_inline1",  ts="_inline2",  rchrg="_inline3"  },
+	[3] = { item="Items.AdvancedSandevistanC3MK4",         dur="_inline1",  ts="_inline2",  rchrg="_inline3"  },
+	[4] = { item="Items.AdvancedSandevistanC3MK4Plus",     dur="_inline1",  ts="_inline2",  rchrg="_inline3"  },
+	[5] = { item="Items.AdvancedSandevistanC3MK5",         dur="_inline14", ts="_inline15", rchrg="_inline16" },
+	[6] = { item="Items.AdvancedSandevistanC3MK5Plus",     dur="_inline14", ts="_inline15", rchrg="_inline16" },
+	[7] = { item="Items.AdvancedSandevistanC3MK5PlusPlus", dur="_inline14", ts="_inline15", rchrg="_inline16" },
+}
+
+local function applyWarpDancerTSDurRchrg(config)
+	if config.warpDancer == nil or config.warpDancer.enabled == false then return end
+	local totalTiers = 7
+	for tier, flats in ipairs(WARPDANCER_TIER_FLATS) do
+		local slowPct = lerpTier(config.warpDancer.slowTimeMinPct, config.warpDancer.slowTimeMaxPct, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.ts .. ".value", 1.0 - slowPct / 100.0)
+		local durSec = lerpTier(config.warpDancer.durationMin, config.warpDancer.durationMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.dur .. ".value", durSec)
+		local rchrgSec = lerpTier(config.warpDancer.rechargeMin, config.warpDancer.rechargeMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.rchrg .. ".value", rchrgSec)
+	end
+end
+
+local WARPDANCER_TIER_SUFFIXES = {"MK3", "MK3Plus", "MK4", "MK4Plus", "MK5", "MK5Plus", "MK5PlusPlus"}
+local WARPDANCER_ACTIVATION_INLINE = { MK3 = 8, MK3Plus = 8, MK4 = 8, MK4Plus = 8, MK5 = 1, MK5Plus = 1, MK5PlusPlus = 1 }
+
+local function applyWarpDancerStaggerPerTier(config)
+	if config.warpDancer == nil or config.warpDancer.enabled == false then return end
+	local sMin = config.warpDancer.staggerDurationMinSec
+	local sMax = config.warpDancer.staggerDurationMaxSec
+	for i, suffix in ipairs(WARPDANCER_TIER_SUFFIXES) do
+		local t = (i - 1) / 6.0
+		local staggerSec = sMax - (sMax - sMin) * t
+		TweakDB:SetFlat("StatusEffects.TDO_WarpDancerStagger_" .. suffix .. "_DurMod.value", staggerSec)
+	end
+end
+
+local function applyWarpDancerMoveSpeed(config)
+	if config.warpDancer == nil or config.warpDancer.enabled == false then return end
+	local msMin = config.warpDancer.moveSpeedMin
+	local msMax = config.warpDancer.moveSpeedMax
+	for i, suffix in ipairs(WARPDANCER_TIER_SUFFIXES) do
+		local t = (i - 1) / 6.0
+		local msPct = msMin + (msMax - msMin) * t
+		TweakDB:SetFlat("StatusEffects.TDO_WarpDancerMoveSpeed_" .. suffix .. "_Mod.value", 1.0 + msPct / 100.0)
+	end
+end
+
+local function applyWarpDancerCardValues(config)
+	if config.warpDancer == nil or config.warpDancer.enabled == false then return end
+	local msMin = config.warpDancer.moveSpeedMin
+	local msMax = config.warpDancer.moveSpeedMax
+	local stgMin = config.warpDancer.staggerDurationMinSec
+	local stgMax = config.warpDancer.staggerDurationMaxSec
+	for i, suffix in ipairs(WARPDANCER_TIER_SUFFIXES) do
+		local t = (i - 1) / 6.0
+		local msPct = msMin + (msMax - msMin) * t
+		local stgSec = stgMax - (stgMax - stgMin) * t
+		local inlineNum = WARPDANCER_ACTIVATION_INLINE[suffix]
+		local floatPath = "Items.AdvancedSandevistanC3" .. suffix .. "_inline" .. tostring(inlineNum) .. ".floatValues"
+		local floats = TweakDB:GetFlat(floatPath)
+		if type(floats) == "table" then
+			while #floats < 7 do table.insert(floats, 0.0) end
+			floats[6] = msPct
+			floats[7] = stgSec
+			TweakDB:SetFlat(floatPath, floats)
+		end
+	end
+end
+
 local function createWarpDancerMechanic(nativeSettings, path, nuiTxt, config, default)
 	local handles = {}
 	local cat = "warpDancer"
 
-	local warpDancerTierSuffixes = {"MK3", "MK3Plus", "MK4", "MK4Plus", "MK5", "MK5Plus", "MK5PlusPlus"}
+	applyWarpDancerTSDurRchrg(config)
 
-	local function applyWarpDancerStaggerPerTier()
-		if config.warpDancer.enabled == false then return end
-		local sMin = config.warpDancer.staggerDurationMinSec
-		local sMax = config.warpDancer.staggerDurationMaxSec
-		for i, suffix in ipairs(warpDancerTierSuffixes) do
-			local t = (i - 1) / 6.0
-			local staggerSec = sMax - (sMax - sMin) * t
-			TweakDB:SetFlat("StatusEffects.TDO_WarpDancerStagger_" .. suffix .. "_DurMod.value", staggerSec)
-		end
-	end
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMinPct"]["opt"]..nuiTxt[cat]["slowTimeMinPct"]["optUnit"], nuiTxt[cat]["slowTimeMinPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.warpDancer.slowTimeMinPct, default.warpDancer.slowTimeMinPct, function(value) config.warpDancer.slowTimeMinPct = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMaxPct"]["opt"]..nuiTxt[cat]["slowTimeMaxPct"]["optUnit"], nuiTxt[cat]["slowTimeMaxPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.warpDancer.slowTimeMaxPct, default.warpDancer.slowTimeMaxPct, function(value) config.warpDancer.slowTimeMaxPct = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.warpDancer.durationMin, default.warpDancer.durationMin, function(value) config.warpDancer.durationMin = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 1.0, 30.0, 0.5, "%.1f", config.warpDancer.durationMax, default.warpDancer.durationMax, function(value) config.warpDancer.durationMax = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMin"]["opt"]..nuiTxt[cat]["rechargeMin"]["optUnit"], nuiTxt[cat]["rechargeMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.warpDancer.rechargeMin, default.warpDancer.rechargeMin, function(value) config.warpDancer.rechargeMin = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMax"]["opt"]..nuiTxt[cat]["rechargeMax"]["optUnit"], nuiTxt[cat]["rechargeMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.warpDancer.rechargeMax, default.warpDancer.rechargeMax, function(value) config.warpDancer.rechargeMax = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
 
-	local function applyWarpDancerMoveSpeed()
-		if config.warpDancer.enabled == false then return end
-		local msMin = config.warpDancer.moveSpeedMin
-		local msMax = config.warpDancer.moveSpeedMax
-		for i, suffix in ipairs(warpDancerTierSuffixes) do
-			local t = (i - 1) / 6.0
-			local msPct = msMin + (msMax - msMin) * t
-			TweakDB:SetFlat("StatusEffects.TDO_WarpDancerMoveSpeed_" .. suffix .. "_Mod.value", 1.0 + msPct / 100.0)
-		end
-	end
-
-	local function applyWarpDancerCardValues()
-		if config.warpDancer.enabled == false then return end
-		local warpDancerActivationInline = { MK3 = 8, MK3Plus = 8, MK4 = 8, MK4Plus = 8, MK5 = 1, MK5Plus = 1, MK5PlusPlus = 1 }
-		local msMin = config.warpDancer.moveSpeedMin
-		local msMax = config.warpDancer.moveSpeedMax
-		local stgMin = config.warpDancer.staggerDurationMinSec
-		local stgMax = config.warpDancer.staggerDurationMaxSec
-		for i, suffix in ipairs(warpDancerTierSuffixes) do
-			local t = (i - 1) / 6.0
-			local msPct = msMin + (msMax - msMin) * t
-			local stgSec = stgMax - (stgMax - stgMin) * t
-			local inlineNum = warpDancerActivationInline[suffix]
-			local floatPath = "Items.AdvancedSandevistanC3" .. suffix .. "_inline" .. tostring(inlineNum) .. ".floatValues"
-			local floats = TweakDB:GetFlat(floatPath)
-			if type(floats) == "table" then
-				while #floats < 7 do table.insert(floats, 0.0) end
-				floats[6] = msPct
-				floats[7] = stgSec
-				TweakDB:SetFlat(floatPath, floats)
-			end
-		end
-	end
+	applyWarpDancerStaggerPerTier(config)
+	applyWarpDancerMoveSpeed(config)
+	applyWarpDancerCardValues(config)
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["moveSpeedMin"]["opt"]..nuiTxt[cat]["moveSpeedMin"]["optUnit"], nuiTxt[cat]["moveSpeedMin"]["des"], 0.0, 100.0, 0.5, "%.1f", config.warpDancer.moveSpeedMin, default.warpDancer.moveSpeedMin, function(value)
 		config.warpDancer.moveSpeedMin = value
-		applyWarpDancerMoveSpeed()
-		applyWarpDancerCardValues()
+		applyWarpDancerMoveSpeed(config)
+		applyWarpDancerCardValues(config)
 		saveSettings(config)
 	end))
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["moveSpeedMax"]["opt"]..nuiTxt[cat]["moveSpeedMax"]["optUnit"], nuiTxt[cat]["moveSpeedMax"]["des"], 0.0, 100.0, 0.5, "%.1f", config.warpDancer.moveSpeedMax, default.warpDancer.moveSpeedMax, function(value)
 		config.warpDancer.moveSpeedMax = value
-		applyWarpDancerMoveSpeed()
-		applyWarpDancerCardValues()
+		applyWarpDancerMoveSpeed(config)
+		applyWarpDancerCardValues(config)
 		saveSettings(config)
 	end))
 
@@ -132,24 +240,103 @@ local function createWarpDancerMechanic(nativeSettings, path, nuiTxt, config, de
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["staggerDurationMinSec"]["opt"]..nuiTxt[cat]["staggerDurationMinSec"]["optUnit"], nuiTxt[cat]["staggerDurationMinSec"]["des"], 0.0, 5.0, 0.05, "%.2f", config.warpDancer.staggerDurationMinSec, default.warpDancer.staggerDurationMinSec, function(value)
 		config.warpDancer.staggerDurationMinSec = value
-		applyWarpDancerStaggerPerTier()
-		applyWarpDancerCardValues()
+		applyWarpDancerStaggerPerTier(config)
+		applyWarpDancerCardValues(config)
 		saveSettings(config)
 	end))
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["staggerDurationMaxSec"]["opt"]..nuiTxt[cat]["staggerDurationMaxSec"]["optUnit"], nuiTxt[cat]["staggerDurationMaxSec"]["des"], 0.0, 5.0, 0.05, "%.2f", config.warpDancer.staggerDurationMaxSec, default.warpDancer.staggerDurationMaxSec, function(value)
 		config.warpDancer.staggerDurationMaxSec = value
-		applyWarpDancerStaggerPerTier()
-		applyWarpDancerCardValues()
+		applyWarpDancerStaggerPerTier(config)
+		applyWarpDancerCardValues(config)
 		saveSettings(config)
 	end))
 
 	return handles
 end
 
+local FALCON_TIER_FLATS = {
+	[1] = { item="Items.AdvancedSandevistanC4MK4",         dur="_inline22", ts="_inline23", rchrg="_inline24", critCh="_inline8",  critDmg="_inline9"  },
+	[2] = { item="Items.AdvancedSandevistanC4MK4Plus",     dur="_inline2",  ts="_inline3",  rchrg="_inline4",  critCh="_inline17", critDmg="_inline18" },
+	[3] = { item="Items.AdvancedSandevistanC4MK5",         dur="_inline2",  ts="_inline3",  rchrg="_inline4",  critCh="_inline17", critDmg="_inline18" },
+	[4] = { item="Items.AdvancedSandevistanC4MK5Plus",     dur="_inline2",  ts="_inline3",  rchrg="_inline4",  critCh="_inline17", critDmg="_inline18" },
+	[5] = { item="Items.AdvancedSandevistanC4MK5PlusPlus", dur="_inline2",  ts="_inline3",  rchrg="_inline4",  critCh="_inline17", critDmg="_inline18" },
+}
+
+local function applyFalconTweaks(config)
+	if config.falcon == nil or config.falcon.enabled == false then return end
+	local totalTiers = 5
+	for tier, flats in ipairs(FALCON_TIER_FLATS) do
+		local slowPct = lerpTier(config.falcon.slowTimeMinPct, config.falcon.slowTimeMaxPct, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.ts .. ".value", 1.0 - slowPct / 100.0)
+		local durSec = lerpTier(config.falcon.durationMin, config.falcon.durationMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.dur .. ".value", durSec)
+		local rchrgSec = lerpTier(config.falcon.rechargeMin, config.falcon.rechargeMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.rchrg .. ".value", rchrgSec)
+		local critChPct = lerpTier(config.falcon.critChanceMin, config.falcon.critChanceMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.critCh .. ".value", critChPct / 100.0)
+		local critDmgPct = lerpTier(config.falcon.critDmgMin, config.falcon.critDmgMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.critDmg .. ".value", critDmgPct / 100.0)
+	end
+end
+
+local function createFalconMechanic(nativeSettings, path, nuiTxt, config, default)
+	local handles = {}
+	local cat = "falcon"
+
+	applyFalconTweaks(config)
+
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMinPct"]["opt"]..nuiTxt[cat]["slowTimeMinPct"]["optUnit"], nuiTxt[cat]["slowTimeMinPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.falcon.slowTimeMinPct, default.falcon.slowTimeMinPct, function(value) config.falcon.slowTimeMinPct = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMaxPct"]["opt"]..nuiTxt[cat]["slowTimeMaxPct"]["optUnit"], nuiTxt[cat]["slowTimeMaxPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.falcon.slowTimeMaxPct, default.falcon.slowTimeMaxPct, function(value) config.falcon.slowTimeMaxPct = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.falcon.durationMin, default.falcon.durationMin, function(value) config.falcon.durationMin = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 1.0, 30.0, 0.5, "%.1f", config.falcon.durationMax, default.falcon.durationMax, function(value) config.falcon.durationMax = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMin"]["opt"]..nuiTxt[cat]["rechargeMin"]["optUnit"], nuiTxt[cat]["rechargeMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.falcon.rechargeMin, default.falcon.rechargeMin, function(value) config.falcon.rechargeMin = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMax"]["opt"]..nuiTxt[cat]["rechargeMax"]["optUnit"], nuiTxt[cat]["rechargeMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.falcon.rechargeMax, default.falcon.rechargeMax, function(value) config.falcon.rechargeMax = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critChanceMin"]["opt"]..nuiTxt[cat]["critChanceMin"]["optUnit"], nuiTxt[cat]["critChanceMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.falcon.critChanceMin, default.falcon.critChanceMin, function(value) config.falcon.critChanceMin = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critChanceMax"]["opt"]..nuiTxt[cat]["critChanceMax"]["optUnit"], nuiTxt[cat]["critChanceMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.falcon.critChanceMax, default.falcon.critChanceMax, function(value) config.falcon.critChanceMax = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critDmgMin"]["opt"]..nuiTxt[cat]["critDmgMin"]["optUnit"], nuiTxt[cat]["critDmgMin"]["des"], 0.0, 200.0, 1.0, "%.0f", config.falcon.critDmgMin, default.falcon.critDmgMin, function(value) config.falcon.critDmgMin = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critDmgMax"]["opt"]..nuiTxt[cat]["critDmgMax"]["optUnit"], nuiTxt[cat]["critDmgMax"]["des"], 0.0, 200.0, 1.0, "%.0f", config.falcon.critDmgMax, default.falcon.critDmgMax, function(value) config.falcon.critDmgMax = value applyFalconTweaks(config) saveSettings(config) end))
+
+	return handles
+end
+
+local APOGEE_TIER_FLATS = {
+	[1] = { item="Items.AdvancedSandevistanApogee",         dur="_inline19", ts="_inline20", rchrg="_inline21" },
+	[2] = { item="Items.AdvancedSandevistanApogeePlus",     dur="_inline18", ts="_inline19", rchrg="_inline20" },
+	[3] = { item="Items.AdvancedSandevistanApogeePlusPlus", dur="_inline18", ts="_inline19", rchrg="_inline20" },
+}
+
+local function applyApogeeTweaks(config)
+	if config.apogee == nil or config.apogee.enabled == false then return end
+	local totalTiers = 3
+	local apLocActive = TweakDB:GetFlat("Attunements.TDO_ApogeeLoc.localizedDescription")
+	if apLocActive ~= nil then apLocActive = tostring(apLocActive) end
+	for tier, flats in ipairs(APOGEE_TIER_FLATS) do
+		local slowPct = lerpTier(config.apogee.slowTimeMinPct, config.apogee.slowTimeMaxPct, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.ts .. ".value", 1.0 - slowPct / 100.0)
+		local durSec = lerpTier(config.apogee.durationMin, config.apogee.durationMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.dur .. ".value", durSec)
+		local rchrgSec = lerpTier(config.apogee.rechargeMin, config.apogee.rechargeMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.rchrg .. ".value", rchrgSec)
+		if apLocActive ~= nil then
+			TweakDB:SetFlat(flats.item .. "_inline1.localizedDescription", apLocActive)
+		end
+	end
+end
+
 local function createApogeeMechanic(nativeSettings, path, nuiTxt, config, default)
 	local handles = {}
 	local cat = "apogee"
+
+	applyApogeeTweaks(config)
+
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMinPct"]["opt"]..nuiTxt[cat]["slowTimeMinPct"]["optUnit"], nuiTxt[cat]["slowTimeMinPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.apogee.slowTimeMinPct, default.apogee.slowTimeMinPct, function(value) config.apogee.slowTimeMinPct = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMaxPct"]["opt"]..nuiTxt[cat]["slowTimeMaxPct"]["optUnit"], nuiTxt[cat]["slowTimeMaxPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.apogee.slowTimeMaxPct, default.apogee.slowTimeMaxPct, function(value) config.apogee.slowTimeMaxPct = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.apogee.durationMin, default.apogee.durationMin, function(value) config.apogee.durationMin = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 1.0, 30.0, 0.5, "%.1f", config.apogee.durationMax, default.apogee.durationMax, function(value) config.apogee.durationMax = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMin"]["opt"]..nuiTxt[cat]["rechargeMin"]["optUnit"], nuiTxt[cat]["rechargeMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.apogee.rechargeMin, default.apogee.rechargeMin, function(value) config.apogee.rechargeMin = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMax"]["opt"]..nuiTxt[cat]["rechargeMax"]["optUnit"], nuiTxt[cat]["rechargeMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.apogee.rechargeMax, default.apogee.rechargeMax, function(value) config.apogee.rechargeMax = value applyApogeeTweaks(config) saveSettings(config) end))
+
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainMultiplierCap"]["opt"]..nuiTxt[cat]["strainMultiplierCap"]["optUnit"], nuiTxt[cat]["strainMultiplierCap"]["des"], 1.0, 32.0, 0.5, "%.1f", config.apogee.strainMultiplierCap, default.apogee.strainMultiplierCap, function(value)
 		config.apogee.strainMultiplierCap = value
 		saveSettings(config)
@@ -157,64 +344,77 @@ local function createApogeeMechanic(nativeSettings, path, nuiTxt, config, defaul
 	return handles
 end
 
+local function applyFusilladeTweaks(config)
+	if config.fusillade == nil then return end
+	TweakDB:SetFlat("Items.TDO_Fusillade_TimeScale.value", config.fusillade.timeScale)
+	TweakDB:SetFlat("Items.TDO_Fusillade_Duration.value", config.fusillade.durationMin)
+	TweakDB:SetFlat("Items.TDO_FusilladePlus_Duration.value", config.fusillade.durationMax)
+	TweakDB:SetFlat("Items.TDO_Fusillade_Recharge.value", config.fusillade.cooldownMax)
+	TweakDB:SetFlat("Items.TDO_FusilladePlus_Recharge.value", config.fusillade.cooldownMin)
+	TweakDB:SetFlat("Items.TDO_Fusillade_RecoilKickMin.value", config.fusillade.recoil)
+	TweakDB:SetFlat("Items.TDO_Fusillade_RecoilKickMax.value", config.fusillade.recoil)
+end
+
 local function createFusilladeMechanic(nativeSettings, path, nuiTxt, config, default)
 	local handles = {}
 	local cat = "fusillade"
 
-	local function applyFusilladeTweaks()
-		TweakDB:SetFlat("Items.TDO_Fusillade_TimeScale.value", config.fusillade.timeScale)
-		TweakDB:SetFlat("Items.TDO_Fusillade_Duration.value", config.fusillade.durationMin)
-		TweakDB:SetFlat("Items.TDO_FusilladePlus_Duration.value", config.fusillade.durationMax)
-		TweakDB:SetFlat("Items.TDO_Fusillade_Recharge.value", config.fusillade.cooldownMax)
-		TweakDB:SetFlat("Items.TDO_FusilladePlus_Recharge.value", config.fusillade.cooldownMin)
-		TweakDB:SetFlat("Items.TDO_Fusillade_RecoilKickMin.value", config.fusillade.recoil)
-		TweakDB:SetFlat("Items.TDO_Fusillade_RecoilKickMax.value", config.fusillade.recoil)
-	end
-	applyFusilladeTweaks()
+	applyFusilladeTweaks(config)
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["timeScale"]["opt"]..nuiTxt[cat]["timeScale"]["optUnit"], nuiTxt[cat]["timeScale"]["des"], 0.01, 1.0, 0.01, "%.2f", config.fusillade.timeScale, default.fusillade.timeScale, function(value) config.fusillade.timeScale = value applyFusilladeTweaks() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["timeScale"]["opt"]..nuiTxt[cat]["timeScale"]["optUnit"], nuiTxt[cat]["timeScale"]["des"], 0.01, 1.0, 0.01, "%.2f", config.fusillade.timeScale, default.fusillade.timeScale, function(value) config.fusillade.timeScale = value applyFusilladeTweaks(config) saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.fusillade.durationMin, default.fusillade.durationMin, function(value) config.fusillade.durationMin = value applyFusilladeTweaks() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 1.0, 30.0, 0.5, "%.1f", config.fusillade.durationMax, default.fusillade.durationMax, function(value) config.fusillade.durationMax = value applyFusilladeTweaks() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.fusillade.durationMin, default.fusillade.durationMin, function(value) config.fusillade.durationMin = value applyFusilladeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 1.0, 30.0, 0.5, "%.1f", config.fusillade.durationMax, default.fusillade.durationMax, function(value) config.fusillade.durationMax = value applyFusilladeTweaks(config) saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.fusillade.cooldownMin, default.fusillade.cooldownMin, function(value) config.fusillade.cooldownMin = value applyFusilladeTweaks() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.fusillade.cooldownMax, default.fusillade.cooldownMax, function(value) config.fusillade.cooldownMax = value applyFusilladeTweaks() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.fusillade.cooldownMin, default.fusillade.cooldownMin, function(value) config.fusillade.cooldownMin = value applyFusilladeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.fusillade.cooldownMax, default.fusillade.cooldownMax, function(value) config.fusillade.cooldownMax = value applyFusilladeTweaks(config) saveSettings(config) end))
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["fireRateMult"]["opt"]..nuiTxt[cat]["fireRateMult"]["optUnit"], nuiTxt[cat]["fireRateMult"]["des"], 1.0, 4.0, 0.1, "%.1f", config.fusillade.fireRateMult, default.fusillade.fireRateMult, function(value) config.fusillade.fireRateMult = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rampStartMin"]["opt"]..nuiTxt[cat]["rampStartMin"]["optUnit"], nuiTxt[cat]["rampStartMin"]["des"], 0.0, 1.0, 0.05, "%.2f", config.fusillade.rampStartMin, default.fusillade.rampStartMin, function(value) config.fusillade.rampStartMin = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rampStartMax"]["opt"]..nuiTxt[cat]["rampStartMax"]["optUnit"], nuiTxt[cat]["rampStartMax"]["des"], 0.0, 1.0, 0.05, "%.2f", config.fusillade.rampStartMax, default.fusillade.rampStartMax, function(value) config.fusillade.rampStartMax = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rampStep"]["opt"]..nuiTxt[cat]["rampStep"]["optUnit"], nuiTxt[cat]["rampStep"]["des"], 0.0, 1.0, 0.05, "%.2f", config.fusillade.rampStep, default.fusillade.rampStep, function(value) config.fusillade.rampStep = value saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["recoil"]["opt"]..nuiTxt[cat]["recoil"]["optUnit"], nuiTxt[cat]["recoil"]["des"], 0.0, 3.0, 0.1, "%.1f", config.fusillade.recoil, default.fusillade.recoil, function(value) config.fusillade.recoil = value applyFusilladeTweaks() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["recoil"]["opt"]..nuiTxt[cat]["recoil"]["optUnit"], nuiTxt[cat]["recoil"]["des"], 0.0, 3.0, 0.1, "%.1f", config.fusillade.recoil, default.fusillade.recoil, function(value) config.fusillade.recoil = value applyFusilladeTweaks(config) saveSettings(config) end))
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["ammoRefillMaxChancePct"]["opt"]..nuiTxt[cat]["ammoRefillMaxChancePct"]["optUnit"], nuiTxt[cat]["ammoRefillMaxChancePct"]["des"], 0.0, 100.0, 1.0, "%.0f", config.fusillade.ammoRefillMaxChancePct, default.fusillade.ammoRefillMaxChancePct, function(value) config.fusillade.ammoRefillMaxChancePct = value saveSettings(config) end))
 
 	return handles
 end
 
+local function applyKurosawaTweaks(config)
+	if config.kurosawa == nil then return end
+	TweakDB:SetFlat("Items.TDO_Kurosawa_Duration.value", 999.0) -- buff cap
+	TweakDB:SetFlat("Items.TDO_Kurosawa_Recharge.value", config.kurosawa.cooldown)
+	TweakDB:SetFlat("Items.TDO_Kurosawa_DamageReduction.value", config.kurosawa.drMin)
+	TweakDB:SetFlat("Items.TDO_KurosawaPlus_DamageReduction.value", config.kurosawa.drMax)
+end
+
 local function createKurosawaMechanic(nativeSettings, path, nuiTxt, config, default)
 	local handles = {}
 	local cat = "kurosawa"
 
-	local function applyKurosawaTweaks()
-		TweakDB:SetFlat("Items.TDO_Kurosawa_Duration.value", 999.0) -- buff cap
-		TweakDB:SetFlat("Items.TDO_Kurosawa_Recharge.value", config.kurosawa.cooldown)
-		TweakDB:SetFlat("Items.TDO_Kurosawa_DamageReduction.value", config.kurosawa.drMin)
-		TweakDB:SetFlat("Items.TDO_KurosawaPlus_DamageReduction.value", config.kurosawa.drMax)
-	end
-	applyKurosawaTweaks()
+	applyKurosawaTweaks(config)
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["enemySlowMult"]["opt"]..nuiTxt[cat]["enemySlowMult"]["optUnit"], nuiTxt[cat]["enemySlowMult"]["des"], 0.01, 1.0, 0.01, "%.2f", config.kurosawa.enemySlowMult, default.kurosawa.enemySlowMult, function(value) config.kurosawa.enemySlowMult = value saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["duration"]["opt"]..nuiTxt[cat]["duration"]["optUnit"], nuiTxt[cat]["duration"]["des"], 1.0, 30.0, 0.5, "%.1f", config.kurosawa.duration, default.kurosawa.duration, function(value) config.kurosawa.duration = value applyKurosawaTweaks() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldown"]["opt"]..nuiTxt[cat]["cooldown"]["optUnit"], nuiTxt[cat]["cooldown"]["des"], 5.0, 120.0, 1.0, "%.0f", config.kurosawa.cooldown, default.kurosawa.cooldown, function(value) config.kurosawa.cooldown = value applyKurosawaTweaks() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["duration"]["opt"]..nuiTxt[cat]["duration"]["optUnit"], nuiTxt[cat]["duration"]["des"], 1.0, 30.0, 0.5, "%.1f", config.kurosawa.duration, default.kurosawa.duration, function(value) config.kurosawa.duration = value applyKurosawaTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldown"]["opt"]..nuiTxt[cat]["cooldown"]["optUnit"], nuiTxt[cat]["cooldown"]["des"], 5.0, 120.0, 1.0, "%.0f", config.kurosawa.cooldown, default.kurosawa.cooldown, function(value) config.kurosawa.cooldown = value applyKurosawaTweaks(config) saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["drMin"]["opt"]..nuiTxt[cat]["drMin"]["optUnit"], nuiTxt[cat]["drMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.kurosawa.drMin, default.kurosawa.drMin, function(value) config.kurosawa.drMin = value applyKurosawaTweaks() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["drMax"]["opt"]..nuiTxt[cat]["drMax"]["optUnit"], nuiTxt[cat]["drMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.kurosawa.drMax, default.kurosawa.drMax, function(value) config.kurosawa.drMax = value applyKurosawaTweaks() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["drMin"]["opt"]..nuiTxt[cat]["drMin"]["optUnit"], nuiTxt[cat]["drMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.kurosawa.drMin, default.kurosawa.drMin, function(value) config.kurosawa.drMin = value applyKurosawaTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["drMax"]["opt"]..nuiTxt[cat]["drMax"]["optUnit"], nuiTxt[cat]["drMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.kurosawa.drMax, default.kurosawa.drMax, function(value) config.kurosawa.drMax = value applyKurosawaTweaks(config) saveSettings(config) end))
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["healMin"]["opt"]..nuiTxt[cat]["healMin"]["optUnit"], nuiTxt[cat]["healMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.kurosawa.healMin, default.kurosawa.healMin, function(value) config.kurosawa.healMin = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["healMax"]["opt"]..nuiTxt[cat]["healMax"]["optUnit"], nuiTxt[cat]["healMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.kurosawa.healMax, default.kurosawa.healMax, function(value) config.kurosawa.healMax = value saveSettings(config) end))
 
 	return handles
+end
+
+local function applyJuggernautCooldowns(config)
+	if config.juggernaut == nil then return end
+	TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T1_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 1, 5))
+	TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T2_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 2, 5))
+	TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T3_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 3, 5))
+	TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T4_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 4, 5))
+	TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T5_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 5, 5))
 end
 
 local function createJuggernautMechanic(nativeSettings, path, nuiTxt, config, default)
@@ -230,19 +430,21 @@ local function createJuggernautMechanic(nativeSettings, path, nuiTxt, config, de
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["damageMultMin"]["opt"], nuiTxt[cat]["damageMultMin"]["des"], 0.5, 5.0, 0.05, "%.2f", config.juggernaut.damageMultMin, default.juggernaut.damageMultMin, function(value) config.juggernaut.damageMultMin = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["damageMultMax"]["opt"], nuiTxt[cat]["damageMultMax"]["des"], 0.5, 5.0, 0.05, "%.2f", config.juggernaut.damageMultMax, default.juggernaut.damageMultMax, function(value) config.juggernaut.damageMultMax = value saveSettings(config) end))
 
-	local function applyJuggernautCooldowns()
-		TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T1_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 1, 5))
-		TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T2_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 2, 5))
-		TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T3_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 3, 5))
-		TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T4_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 4, 5))
-		TweakDB:SetFlat("StatusEffects.TDO_JuggernautCooldown_T5_DurMod.value", lerpTier(config.juggernaut.cooldownMax, config.juggernaut.cooldownMin, 5, 5))
-	end
-	applyJuggernautCooldowns()
+	applyJuggernautCooldowns(config)
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.juggernaut.cooldownMin, default.juggernaut.cooldownMin, function(value) config.juggernaut.cooldownMin = value applyJuggernautCooldowns() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.juggernaut.cooldownMax, default.juggernaut.cooldownMax, function(value) config.juggernaut.cooldownMax = value applyJuggernautCooldowns() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.juggernaut.cooldownMin, default.juggernaut.cooldownMin, function(value) config.juggernaut.cooldownMin = value applyJuggernautCooldowns(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.juggernaut.cooldownMax, default.juggernaut.cooldownMax, function(value) config.juggernaut.cooldownMax = value applyJuggernautCooldowns(config) saveSettings(config) end))
 
 	return handles
+end
+
+local function applyPyrolithCooldowns(config)
+	if config.pyrolith == nil then return end
+	TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T1_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 1, 5))
+	TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T2_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 2, 5))
+	TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T3_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 3, 5))
+	TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T4_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 4, 5))
+	TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T5_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 5, 5))
 end
 
 local function createPyrolithMechanic(nativeSettings, path, nuiTxt, config, default)
@@ -258,19 +460,30 @@ local function createPyrolithMechanic(nativeSettings, path, nuiTxt, config, defa
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["clusterCountMin"]["opt"], nuiTxt[cat]["clusterCountMin"]["des"], 0.0, 10.0, 1.0, "%.0f", config.pyrolith.clusterCountMin, default.pyrolith.clusterCountMin, function(value) config.pyrolith.clusterCountMin = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["clusterCountMax"]["opt"], nuiTxt[cat]["clusterCountMax"]["des"], 0.0, 10.0, 1.0, "%.0f", config.pyrolith.clusterCountMax, default.pyrolith.clusterCountMax, function(value) config.pyrolith.clusterCountMax = value saveSettings(config) end))
 
-	local function applyPyrolithCooldowns()
-		TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T1_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 1, 5))
-		TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T2_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 2, 5))
-		TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T3_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 3, 5))
-		TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T4_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 4, 5))
-		TweakDB:SetFlat("StatusEffects.TDO_PyrolithCooldown_T5_DurMod.value", lerpTier(config.pyrolith.cooldownMax, config.pyrolith.cooldownMin, 5, 5))
-	end
-	applyPyrolithCooldowns()
+	applyPyrolithCooldowns(config)
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.pyrolith.cooldownMin, default.pyrolith.cooldownMin, function(value) config.pyrolith.cooldownMin = value applyPyrolithCooldowns() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.pyrolith.cooldownMax, default.pyrolith.cooldownMax, function(value) config.pyrolith.cooldownMax = value applyPyrolithCooldowns() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.pyrolith.cooldownMin, default.pyrolith.cooldownMin, function(value) config.pyrolith.cooldownMin = value applyPyrolithCooldowns(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.pyrolith.cooldownMax, default.pyrolith.cooldownMax, function(value) config.pyrolith.cooldownMax = value applyPyrolithCooldowns(config) saveSettings(config) end))
 
 	return handles
+end
+
+local function applyQuantumDurations(config)
+	if config.quantum == nil then return end
+	TweakDB:SetFlat("Items.TDO_Quantum_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 1, 5))
+	TweakDB:SetFlat("Items.TDO_QuantumPlus_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 2, 5))
+	TweakDB:SetFlat("Items.TDO_QuantumAdvanced_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 3, 5))
+	TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlus_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 4, 5))
+	TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlusPlus_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 5, 5))
+end
+
+local function applyQuantumRecharge(config)
+	if config.quantum == nil then return end
+	TweakDB:SetFlat("Items.TDO_Quantum_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 1, 5))
+	TweakDB:SetFlat("Items.TDO_QuantumPlus_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 2, 5))
+	TweakDB:SetFlat("Items.TDO_QuantumAdvanced_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 3, 5))
+	TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlus_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 4, 5))
+	TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlusPlus_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 5, 5))
 end
 
 local function createQuantumMechanic(nativeSettings, path, nuiTxt, config, default)
@@ -283,29 +496,17 @@ local function createQuantumMechanic(nativeSettings, path, nuiTxt, config, defau
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["plotFreezeStrength"]["opt"]..nuiTxt[cat]["plotFreezeStrength"]["optUnit"], nuiTxt[cat]["plotFreezeStrength"]["des"], 0.001, 0.05, 0.001, "%.3f", config.quantum.plotFreezeStrength, default.quantum.plotFreezeStrength, function(value) config.quantum.plotFreezeStrength = value saveSettings(config) end))
 
-	local function applyQuantumDurations()
-		TweakDB:SetFlat("Items.TDO_Quantum_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 1, 5))
-		TweakDB:SetFlat("Items.TDO_QuantumPlus_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 2, 5))
-		TweakDB:SetFlat("Items.TDO_QuantumAdvanced_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 3, 5))
-		TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlus_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 4, 5))
-		TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlusPlus_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 5, 5))
-	end
-	applyQuantumDurations()
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["playerSlowTimePct"]["opt"]..nuiTxt[cat]["playerSlowTimePct"]["optUnit"], nuiTxt[cat]["playerSlowTimePct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.quantum.playerSlowTimePct, default.quantum.playerSlowTimePct, function(value) config.quantum.playerSlowTimePct = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["malwareSlowTimePct"]["opt"]..nuiTxt[cat]["malwareSlowTimePct"]["optUnit"], nuiTxt[cat]["malwareSlowTimePct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.quantum.malwareSlowTimePct, default.quantum.malwareSlowTimePct, function(value) config.quantum.malwareSlowTimePct = value saveSettings(config) end))
 
-	local function applyQuantumRecharge()
-		TweakDB:SetFlat("Items.TDO_Quantum_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 1, 5))
-		TweakDB:SetFlat("Items.TDO_QuantumPlus_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 2, 5))
-		TweakDB:SetFlat("Items.TDO_QuantumAdvanced_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 3, 5))
-		TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlus_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 4, 5))
-		TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlusPlus_Recharge.value", lerpTier(config.quantum.cooldownMax, config.quantum.cooldownMin, 5, 5))
-	end
-	applyQuantumRecharge()
+	applyQuantumDurations(config)
+	applyQuantumRecharge(config)
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 0.5, 15.0, 0.25, "%.2f", config.quantum.durationMin, default.quantum.durationMin, function(value) config.quantum.durationMin = value applyQuantumDurations() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 0.5, 15.0, 0.25, "%.2f", config.quantum.durationMax, default.quantum.durationMax, function(value) config.quantum.durationMax = value applyQuantumDurations() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 0.5, 15.0, 0.25, "%.2f", config.quantum.durationMin, default.quantum.durationMin, function(value) config.quantum.durationMin = value applyQuantumDurations(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 0.5, 15.0, 0.25, "%.2f", config.quantum.durationMax, default.quantum.durationMax, function(value) config.quantum.durationMax = value applyQuantumDurations(config) saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 1.0, 120.0, 0.5, "%.1f", config.quantum.cooldownMin, default.quantum.cooldownMin, function(value) config.quantum.cooldownMin = value applyQuantumRecharge() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 1.0, 120.0, 0.5, "%.1f", config.quantum.cooldownMax, default.quantum.cooldownMax, function(value) config.quantum.cooldownMax = value applyQuantumRecharge() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 1.0, 120.0, 0.5, "%.1f", config.quantum.cooldownMin, default.quantum.cooldownMin, function(value) config.quantum.cooldownMin = value applyQuantumRecharge(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 1.0, 120.0, 0.5, "%.1f", config.quantum.cooldownMax, default.quantum.cooldownMax, function(value) config.quantum.cooldownMax = value applyQuantumRecharge(config) saveSettings(config) end))
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["teleportRangeMin"]["opt"]..nuiTxt[cat]["teleportRangeMin"]["optUnit"], nuiTxt[cat]["teleportRangeMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.quantum.teleportRangeMin, default.quantum.teleportRangeMin, function(value) config.quantum.teleportRangeMin = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["teleportRangeMax"]["opt"]..nuiTxt[cat]["teleportRangeMax"]["optUnit"], nuiTxt[cat]["teleportRangeMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.quantum.teleportRangeMax, default.quantum.teleportRangeMax, function(value) config.quantum.teleportRangeMax = value saveSettings(config) end))
@@ -319,49 +520,51 @@ local function createQuantumMechanic(nativeSettings, path, nuiTxt, config, defau
 	return handles
 end
 
+local function applySogimsuTweaks(config)
+	if config.sogimsu == nil then return end
+	TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T1_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 1, 7))
+	TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T2_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 2, 7))
+	TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T3_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 3, 7))
+	TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T4_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 4, 7))
+	TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T5_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 5, 7))
+	TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T6_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 6, 7))
+	TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T7_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 7, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedRare.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 1, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedRarePlus.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 2, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedEpic.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 3, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedEpicPlus.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 4, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedLegendary.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 5, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedLegendaryPlus.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 6, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedLegendaryPlusPlus.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 7, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgRare.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 1, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgRarePlus.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 2, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgEpic.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 3, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgEpicPlus.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 4, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgLegendary.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 5, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgLegendaryPlus.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 6, 7))
+	TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgLegendaryPlusPlus.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 7, 7))
+end
+
 local function createSogimsuMechanic(nativeSettings, path, nuiTxt, config, default)
 	local handles = {}
 	local cat = "sogimsu"
 
-	local function applySogimsuTweaks()
-		TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T1_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 1, 7))
-		TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T2_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 2, 7))
-		TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T3_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 3, 7))
-		TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T4_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 4, 7))
-		TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T5_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 5, 7))
-		TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T6_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 6, 7))
-		TweakDB:SetFlat("StatusEffects.TDO_SogimsuCooldown_T7_DurMod.value", lerpTier(config.sogimsu.cooldownMax, config.sogimsu.cooldownMin, 7, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedRare.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 1, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedRarePlus.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 2, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedEpic.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 3, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedEpicPlus.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 4, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedLegendary.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 5, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedLegendaryPlus.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 6, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_DetSpeedLegendaryPlusPlus.value", lerpTier(config.sogimsu.detSpeedMin, config.sogimsu.detSpeedMax, 7, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgRare.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 1, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgRarePlus.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 2, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgEpic.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 3, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgEpicPlus.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 4, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgLegendary.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 5, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgLegendaryPlus.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 6, 7))
-		TweakDB:SetFlat("Items.TDO_Sogimsu_StealthDmgLegendaryPlusPlus.value", lerpTier(config.sogimsu.stealthDmgMin, config.sogimsu.stealthDmgMax, 7, 7))
-	end
-	applySogimsuTweaks()
+	applySogimsuTweaks(config)
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.sogimsu.durationMin, default.sogimsu.durationMin, function(value) config.sogimsu.durationMin = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.sogimsu.durationMax, default.sogimsu.durationMax, function(value) config.sogimsu.durationMax = value saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.sogimsu.cooldownMin, default.sogimsu.cooldownMin, function(value) config.sogimsu.cooldownMin = value applySogimsuTweaks() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.sogimsu.cooldownMax, default.sogimsu.cooldownMax, function(value) config.sogimsu.cooldownMax = value applySogimsuTweaks() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.sogimsu.cooldownMin, default.sogimsu.cooldownMin, function(value) config.sogimsu.cooldownMin = value applySogimsuTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.sogimsu.cooldownMax, default.sogimsu.cooldownMax, function(value) config.sogimsu.cooldownMax = value applySogimsuTweaks(config) saveSettings(config) end))
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["interventionsMin"]["opt"], nuiTxt[cat]["interventionsMin"]["des"], 1.0, 20.0, 1.0, "%.0f", config.sogimsu.interventionsMin, default.sogimsu.interventionsMin, function(value) config.sogimsu.interventionsMin = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["interventionsMax"]["opt"], nuiTxt[cat]["interventionsMax"]["des"], 1.0, 20.0, 1.0, "%.0f", config.sogimsu.interventionsMax, default.sogimsu.interventionsMax, function(value) config.sogimsu.interventionsMax = value saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["detSpeedMin"]["opt"]..nuiTxt[cat]["detSpeedMin"]["optUnit"], nuiTxt[cat]["detSpeedMin"]["des"], 0.0, 200.0, 1.0, "%.0f", config.sogimsu.detSpeedMin, default.sogimsu.detSpeedMin, function(value) config.sogimsu.detSpeedMin = value applySogimsuTweaks() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["detSpeedMax"]["opt"]..nuiTxt[cat]["detSpeedMax"]["optUnit"], nuiTxt[cat]["detSpeedMax"]["des"], 0.0, 200.0, 1.0, "%.0f", config.sogimsu.detSpeedMax, default.sogimsu.detSpeedMax, function(value) config.sogimsu.detSpeedMax = value applySogimsuTweaks() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["detSpeedMin"]["opt"]..nuiTxt[cat]["detSpeedMin"]["optUnit"], nuiTxt[cat]["detSpeedMin"]["des"], 0.0, 200.0, 1.0, "%.0f", config.sogimsu.detSpeedMin, default.sogimsu.detSpeedMin, function(value) config.sogimsu.detSpeedMin = value applySogimsuTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["detSpeedMax"]["opt"]..nuiTxt[cat]["detSpeedMax"]["optUnit"], nuiTxt[cat]["detSpeedMax"]["des"], 0.0, 200.0, 1.0, "%.0f", config.sogimsu.detSpeedMax, default.sogimsu.detSpeedMax, function(value) config.sogimsu.detSpeedMax = value applySogimsuTweaks(config) saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["stealthDmgMin"]["opt"]..nuiTxt[cat]["stealthDmgMin"]["optUnit"], nuiTxt[cat]["stealthDmgMin"]["des"], 0.0, 200.0, 1.0, "%.0f", config.sogimsu.stealthDmgMin, default.sogimsu.stealthDmgMin, function(value) config.sogimsu.stealthDmgMin = value applySogimsuTweaks() saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["stealthDmgMax"]["opt"]..nuiTxt[cat]["stealthDmgMax"]["optUnit"], nuiTxt[cat]["stealthDmgMax"]["des"], 0.0, 200.0, 1.0, "%.0f", config.sogimsu.stealthDmgMax, default.sogimsu.stealthDmgMax, function(value) config.sogimsu.stealthDmgMax = value applySogimsuTweaks() saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["stealthDmgMin"]["opt"]..nuiTxt[cat]["stealthDmgMin"]["optUnit"], nuiTxt[cat]["stealthDmgMin"]["des"], 0.0, 200.0, 1.0, "%.0f", config.sogimsu.stealthDmgMin, default.sogimsu.stealthDmgMin, function(value) config.sogimsu.stealthDmgMin = value applySogimsuTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["stealthDmgMax"]["opt"]..nuiTxt[cat]["stealthDmgMax"]["optUnit"], nuiTxt[cat]["stealthDmgMax"]["des"], 0.0, 200.0, 1.0, "%.0f", config.sogimsu.stealthDmgMax, default.sogimsu.stealthDmgMax, function(value) config.sogimsu.stealthDmgMax = value applySogimsuTweaks(config) saveSettings(config) end))
 
 	return handles
 end
@@ -393,6 +596,44 @@ local function createCustomSandyShowHideMenu(nativeSettings, path, displayName, 
 	end, 1)
 
 	if config[showFlagKey] == true then
+		mechanicHandles = mechanicCreator(nativeSettings, path)
+	end
+end
+
+local function createVanillaSandyMenu(nativeSettings, path, displayName, nuiTxt, config, showFlagKey, enableConfigSection, enableLabel, enableDefault, mechanicCreator)
+	nativeSettings.addSubcategory(path, displayName)
+
+	local mechanicHandles = nil
+
+	local function clearMechanic()
+		if mechanicHandles ~= nil then
+			for i=1, #mechanicHandles, 1 do
+				nativeSettings.removeOption(mechanicHandles[i])
+				mechanicHandles[i] = nil
+			end
+			mechanicHandles = nil
+		end
+	end
+
+	nativeSettings.addButton(path, nuiTxt.showHide.opt, nuiTxt.showHide.des, nuiTxt.showHide.button, nuiTxt.showHide.textSize, function()
+		if config[showFlagKey] == true then
+			config[showFlagKey] = false
+			clearMechanic()
+		else
+			config[showFlagKey] = true
+			if mechanicCreator ~= nil then
+				mechanicHandles = mechanicCreator(nativeSettings, path)
+			end
+		end
+		saveSettings(config)
+	end, 1)
+
+	nativeSettings.addSwitch(path, enableLabel.opt, enableLabel.des, config[enableConfigSection].enabled, enableDefault, function(state)
+		config[enableConfigSection].enabled = state
+		saveSettings(config)
+	end)
+
+	if config[showFlagKey] == true and mechanicCreator ~= nil then
 		mechanicHandles = mechanicCreator(nativeSettings, path)
 	end
 end
@@ -474,12 +715,10 @@ registerForEvent("onInit", function()
 	print("[TDO] Time Dilation Overhaul " .. TDO_VERSION .. " loaded")
 	print("[TDO] Enemy Sandevistan Rework " .. ESR_VERSION .. " loaded")
 	Localizer.LoadLanguage()
-	TDOAbilityData = require("data/abilityData.lua")
 
 	if Game.GetPlayer() then
 		isLoaded = Game.GetPlayer():IsAttached() and not Game.GetSystemRequestsHandler():IsPreGame()
 	end
-	local nuiSandyParams = require("config/nUIParams.lua")
 
 	local hardCodedMods = require("config/externalMods.lua") or {}
 	for i, v in pairs(hardCodedMods) do
@@ -487,15 +726,6 @@ registerForEvent("onInit", function()
 	end
 
 	
-	sandys:DeleteStoredAbilityData()
-
-	for productLine, firstFlat in ipairs(sandyData) do
-		sandys:AddExistingProductLine(productLine, firstFlat, TDOAbilityData, AbilityDefs)
-	end
-	sandys.names[1] = Game.GetLocalizedTextByKey(CName.new("Item-TDO-C1Shrike-Name"))
-	sandys.names[2] = Game.GetLocalizedTextByKey(CName.new("Item-TDO-C2Tanto-Name"))
-	sandys.names[4] = Game.GetLocalizedTextByKey(CName.new("Item-TDO-Falcon-Name"))
-
 	nativeSettings = GetMod("nativeSettings")
 	if nativeSettings ~= nil then
 		config = loadSettings()
@@ -552,27 +782,30 @@ registerForEvent("onInit", function()
 			saveSettings(config)
 		end
 
-		
-		local skipLines = {}
-		if config.warpDancer.enabled == false then skipLines[3] = true end -- 3 = C3 WarpDancer (sandyData[3])
-		if config.zetatech.enabled == false then skipLines[1] = true end -- 1 = C1 Shrike (sandyData[1])
-		if config.tanto.enabled == false then skipLines[2] = true end -- 2 = C2 Tanto (sandyData[2])
-		if config.apogee.enabled == false then skipLines[5] = true end -- 5 = C5 Apogee (sandyData[5])
-		if config.falcon.enabled == false then skipLines[4] = true end -- 4 = C4 Falcon (sandyData[4])
-		sandys:ProcessAllAbilities(config, skipLines)
-		sandys:SaveAllAbilityData()
+		if migrateSandysToVanillaSandyKeys(config, oldVersion) then
+			saveSettings(config)
+		end
+
+		applyShrikeTweaks(config)
+		applyTantoTweaks(config)
+		applyWarpDancerTSDurRchrg(config)
+		applyWarpDancerStaggerPerTier(config)
+		applyWarpDancerMoveSpeed(config)
+		applyWarpDancerCardValues(config)
+		applyFalconTweaks(config)
+		applyApogeeTweaks(config)
+		applyFusilladeTweaks(config)
+		applyKurosawaTweaks(config)
+		applyJuggernautCooldowns(config)
+		applyPyrolithCooldowns(config)
+		applyQuantumDurations(config)
+		applyQuantumRecharge(config)
+		applySogimsuTweaks(config)
 
 		local nuiTxt = Localizer.GetTextWithKeys("nui", nil, nil, nil)
 
 		nativeSettings.addTab("/tdo", "TDO", function()
 			saveSettings(config)
-			local queueSkip = {}
-			if config.warpDancer.enabled == false then queueSkip[3] = true end -- 3 = C3 WarpDancer
-			if config.zetatech.enabled == false then queueSkip[1] = true end -- 1 = C1 Shrike
-			if config.tanto.enabled == false then queueSkip[2] = true end -- 2 = C2 Tanto
-			if config.apogee.enabled == false then queueSkip[5] = true end -- 5 = C5 Apogee
-			if config.falcon.enabled == false then queueSkip[4] = true end -- 4 = C4 Falcon
-			sandys:ProcessUpdateQueue(config, queueSkip)
 		end)
 
 		nativeSettings.addSubcategory("/tdo/note", nuiTxt["reloadWarning"])
@@ -642,6 +875,39 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "DOTMitigationRefStatCap;", function() return config.dot.mitigationRefStatCap end)
 		Override("TDOConfig", "DOTCanKill;", function() return config.dot.canKill end)
 
+		nativeSettings.addSubcategory("/tdo/bulletTrail", "Bullet Trails")
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 10% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 10%. Higher = faster bullet. The mod interpolates between adjacent TD-level sliders, so a Sandy slowing at 15% blends between this and the 20% slider. Defaults follow a 10-per-step ramp from 95 (at 10%) down to 5 (at 99%). All bullets in flight snap back to vanilla 90 m/s the moment Sandevistan ends.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at10, default.bulletTrail.at10, function(value) config.bulletTrail.at10 = value saveSettings(config) end)
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 20% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 20%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at20, default.bulletTrail.at20, function(value) config.bulletTrail.at20 = value saveSettings(config) end)
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 30% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 30%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at30, default.bulletTrail.at30, function(value) config.bulletTrail.at30 = value saveSettings(config) end)
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 40% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 40%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at40, default.bulletTrail.at40, function(value) config.bulletTrail.at40 = value saveSettings(config) end)
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 50% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 50%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at50, default.bulletTrail.at50, function(value) config.bulletTrail.at50 = value saveSettings(config) end)
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 60% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 60%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at60, default.bulletTrail.at60, function(value) config.bulletTrail.at60 = value saveSettings(config) end)
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 70% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 70%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at70, default.bulletTrail.at70, function(value) config.bulletTrail.at70 = value saveSettings(config) end)
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 80% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 80%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at80, default.bulletTrail.at80, function(value) config.bulletTrail.at80 = value saveSettings(config) end)
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 90% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 90%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at90, default.bulletTrail.at90, function(value) config.bulletTrail.at90 = value saveSettings(config) end)
+
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 99% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 99% (near-frozen). Lowest setting here = bullets crawl at the most extreme dilation.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at99, default.bulletTrail.at99, function(value) config.bulletTrail.at99 = value saveSettings(config) end)
+
+		Override("TDOConfig", "BulletTrailVelocityAt10;", function() return config.bulletTrail.at10 end)
+		Override("TDOConfig", "BulletTrailVelocityAt20;", function() return config.bulletTrail.at20 end)
+		Override("TDOConfig", "BulletTrailVelocityAt30;", function() return config.bulletTrail.at30 end)
+		Override("TDOConfig", "BulletTrailVelocityAt40;", function() return config.bulletTrail.at40 end)
+		Override("TDOConfig", "BulletTrailVelocityAt50;", function() return config.bulletTrail.at50 end)
+		Override("TDOConfig", "BulletTrailVelocityAt60;", function() return config.bulletTrail.at60 end)
+		Override("TDOConfig", "BulletTrailVelocityAt70;", function() return config.bulletTrail.at70 end)
+		Override("TDOConfig", "BulletTrailVelocityAt80;", function() return config.bulletTrail.at80 end)
+		Override("TDOConfig", "BulletTrailVelocityAt90;", function() return config.bulletTrail.at90 end)
+		Override("TDOConfig", "BulletTrailVelocityAt99;", function() return config.bulletTrail.at99 end)
+
 
 		cat = "sandyVFX"
 		nativeSettings.addSubcategory("/tdo/sandyVFX", nuiTxt[cat]["header"])
@@ -693,6 +959,11 @@ registerForEvent("onInit", function()
 			saveSettings(config)
 		end)
 
+		nativeSettings.addRangeFloat("/tdo/scanning", nuiTxt[cat]["gracePeriodSec"]["opt"]..nuiTxt[cat]["gracePeriodSec"]["optUnit"], nuiTxt[cat]["gracePeriodSec"]["des"], 0.1, 2.0, 0.1, "%.1f", config.scanning.gracePeriodSec, default.scanning.gracePeriodSec, function(value)
+			config.scanning.gracePeriodSec = value
+			saveSettings(config)
+		end)
+
 		nativeSettings.addRangeFloat("/tdo/scanning", nuiTxt[cat]["barPosX"]["opt"]..nuiTxt[cat]["barPosX"]["optUnit"], nuiTxt[cat]["barPosX"]["des"], 0.0, 3840.0, 5.0, "%.0f", config.scanning.barPosX, default.scanning.barPosX, function(value)
 			config.scanning.barPosX = value
 			saveSettings(config)
@@ -714,6 +985,7 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "ScanningBarPosX;", function() return config.scanning.barPosX end)
 		Override("TDOConfig", "ScanningBarPosY;", function() return config.scanning.barPosY end)
 		Override("TDOConfig", "ScanningIntScaleMax;", function() return config.scanning.intScaleMax end)
+		Override("TDOConfig", "ScanningGracePeriodSec;", function() return config.scanning.gracePeriodSec end)
 
 		cat = "vehicle"
 		nativeSettings.addSubcategory("/tdo/vehicle", nuiTxt[cat]["header"])
@@ -798,20 +1070,75 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "HerbieBikeYaw;", function() return config.vehicle.bikeYaw end)
 		Override("TDOConfig", "HerbieBikeGrip;", function() return config.vehicle.bikeGrip end)
 
-		local mechanicCreators = {
-			[1] = function(ns, p) return createShrikeMechanic(ns, p, nuiTxt, config, default) end,
-			[2] = function(ns, p) return createTantoMechanic(ns, p, nuiTxt, config, default) end,
-			[3] = function(ns, p) return createWarpDancerMechanic(ns, p, nuiTxt, config, default) end,
-			[5] = function(ns, p) return createApogeeMechanic(ns, p, nuiTxt, config, default) end,
-		}
-		local enableCreators = {
-			[1] = function(ns, p) ns.addSwitch(p, nuiTxt.zetatech.enabled.opt, nuiTxt.zetatech.enabled.des, config.zetatech.enabled, default.zetatech.enabled, function(state) config.zetatech.enabled = state saveSettings(config) end) end,
-			[2] = function(ns, p) ns.addSwitch(p, nuiTxt.tanto.enabled.opt, nuiTxt.tanto.enabled.des, config.tanto.enabled, default.tanto.enabled, function(state) config.tanto.enabled = state saveSettings(config) end) end,
-			[3] = function(ns, p) ns.addSwitch(p, nuiTxt.warpDancer.enabled.opt, nuiTxt.warpDancer.enabled.des, config.warpDancer.enabled, default.warpDancer.enabled, function(state) config.warpDancer.enabled = state saveSettings(config) end) end,
-			[4] = function(ns, p) ns.addSwitch(p, nuiTxt.falcon.enabled.opt, nuiTxt.falcon.enabled.des, config.falcon.enabled, default.falcon.enabled, function(state) config.falcon.enabled = state saveSettings(config) end) end,
-			[5] = function(ns, p) ns.addSwitch(p, nuiTxt.apogee.enabled.opt, nuiTxt.apogee.enabled.des, config.apogee.enabled, default.apogee.enabled, function(state) config.apogee.enabled = state saveSettings(config) end) end,
-		}
-		sandys:CreateNUIMenus(nativeSettings, nuiSandyParams, nuiTxt, config, default, options.sandys, mechanicCreators, enableCreators)
+		createVanillaSandyMenu(nativeSettings, "/tdo/shrike", nuiTxt.zetatech.header, nuiTxt, config, "zetatechShow", "zetatech", nuiTxt.zetatech.enabled, default.zetatech.enabled, function(ns, p)
+			return createShrikeMechanic(ns, p, nuiTxt, config, default)
+		end)
+
+		Override("TDOConfig", "ShrikeSlowTimeMinPct;", function() return config.zetatech.slowTimeMinPct end)
+		Override("TDOConfig", "ShrikeSlowTimeMaxPct;", function() return config.zetatech.slowTimeMaxPct end)
+		Override("TDOConfig", "ShrikeDurationMin;",    function() return config.zetatech.durationMin    end)
+		Override("TDOConfig", "ShrikeDurationMax;",    function() return config.zetatech.durationMax    end)
+		Override("TDOConfig", "ShrikeRechargeMin;",    function() return config.zetatech.rechargeMin    end)
+		Override("TDOConfig", "ShrikeRechargeMax;",    function() return config.zetatech.rechargeMax    end)
+
+		Override("TDOConfig", "TantoSlowTimeMinPct;", function() return config.tanto.slowTimeMinPct end)
+		Override("TDOConfig", "TantoSlowTimeMaxPct;", function() return config.tanto.slowTimeMaxPct end)
+		Override("TDOConfig", "TantoDurationMin;",    function() return config.tanto.durationMin    end)
+		Override("TDOConfig", "TantoDurationMax;",    function() return config.tanto.durationMax    end)
+		Override("TDOConfig", "TantoRechargeMin;",    function() return config.tanto.rechargeMin    end)
+		Override("TDOConfig", "TantoRechargeMax;",    function() return config.tanto.rechargeMax    end)
+		Override("TDOConfig", "TantoCritChanceMin;",  function() return config.tanto.critChanceMin  end)
+		Override("TDOConfig", "TantoCritChanceMax;",  function() return config.tanto.critChanceMax  end)
+		Override("TDOConfig", "TantoCritDmgMin;",     function() return config.tanto.critDmgMin     end)
+		Override("TDOConfig", "TantoCritDmgMax;",     function() return config.tanto.critDmgMax     end)
+
+		Override("TDOConfig", "WarpDancerSlowTimeMinPct;", function() return config.warpDancer.slowTimeMinPct end)
+		Override("TDOConfig", "WarpDancerSlowTimeMaxPct;", function() return config.warpDancer.slowTimeMaxPct end)
+		Override("TDOConfig", "WarpDancerDurationMin;",    function() return config.warpDancer.durationMin    end)
+		Override("TDOConfig", "WarpDancerDurationMax;",    function() return config.warpDancer.durationMax    end)
+		Override("TDOConfig", "WarpDancerRechargeMin;",    function() return config.warpDancer.rechargeMin    end)
+		Override("TDOConfig", "WarpDancerRechargeMax;",    function() return config.warpDancer.rechargeMax    end)
+		Override("TDOConfig", "WarpDancerMoveSpeedMin;",   function() return config.warpDancer.moveSpeedMin   end)
+		Override("TDOConfig", "WarpDancerMoveSpeedMax;",   function() return config.warpDancer.moveSpeedMax   end)
+
+		Override("TDOConfig", "FalconSlowTimeMinPct;", function() return config.falcon.slowTimeMinPct end)
+		Override("TDOConfig", "FalconSlowTimeMaxPct;", function() return config.falcon.slowTimeMaxPct end)
+		Override("TDOConfig", "FalconDurationMin;",    function() return config.falcon.durationMin    end)
+		Override("TDOConfig", "FalconDurationMax;",    function() return config.falcon.durationMax    end)
+		Override("TDOConfig", "FalconRechargeMin;",    function() return config.falcon.rechargeMin    end)
+		Override("TDOConfig", "FalconRechargeMax;",    function() return config.falcon.rechargeMax    end)
+		Override("TDOConfig", "FalconCritChanceMin;",  function() return config.falcon.critChanceMin  end)
+		Override("TDOConfig", "FalconCritChanceMax;",  function() return config.falcon.critChanceMax  end)
+		Override("TDOConfig", "FalconCritDmgMin;",     function() return config.falcon.critDmgMin     end)
+		Override("TDOConfig", "FalconCritDmgMax;",     function() return config.falcon.critDmgMax     end)
+
+		Override("TDOConfig", "ApogeeEnabled;",        function() return config.apogee.enabled end)
+		Override("TDOConfig", "ApogeeStrainMultiplierCap;", function() return config.apogee.strainMultiplierCap end)
+		Override("TDOConfig", "ApogeeSlowTimeMinPct;", function() return config.apogee.slowTimeMinPct end)
+		Override("TDOConfig", "ApogeeSlowTimeMaxPct;", function() return config.apogee.slowTimeMaxPct end)
+		Override("TDOConfig", "ApogeeDurationMin;",    function() return config.apogee.durationMin    end)
+		Override("TDOConfig", "ApogeeDurationMax;",    function() return config.apogee.durationMax    end)
+		Override("TDOConfig", "ApogeeRechargeMin;",    function() return config.apogee.rechargeMin    end)
+		Override("TDOConfig", "ApogeeRechargeMax;",    function() return config.apogee.rechargeMax    end)
+
+		Override("TDOConfig", "QuantumPlayerSlowTimePct;",  function() return config.quantum.playerSlowTimePct  end)
+		Override("TDOConfig", "QuantumMalwareSlowTimePct;", function() return config.quantum.malwareSlowTimePct end)
+
+		createVanillaSandyMenu(nativeSettings, "/tdo/tanto", nuiTxt.tanto.header, nuiTxt, config, "tantoShow", "tanto", nuiTxt.tanto.enabled, default.tanto.enabled, function(ns, p)
+			return createTantoMechanic(ns, p, nuiTxt, config, default)
+		end)
+
+		createVanillaSandyMenu(nativeSettings, "/tdo/warpDancer", nuiTxt.warpDancer.header, nuiTxt, config, "warpDancerShow", "warpDancer", nuiTxt.warpDancer.enabled, default.warpDancer.enabled, function(ns, p)
+			return createWarpDancerMechanic(ns, p, nuiTxt, config, default)
+		end)
+
+		createVanillaSandyMenu(nativeSettings, "/tdo/falcon", nuiTxt.falcon.header, nuiTxt, config, "falconShow", "falcon", nuiTxt.falcon.enabled, default.falcon.enabled, function(ns, p)
+			return createFalconMechanic(ns, p, nuiTxt, config, default)
+		end)
+
+		createVanillaSandyMenu(nativeSettings, "/tdo/apogee", nuiTxt.apogee.header, nuiTxt, config, "apogeeShow", "apogee", nuiTxt.apogee.enabled, default.apogee.enabled, function(ns, p)
+			return createApogeeMechanic(ns, p, nuiTxt, config, default)
+		end)
 
 		
 		createCustomSandyShowHideMenu(nativeSettings, "/tdo/fusillade", nuiTxt.fusillade.header, nuiTxt, config, "fusilladeShow", function(ns, p)

@@ -1,5 +1,54 @@
 local modName = "TDO"
 
+function migrateSandysToVanillaSandyKeys(config, oldVersion)
+	if oldVersion == nil or oldVersion >= 10.0 then return false end
+	if type(config.sandys) ~= "table" then return false end
+
+	local mapping = {
+		[1] = { section = "zetatech",   hasCrit = false },
+		[2] = { section = "tanto",      hasCrit = true  },
+		[3] = { section = "warpDancer", hasCrit = false },
+		[4] = { section = "falcon",     hasCrit = true  },
+		[5] = { section = "apogee",     hasCrit = false },
+	}
+
+	local copied = false
+	for sandyIdx, info in pairs(mapping) do
+		local src = config.sandys[sandyIdx]
+		local dst = config[info.section]
+		if type(src) == "table" and type(dst) == "table" then
+			if type(src.ts) == "table" then
+				if src.ts.min ~= nil then dst.slowTimeMinPct = src.ts.min; copied = true end
+				if src.ts.max ~= nil then dst.slowTimeMaxPct = src.ts.max; copied = true end
+			end
+			if type(src.dur) == "table" then
+				if src.dur.min ~= nil then dst.durationMin = src.dur.min; copied = true end
+				if src.dur.max ~= nil then dst.durationMax = src.dur.max; copied = true end
+			end
+			if type(src.rchrg) == "table" then
+				if src.rchrg.min ~= nil then dst.rechargeMin = src.rchrg.min; copied = true end
+				if src.rchrg.max ~= nil then dst.rechargeMax = src.rchrg.max; copied = true end
+			end
+			if info.hasCrit then
+				if type(src.critCh) == "table" then
+					if src.critCh.min ~= nil then dst.critChanceMin = src.critCh.min; copied = true end
+					if src.critCh.max ~= nil then dst.critChanceMax = src.critCh.max; copied = true end
+				end
+				if type(src.critDmg) == "table" then
+					if src.critDmg.min ~= nil then dst.critDmgMin = src.critDmg.min; copied = true end
+					if src.critDmg.max ~= nil then dst.critDmgMax = src.critDmg.max; copied = true end
+				end
+			end
+		end
+	end
+
+	config.sandys = nil
+	if copied then
+		print("[TDO] INFO: Migrated pre-v10.0 Sandy slider tunings to new per-Sandy keys.")
+	end
+	return copied
+end
+
 function ArraySize(tableArray)
 	local count = 0
 	for _ in pairs(tableArray) do count = count + 1 end

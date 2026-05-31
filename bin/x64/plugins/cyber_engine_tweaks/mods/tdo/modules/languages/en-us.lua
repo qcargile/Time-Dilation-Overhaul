@@ -55,7 +55,7 @@ return {
             header = "Dynalar \"Tanto\" Phantom Strike",
             enabled = {
                 opt = "Enabled",
-                des = "Master toggle for the Dynalar \"Tanto\" Sandevistan line (C2). When enabled, every C2 Tanto tier uses TDO's reworked stats, attunement, card text, and Phantom Strike. When disabled, all C2 Tanto tiers revert completely to vanilla stats, descriptions, and values. Toggling needs a save reload.",
+                des = "Master toggle for the Dynalar \"Tanto\" Sandevistan line (C2). When enabled, every C2 Tanto tier uses TDO's reworked stats, attunement, card text, and Phantom Strike. When disabled, all C2 Tanto tiers revert completely to vanilla stats, descriptions, and values. Toggling REQUIRES a full game relaunch (not just save-load) to take effect. Note: slider values also affect ENEMY netrunners using the same Sandy via ESR - combat difficulty scales with your player tunings.",
             },
             teleportBaseRange = {
                 opt = "Teleport Range (Min)",
@@ -66,6 +66,56 @@ return {
                 opt = "Teleport Range (Max)",
                 optUnit = " (m)",
                 des = "Hard cap on Phantom Strike teleport range regardless of Reflexes. Default 40m.",
+            },
+            slowTimeMinPct = {
+                opt = "Slow Time at MK1",
+                optUnit = " (%)",
+                des = "How much Tanto slows time at MK1 (Tier 1). Linear interp to Legendary++ across all 9 vanilla C2 tiers. Larger = stronger slow.",
+            },
+            slowTimeMaxPct = {
+                opt = "Slow Time at Legendary++",
+                optUnit = " (%)",
+                des = "How much Tanto slows time at MK4PlusPlus (Tier 9 / Legendary++).",
+            },
+            durationMin = {
+                opt = "Duration at MK1",
+                optUnit = " (sec)",
+                des = "Sandevistan active window at MK1. Linear interp to Legendary++ across the 9 tiers.",
+            },
+            durationMax = {
+                opt = "Duration at Legendary++",
+                optUnit = " (sec)",
+                des = "Sandevistan active window at MK4PlusPlus (Tier 9).",
+            },
+            rechargeMin = {
+                opt = "Cooldown at MK1",
+                optUnit = " (sec)",
+                des = "Recharge time at MK1. Linear interp to Legendary++ across the 9 tiers.",
+            },
+            rechargeMax = {
+                opt = "Cooldown at Legendary++",
+                optUnit = " (sec)",
+                des = "Recharge time at MK4PlusPlus (Tier 9).",
+            },
+            critChanceMin = {
+                opt = "Crit Chance at MK1",
+                optUnit = " (%)",
+                des = "Bonus Crit Chance while Tanto Sandy is active, at MK1. Linear interp to Legendary++ across the 9 tiers.",
+            },
+            critChanceMax = {
+                opt = "Crit Chance at Legendary++",
+                optUnit = " (%)",
+                des = "Bonus Crit Chance while Tanto Sandy is active, at MK4PlusPlus (Tier 9).",
+            },
+            critDmgMin = {
+                opt = "Crit Damage at MK1",
+                optUnit = " (%)",
+                des = "Bonus Crit Damage while Tanto Sandy is active, at MK1. Linear interp to Legendary++ across the 9 tiers.",
+            },
+            critDmgMax = {
+                opt = "Crit Damage at Legendary++",
+                optUnit = " (%)",
+                des = "Bonus Crit Damage while Tanto Sandy is active, at MK4PlusPlus (Tier 9).",
             },
         },
         sandyVFX = {
@@ -83,13 +133,19 @@ return {
             header = "Apogee Biological Strain",
             enabled = {
                 opt = "Enabled",
-                des = "Master toggle for the Apogee Sandevistan. When enabled, Apogee gains TDO's Biological Strain (each activation within 60s of the last stacks x2, decaying after 60s). When disabled, Apogee reverts completely to vanilla. Toggling needs a save reload.",
+                des = "Master toggle for the Apogee Sandevistan. Defaults to DISABLED - enable to gain TDO's Biological Strain (each activation within 60s of the last stacks x2, decaying after 60s), custom TDO card text, and slider-driven tier scaling. When disabled, Apogee reverts completely to vanilla card text and gameplay. Toggling REQUIRES a full game relaunch (not just save-load) to take effect. Note: slider values also affect ENEMY netrunners using the same Sandy via ESR - combat difficulty scales with your player tunings.",
             },
             strainMultiplierCap = {
                 opt = "Strain Multiplier Cap",
                 optUnit = "x",
                 des = "Maximum cumulative strain multiplier reached after stacking. Default 8.0x (3 stacks at x2 per stack).",
             },
+            slowTimeMinPct = { opt = "Slow Time at Base", optUnit = " (%)", des = "Slow % at Apogee base (Tier 1). Linear interp to PlusPlus across the 3 Apogee tiers." },
+            slowTimeMaxPct = { opt = "Slow Time at PlusPlus", optUnit = " (%)", des = "Slow % at ApogeePlusPlus (Tier 3)." },
+            durationMin = { opt = "Duration at Base", optUnit = " (sec)", des = "Max Sandevistan duration at Apogee base." },
+            durationMax = { opt = "Duration at PlusPlus", optUnit = " (sec)", des = "Max Sandevistan duration at ApogeePlusPlus." },
+            rechargeMin = { opt = "Cooldown at Base", optUnit = " (sec)", des = "Cooldown at Apogee base." },
+            rechargeMax = { opt = "Cooldown at PlusPlus", optUnit = " (sec)", des = "Cooldown at ApogeePlusPlus." },
         },
         fusillade = {
             header = "Raven \"Fusillade\" Sandevistan",
@@ -109,7 +165,7 @@ return {
             header = "QianT \"Warp Dancer\" Time Rewind",
             enabled = {
                 opt = "Enabled",
-                des = "Master toggle for the QianT \"Warp Dancer\" Sandevistan line (C3). When enabled, every C3 Warp Dancer tier uses TDO's reworked stats, attunement, card text, and Time Rewind. When disabled, all C3 Warp Dancer tiers revert completely to vanilla stats, descriptions, and values. Toggling needs a save reload.",
+                des = "Master toggle for the QianT \"Warp Dancer\" Sandevistan line (C3). When enabled, every C3 Warp Dancer tier uses TDO's reworked stats, attunement, card text, and Time Rewind. When disabled, all C3 Warp Dancer tiers revert completely to vanilla stats, descriptions, and values. Toggling REQUIRES a full game relaunch (not just save-load) to take effect. Note: slider values also affect ENEMY netrunners using the same Sandy via ESR - combat difficulty scales with your player tunings.",
             },
             moveSpeedMin = {
                 opt = "Move Speed Bonus (Lowest Tier)",
@@ -136,17 +192,53 @@ return {
                 optUnit = " (s)",
                 des = "Stagger duration on the lowest tier (MK3). Stagger linearly interpolates between MK3 (max) and MK5++ (min) across the 7 vanilla C3 tiers. Default 2.0s.",
             },
+            slowTimeMinPct = { opt = "Slow Time at MK3", optUnit = " (%)", des = "Slow % at MK3 (Tier 1). Linear interp to MK5++ across the 7 vanilla C3 tiers." },
+            slowTimeMaxPct = { opt = "Slow Time at MK5++", optUnit = " (%)", des = "Slow % at MK5++ (Tier 7)." },
+            durationMin = { opt = "Duration at MK3", optUnit = " (sec)", des = "Sandevistan active window at MK3." },
+            durationMax = { opt = "Duration at MK5++", optUnit = " (sec)", des = "Sandevistan active window at MK5++." },
+            rechargeMin = { opt = "Cooldown at MK3", optUnit = " (sec)", des = "Recharge time at MK3." },
+            rechargeMax = { opt = "Cooldown at MK5++", optUnit = " (sec)", des = "Recharge time at MK5++." },
         },
         zetatech = {
             header = "Zetatech \"Shrike\" Mark & Execute",
             enabled = {
                 opt = "Enabled",
-                des = "Master toggle for the Zetatech \"Shrike\" Sandevistan line (C1). When enabled, every C1 Shrike tier uses TDO's reworked stats, attunement, card text, and Mark & Execute. When disabled, all C1 Shrike tiers revert completely to vanilla stats, descriptions, and values. Toggling needs a save reload.",
+                des = "Master toggle for the Zetatech \"Shrike\" Sandevistan line (C1). When enabled, every C1 Shrike tier uses TDO's reworked stats, attunement, card text, and Mark & Execute. When disabled, all C1 Shrike tiers revert completely to vanilla stats, descriptions, and values. Toggling REQUIRES a full game relaunch (not just save-load) to take effect. Note: slider values also affect ENEMY netrunners using the same Sandy via ESR - combat difficulty scales with your player tunings.",
             },
             markRange = {
                 opt = "Mark Range",
                 optUnit = " (m)",
                 des = "Maximum distance a target can be marked. Beyond this range, no mark even with line of sight.",
+            },
+            slowTimeMinPct = {
+                opt = "Slow Time at MK1",
+                optUnit = " (%)",
+                des = "How much Shrike slows time at MK1 (Tier 1). Linear interp to Legendary++ across all 9 vanilla C1 tiers. Larger = stronger slow.",
+            },
+            slowTimeMaxPct = {
+                opt = "Slow Time at Legendary++",
+                optUnit = " (%)",
+                des = "How much Shrike slows time at MK4PlusPlus (Tier 9 / Legendary++).",
+            },
+            durationMin = {
+                opt = "Duration at MK1",
+                optUnit = " (sec)",
+                des = "Sandevistan active window at MK1. Linear interp to Legendary++ across the 9 tiers.",
+            },
+            durationMax = {
+                opt = "Duration at Legendary++",
+                optUnit = " (sec)",
+                des = "Sandevistan active window at MK4PlusPlus (Tier 9).",
+            },
+            rechargeMin = {
+                opt = "Cooldown at MK1",
+                optUnit = " (sec)",
+                des = "Recharge time at MK1. Linear interp to Legendary++ across the 9 tiers.",
+            },
+            rechargeMax = {
+                opt = "Cooldown at Legendary++",
+                optUnit = " (sec)",
+                des = "Recharge time at MK4PlusPlus (Tier 9).",
             },
             executeDmgTrash = { opt = "Damage vs Trash", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs Trash-tier enemies. 100 = instakill." },
             executeDmgWeak = { opt = "Damage vs Weak", optUnit = " (% maxHP)", des = "Percentage of target's max HP applied per execute shot vs Weak-tier enemies." },
@@ -161,8 +253,18 @@ return {
             header = "Militech \"Falcon\" Weapon-Type Bonus",
             enabled = {
                 opt = "Enabled",
-                des = "Master toggle for the Militech \"Falcon\" Sandevistan line (C4). When enabled, every C4 Falcon tier uses TDO's reworked stats, attunement, card text, and weapon-type bonuses (Power ricochet, Tech phase round, Smart saturation lock). When disabled, all C4 Falcon tiers revert completely to vanilla stats, descriptions, and values. Toggling needs a save reload.",
+                des = "Master toggle for the Militech \"Falcon\" Sandevistan line (C4). When enabled, every C4 Falcon tier uses TDO's reworked stats, attunement, card text, and weapon-type bonuses (Power ricochet, Tech phase round, Smart saturation lock). When disabled, all C4 Falcon tiers revert completely to vanilla stats, descriptions, and values. Toggling REQUIRES a full game relaunch (not just save-load) to take effect. Note: slider values also affect ENEMY netrunners using the same Sandy via ESR - combat difficulty scales with your player tunings.",
             },
+            slowTimeMinPct = { opt = "Slow Time at MK4", optUnit = " (%)", des = "Slow % at MK4 (Tier 1). Linear interp to MK5++ across the 5 vanilla C4 tiers." },
+            slowTimeMaxPct = { opt = "Slow Time at MK5++", optUnit = " (%)", des = "Slow % at MK5++ (Tier 5)." },
+            durationMin = { opt = "Duration at MK4", optUnit = " (sec)", des = "Sandevistan active window at MK4." },
+            durationMax = { opt = "Duration at MK5++", optUnit = " (sec)", des = "Sandevistan active window at MK5++." },
+            rechargeMin = { opt = "Cooldown at MK4", optUnit = " (sec)", des = "Recharge time at MK4." },
+            rechargeMax = { opt = "Cooldown at MK5++", optUnit = " (sec)", des = "Recharge time at MK5++." },
+            critChanceMin = { opt = "Crit Chance at MK4", optUnit = " (%)", des = "Crit Chance bonus while Falcon active, at MK4. Gameplay-only (not on card)." },
+            critChanceMax = { opt = "Crit Chance at MK5++", optUnit = " (%)", des = "Crit Chance bonus while Falcon active, at MK5++." },
+            critDmgMin = { opt = "Crit Damage at MK4", optUnit = " (%)", des = "Crit Damage bonus while Falcon active, at MK4. Gameplay-only (not on card)." },
+            critDmgMax = { opt = "Crit Damage at MK5++", optUnit = " (%)", des = "Crit Damage bonus while Falcon active, at MK5++." },
         },
         kurosawa = {
             header = "Fuyutsuki \"Kurosawa\" Sandevistan",
@@ -213,6 +315,8 @@ return {
             header = "MoorE \"Quantum\" Sandevistan",
             maxCharges = { opt = "Max Charges (Advanced Tier)", des = "Number of teleport activations Advanced Quantum banks before regen is needed. Default 2." },
             plotFreezeStrength = { opt = "Plot Freeze Strength", optUnit = "", des = "World time scale while aiming the teleport (0.001 = ~99.9% slow). Lower = closer to a full freeze. Default 0.001." },
+            playerSlowTimePct = { opt = "Player Slow Time", optUnit = " (%)", des = "World slow % displayed on the Quantum card while active. Default 99." },
+            malwareSlowTimePct = { opt = "Malware Slow Time", optUnit = " (%)", des = "Individual enemy slow % from Quantum Malware (displayed on card). Default 99." },
             durationMin = { opt = "Teleport Window (Min Tier)", optUnit = " (s)", des = "Teleport-aim window at the lowest tier. Intermediate tiers scale up toward the Max." },
             durationMax = { opt = "Teleport Window (Max Tier)", optUnit = " (s)", des = "Teleport-aim window at the highest tier." },
             cooldownMin = { opt = "Cooldown / Charge Regen (Min)", optUnit = " (s)", des = "Shortest cooldown (base item) / per-charge regen (Advanced), reached at the highest tier. Lower tiers scale up toward the Max." },
@@ -235,6 +339,7 @@ return {
             drainPerSec = { opt = "Resource Drain Per Second", des = "Fraction of the scanning bar drained per second while time dilation is active, at base Intelligence." },
             rechargePerSec = { opt = "Resource Recharge Per Second", des = "Fraction of the scanning bar refilled per second while time dilation is inactive, at base Intelligence." },
             intScaleMax = { opt = "Intelligence Duration/Recharge Multiplier", des = "At 20 Intelligence the bar lasts longer and recharges faster by up to this multiplier. 1.0 = no Intelligence benefit." },
+            gracePeriodSec = { opt = "Target Grace Period", optUnit = " (sec)", des = "How long time dilation persists after the cursor leaves a scannable. Smooths over the gap between targets so sweeping the scanner across a row of enemies doesn't jerk back and forth. Resets the moment the cursor lands on any new target." },
             barPosX = { opt = "Bar Screen Position X", optUnit = " (px)", des = "Horizontal position of the resource bar, on a 3840-wide virtual canvas scaled to your resolution." },
             barPosY = { opt = "Bar Screen Position Y", optUnit = " (px)", des = "Vertical position of the resource bar, on a 2160-tall virtual canvas scaled to your resolution." },
         },

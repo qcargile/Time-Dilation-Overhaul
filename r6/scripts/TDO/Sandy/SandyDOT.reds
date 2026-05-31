@@ -86,6 +86,15 @@ protected cb func OnTDO_SandyDOTTickEvent(evt: ref<TDO_SandyDOTTickEvent>) -> Bo
     return false;
   }
 
+  let bb: ref<IBlackboard> = this.GetPlayerStateMachineBlackboard();
+  if IsDefined(bb) {
+    let td: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.TimeDilation);
+    if td != EnumInt(gamePSMTimeDilation.Sandevistan) {
+      TDODebug("DOT", "tick saw PSM != Sandevistan, self-terminating");
+      return false;
+    }
+  }
+
   if this.m_warpDancerPhase != 0 {
     this.TDO_DOT_Reschedule(TDOConfig.DOTTickMaxInterval());
     return true;
@@ -179,4 +188,15 @@ protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<Stat
   }
   player.TDO_DOT_Cancel();
   TDODebug("DOT", "disarmed on Sandy exit");
+}
+
+@wrapMethod(SandevistanEvents)
+protected final func OnForcedExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if !IsDefined(player) {
+    return;
+  }
+  player.TDO_DOT_Cancel();
+  TDODebug("DOT", "disarmed on Sandy forced exit");
 }
