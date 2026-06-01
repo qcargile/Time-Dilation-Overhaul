@@ -10,7 +10,7 @@ local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
 
-local TDO_VERSION = "v0.4.1"
+local TDO_VERSION = "v0.5"
 local ESR_VERSION = "d2026.5.25"
 
 local function lerpTier(v1, vTop, tier, total)
@@ -784,6 +784,11 @@ registerForEvent("onInit", function()
 
 		local oldVersion = config.configVersion or 0
 
+		if oldVersion < 11.5 and config.vehicle ~= nil then
+			print("[TDO] INFO: Vehicle handling shipping defaults v11.5 — Car Turn Strength, Traction, Grip, and motorcycle sliders retuned to the new shipping defaults. Wiping vehicle.* to populate fresh values.")
+			config.vehicle = nil
+		end
+
 		if config.configVersion ~= default.configVersion then
 			print("[TDO] INFO: Updating existing config json to current config version.")
 			local tempConfig = require("config/userConfig.lua")
@@ -927,27 +932,28 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "DOTMitigationRefStatCap;", function() return config.dot.mitigationRefStatCap end)
 		Override("TDOConfig", "DOTCanKill;", function() return config.dot.canKill end)
 
-		nativeSettings.addSubcategory("/tdo/bulletTrail", "Bullet Trails")
+		cat = "bulletTrail"
+		nativeSettings.addSubcategory("/tdo/bulletTrail", nuiTxt[cat]["header"])
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 10% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 10%. Higher = faster bullet. The mod interpolates between adjacent TD-level sliders, so a Sandy slowing at 15% blends between this and the 20% slider. Defaults follow a 10-per-step ramp from 95 (at 10%) down to 5 (at 99%). All bullets in flight snap back to vanilla 90 m/s the moment Sandevistan ends.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at10, default.bulletTrail.at10, function(value) config.bulletTrail.at10 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at10"]["opt"]..nuiTxt[cat]["at10"]["optUnit"], nuiTxt[cat]["at10"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at10, default.bulletTrail.at10, function(value) config.bulletTrail.at10 = value saveSettings(config) end)
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 20% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 20%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at20, default.bulletTrail.at20, function(value) config.bulletTrail.at20 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at20"]["opt"]..nuiTxt[cat]["at20"]["optUnit"], nuiTxt[cat]["at20"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at20, default.bulletTrail.at20, function(value) config.bulletTrail.at20 = value saveSettings(config) end)
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 30% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 30%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at30, default.bulletTrail.at30, function(value) config.bulletTrail.at30 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at30"]["opt"]..nuiTxt[cat]["at30"]["optUnit"], nuiTxt[cat]["at30"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at30, default.bulletTrail.at30, function(value) config.bulletTrail.at30 = value saveSettings(config) end)
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 40% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 40%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at40, default.bulletTrail.at40, function(value) config.bulletTrail.at40 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at40"]["opt"]..nuiTxt[cat]["at40"]["optUnit"], nuiTxt[cat]["at40"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at40, default.bulletTrail.at40, function(value) config.bulletTrail.at40 = value saveSettings(config) end)
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 50% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 50%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at50, default.bulletTrail.at50, function(value) config.bulletTrail.at50 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at50"]["opt"]..nuiTxt[cat]["at50"]["optUnit"], nuiTxt[cat]["at50"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at50, default.bulletTrail.at50, function(value) config.bulletTrail.at50 = value saveSettings(config) end)
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 60% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 60%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at60, default.bulletTrail.at60, function(value) config.bulletTrail.at60 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at60"]["opt"]..nuiTxt[cat]["at60"]["optUnit"], nuiTxt[cat]["at60"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at60, default.bulletTrail.at60, function(value) config.bulletTrail.at60 = value saveSettings(config) end)
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 70% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 70%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at70, default.bulletTrail.at70, function(value) config.bulletTrail.at70 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at70"]["opt"]..nuiTxt[cat]["at70"]["optUnit"], nuiTxt[cat]["at70"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at70, default.bulletTrail.at70, function(value) config.bulletTrail.at70 = value saveSettings(config) end)
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 80% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 80%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at80, default.bulletTrail.at80, function(value) config.bulletTrail.at80 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at80"]["opt"]..nuiTxt[cat]["at80"]["optUnit"], nuiTxt[cat]["at80"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at80, default.bulletTrail.at80, function(value) config.bulletTrail.at80 = value saveSettings(config) end)
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 90% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 90%.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at90, default.bulletTrail.at90, function(value) config.bulletTrail.at90 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at90"]["opt"]..nuiTxt[cat]["at90"]["optUnit"], nuiTxt[cat]["at90"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at90, default.bulletTrail.at90, function(value) config.bulletTrail.at90 = value saveSettings(config) end)
 
-		nativeSettings.addRangeFloat("/tdo/bulletTrail", "Bullet speed at 99% TD (m/s)", "Bullet launch speed when the active Sandevistan slows the world by 99% (near-frozen). Lowest setting here = bullets crawl at the most extreme dilation.", 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at99, default.bulletTrail.at99, function(value) config.bulletTrail.at99 = value saveSettings(config) end)
+		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at99"]["opt"]..nuiTxt[cat]["at99"]["optUnit"], nuiTxt[cat]["at99"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at99, default.bulletTrail.at99, function(value) config.bulletTrail.at99 = value saveSettings(config) end)
 
 		Override("TDOConfig", "BulletTrailVelocityAt10;", function() return config.bulletTrail.at10 end)
 		Override("TDOConfig", "BulletTrailVelocityAt20;", function() return config.bulletTrail.at20 end)
@@ -1067,28 +1073,18 @@ registerForEvent("onInit", function()
 			saveSettings(config)
 		end)
 
-		nativeSettings.addRangeFloat("/tdo/vehicle", nuiTxt[cat]["gripForce"]["opt"], nuiTxt[cat]["gripForce"]["des"], 0.0, 5.0, 0.05, "%.2f", config.vehicle.gripForce, default.vehicle.gripForce, function(value)
+		nativeSettings.addRangeFloat("/tdo/vehicle", nuiTxt[cat]["carYaw"]["opt"], nuiTxt[cat]["carYaw"]["des"], 0.0, 10.0, 0.1, "%.1f", config.vehicle.carYaw, default.vehicle.carYaw, function(value)
+			config.vehicle.carYaw = value
+			saveSettings(config)
+		end)
+
+		nativeSettings.addRangeFloat("/tdo/vehicle", nuiTxt[cat]["traction"]["opt"], nuiTxt[cat]["traction"]["des"], 0.0, 5.0, 0.1, "%.1f", config.vehicle.traction, default.vehicle.traction, function(value)
+			config.vehicle.traction = value
+			saveSettings(config)
+		end)
+
+		nativeSettings.addRangeFloat("/tdo/vehicle", nuiTxt[cat]["gripForce"]["opt"], nuiTxt[cat]["gripForce"]["des"], 0.0, 2.0, 0.05, "%.2f", config.vehicle.gripForce, default.vehicle.gripForce, function(value)
 			config.vehicle.gripForce = value
-			saveSettings(config)
-		end)
-
-		nativeSettings.addRangeFloat("/tdo/vehicle", nuiTxt[cat]["damping"]["opt"], nuiTxt[cat]["damping"]["des"], 0.0, 3.0, 0.05, "%.2f", config.vehicle.damping, default.vehicle.damping, function(value)
-			config.vehicle.damping = value
-			saveSettings(config)
-		end)
-
-		nativeSettings.addRangeFloat("/tdo/vehicle", nuiTxt[cat]["steerLead"]["opt"], nuiTxt[cat]["steerLead"]["des"], 0.0, 2.0, 0.05, "%.2f", config.vehicle.steerLead, default.vehicle.steerLead, function(value)
-			config.vehicle.steerLead = value
-			saveSettings(config)
-		end)
-
-		nativeSettings.addRangeFloat("/tdo/vehicle", nuiTxt[cat]["slipThreshold"]["opt"], nuiTxt[cat]["slipThreshold"]["des"], 0.0, 4.0, 0.1, "%.1f", config.vehicle.slipThreshold, default.vehicle.slipThreshold, function(value)
-			config.vehicle.slipThreshold = value
-			saveSettings(config)
-		end)
-
-		nativeSettings.addRangeFloat("/tdo/vehicle", nuiTxt[cat]["maxImpulse"]["opt"], nuiTxt[cat]["maxImpulse"]["des"], 1000.0, 40000.0, 500.0, "%.0f", config.vehicle.maxImpulse, default.vehicle.maxImpulse, function(value)
-			config.vehicle.maxImpulse = value
 			saveSettings(config)
 		end)
 
@@ -1114,13 +1110,11 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "HerbieWorldScaleEpic;", function() return config.vehicle.worldScaleEpic end)
 		Override("TDOConfig", "HerbieWorldScaleLegendary;", function() return config.vehicle.worldScaleLegendary end)
 		Override("TDOConfig", "HerbieGripForce;", function() return config.vehicle.gripForce end)
-		Override("TDOConfig", "HerbieDamping;", function() return config.vehicle.damping end)
-		Override("TDOConfig", "HerbieSteerLead;", function() return config.vehicle.steerLead end)
-		Override("TDOConfig", "HerbieSlipThreshold;", function() return config.vehicle.slipThreshold end)
-		Override("TDOConfig", "HerbieMaxImpulse;", function() return config.vehicle.maxImpulse end)
 		Override("TDOConfig", "HerbieDownforce;", function() return config.vehicle.downforce end)
 		Override("TDOConfig", "HerbieBikeYaw;", function() return config.vehicle.bikeYaw end)
 		Override("TDOConfig", "HerbieBikeGrip;", function() return config.vehicle.bikeGrip end)
+		Override("TDOConfig", "HerbieCarYaw;", function() return config.vehicle.carYaw end)
+		Override("TDOConfig", "HerbieTraction;", function() return config.vehicle.traction end)
 
 		createVanillaSandyMenu(nativeSettings, "/tdo/shrike", nuiTxt.zetatech.header, nuiTxt, config, "zetatechShow", "zetatech", nuiTxt.zetatech.enabled, default.zetatech.enabled, function(ns, p)
 			return createShrikeMechanic(ns, p, nuiTxt, config, default)

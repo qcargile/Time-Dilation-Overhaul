@@ -254,6 +254,14 @@ public class TDOConfig {
     return 0.0;
   }
 
+  public static func ShrikeUnmarkHoverTime() -> Float {
+    return 1.0; // wall-clock seconds to confirm unmark
+  }
+
+  public static func ShrikeRemarkCooldown() -> Float {
+    return 5.0; // wall-clock seconds before a just-unmarked target is taggable again
+  }
+
   public static func ShrikeMarkRange() -> Float {
     return 30.0;
   }
@@ -712,7 +720,7 @@ public class TDOConfig {
   }
 
   public static func HerbieTickInterval() -> Float {
-    return 0.05;
+    return 0.025; // 40Hz sampling; impulses auto-scale via dtScale = tickInterval/0.05
   }
 
   public static func HerbieWorldScaleUncommon() -> Float {
@@ -732,35 +740,31 @@ public class TDOConfig {
   }
 
   public static func HerbieGripForce() -> Float {
-    return 2.0; // velocity-slew gain toward steered heading
-  }
-
-  public static func HerbieDamping() -> Float {
-    return 0.25; // derivative damping on lateral-slip rate
-  }
-
-  public static func HerbieSteerLead() -> Float {
-    return 0.10; // steering-input lead toward target heading
-  }
-
-  public static func HerbieSlipThreshold() -> Float {
-    return 0.5; // m/s heading error allowed before correcting
+    return 0.20; // P-gain on lateral velocity error (kills drift)
   }
 
   public static func HerbieMaxImpulse() -> Float {
-    return 1000.0; // per-tick correction clamp
+    return 1000.0; // bike-side per-impulse cap (cars use hardcoded 5000 in ApplyImpulses)
   }
 
   public static func HerbieDownforce() -> Float {
-    return 0.10; // optional supplemental plant, range 0-1
+    return 0.20; // optional supplemental plant, range 0-1
   }
 
   public static func HerbieBikeYaw() -> Float {
-    return 1.0; // motorcycle steer-gated yaw-couple strength
+    return 0.2; // motorcycle steer-gated yaw-couple strength
   }
 
   public static func HerbieBikeGrip() -> Float {
-    return 0.5; // motorcycle lateral-slip grip while steering
+    return 1.0; // motorcycle lateral-slip grip while steering
+  }
+
+  public static func HerbieCarYaw() -> Float {
+    return 0.4; // car steer-gated yaw-couple strength
+  }
+
+  public static func HerbieTraction() -> Float {
+    return 4.0; // forward momentum preservation during turns; restoration rate cap 2.0 × traction m/s/sec
   }
 
 
@@ -802,6 +806,42 @@ public class TDOConfig {
 
   public static func QuantumMarkerLift() -> Float {
     return 0.1; // teleport landing lift off hit surface, meters
+  }
+
+  public static func QuantumTeleportGroundSearchBudget() -> Float {
+    return 3.0; // downward floor search budget, meters
+  }
+
+  public static func QuantumTeleportGroundSearchStartLift() -> Float {
+    return 0.5; // start downward raycast above raw aim point, meters
+  }
+
+  public static func QuantumTeleportCapsuleWidth() -> Float {
+    return 0.5; // player capsule width for overlap check, meters
+  }
+
+  public static func QuantumTeleportCapsuleHeight() -> Float {
+    return 1.9; // player capsule height for overlap check, meters
+  }
+
+  public static func QuantumTeleportCapsuleClearance() -> Float {
+    return 0.1; // foot-to-box-bottom gap during overlap check, meters
+  }
+
+  public static func QuantumTeleportNavmeshSnapRadius() -> Float {
+    return 0.5; // navmesh point search radius, meters
+  }
+
+  public static func QuantumTeleportFloorNormalMinZ() -> Float {
+    return 0.7; // floor normal Z minimum, rejects walls and steep slopes
+  }
+
+  public static func QuantumTeleportFallbackNearOffset() -> Float {
+    return 0.5; // first fallback search offset, meters
+  }
+
+  public static func QuantumTeleportFallbackFarOffset() -> Float {
+    return 1.0; // second fallback search offset, meters
   }
 
 
