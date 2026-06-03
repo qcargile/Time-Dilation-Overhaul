@@ -105,23 +105,62 @@ public func TDO_Falcon_GetNearbyHostiles(player: ref<PlayerPuppet>, range: Float
   return result;
 }
 
+public func TDO_Falcon_GetHostilesNearPoint(player: ref<PlayerPuppet>, center: Vector4, radius: Float) -> array<wref<NPCPuppet>> {
+  let result: array<wref<NPCPuppet>>;
+  let targetingSystem: ref<TargetingSystem> = GameInstance.GetTargetingSystem(player.GetGame());
+  let playerPos: Vector4 = player.GetWorldPosition();
+  let playerToCenter: Float = Vector4.Distance(playerPos, center);
+  let query: TargetSearchQuery = TSQ_NPC();
+  query.maxDistance = playerToCenter + radius + 2.0;
+  query.filterObjectByDistance = true;
+  query.testedSet = TargetingSet.Complete;
+
+  let parts: array<TS_TargetPartInfo>;
+  targetingSystem.GetTargetParts(player, query, parts);
+
+  let seen: array<EntityID>;
+  let i: Int32 = 0;
+  while i < ArraySize(parts) {
+    let comp: wref<TargetingComponent> = TS_TargetPartInfo.GetComponent(parts[i]);
+    if IsDefined(comp) {
+      let entity: wref<Entity> = comp.GetEntity();
+      let npc: wref<NPCPuppet> = entity as NPCPuppet;
+      if IsDefined(npc) && !npc.IsDead() && npc.IsHostile() && !ArrayContains(seen, npc.GetEntityID()) {
+        let npcPos: Vector4 = npc.GetWorldPosition();
+        if Vector4.Distance(npcPos, center) <= radius {
+          ArrayPush(result, npc);
+          ArrayPush(seen, npc.GetEntityID());
+        }
+      }
+    }
+    i += 1;
+  }
+  return result;
+}
+
 public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<WeaponObject>) -> Void {
   if TDO_IsPlayerInVehicle(player) {
     return;
   }
   let gi: GameInstance = player.GetGame();
   let camera: ref<FPPCameraComponent> = player.GetFPPCameraComponent();
+  if !IsDefined(camera) { return; }
   let camMatrix: Matrix = camera.GetLocalToWorld();
   let camPos: Vector4 = Matrix.GetTranslation(camMatrix);
   let camFwd: Vector4 = Vector4.Normalize(Matrix.GetDirectionVector(camMatrix));
-  let lineEnd: Vector4 = camPos + (camFwd * 100.0);
+  let endPos: Vector4 = camPos + (camFwd * 100.0);
 
-  let hostiles: array<wref<NPCPuppet>> = TDO_Falcon_GetOnLineHostiles(player, camPos, lineEnd, TDOConfig.FalconPhaseRoundLineRadius());
-  if ArraySize(hostiles) == 0 {
-    TDODebug("Falcon", "Phase Round: no hostiles on line, no-op");
-    return;
+  let queries: ref<SpatialQueriesSystem> = GameInstance.GetSpatialQueriesSystem(gi);
+  let tr: TraceResult;
+  let didHit: Bool = queries.SyncRaycastByCollisionPreset(camPos, endPos, n"World Static", tr, true);
+  let impactPos: Vector4;
+  if didHit {
+    impactPos = Cast<Vector4>(tr.position);
+  } else {
+    impactPos = endPos;
   }
-  TDOInfo("Falcon", "Phase Round fired, " + ToString(ArraySize(hostiles)) + " on line");
+
+  TDOInfo("FalconBolt", s"Bolt fired, impact distance=\(Vector4.Distance(camPos, impactPos))");
 
   GameObjectEffectHelper.StartEffectEvent(player, n"blackwall_use_force");
   GameObjectEffectHelper.StartEffectEvent(player, n"laser_targetting");
@@ -129,26 +168,14 @@ public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<Wea
   GameObjectEffectHelper.StartEffectEvent(weapon, n"trail_electric");
   GameObjectEffectHelper.StartEffectEvent(weapon, n"emp_hit");
 
-  let statsSystem: ref<StatsSystem> = GameInstance.GetStatsSystem(gi);
-  let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(gi);
-  let weaponID: StatsObjectID = Cast<StatsObjectID>(weapon.GetEntityID());
-  let baseDamage: Float = statsSystem.GetStatValue(weaponID, gamedataStatType.EffectiveDamagePerHit);
-  let mult: Float = TDOConfig.FalconPhaseRoundDamageMultiplier();
   let playerID: EntityID = player.GetEntityID();
-
   let lineIDs: array<EntityID>;
+
+  let lineHostiles: array<wref<NPCPuppet>> = TDO_Falcon_GetOnLineHostiles(player, camPos, endPos, TDOConfig.FalconPhaseRoundLineRadius());
   let i: Int32 = 0;
-  while i < ArraySize(hostiles) {
-    let npc: wref<NPCPuppet> = hostiles[i];
+  while i < ArraySize(lineHostiles) {
+    let npc: wref<NPCPuppet> = lineHostiles[i];
     let npcID: EntityID = npc.GetEntityID();
-    let damage: Float = baseDamage * mult;
-    let npcMaxHP: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(npcID), gamedataStatType.Health);
-    let xpPct: Float = 100.0;
-    if npcMaxHP > 0.0 {
-      xpPct = MinF(100.0, (damage / npcMaxHP) * 100.0);
-    }
-    TDO_Falcon_GrantKillCredit(player, npc, weapon, xpPct);
-    pools.RequestChangingStatPoolValue(Cast<StatsObjectID>(npcID), gamedataStatPoolType.Health, -damage, player, false, false);
     StatusEffectHelper.ApplyStatusEffect(npc, t"BaseStatusEffect.Electrocuted", playerID);
     StatusEffectHelper.ApplyStatusEffect(npc, t"BaseStatusEffect.EMP", playerID);
     GameObjectEffectHelper.StartEffectEvent(npc, n"weakspot_destroyed");
@@ -160,6 +187,7 @@ public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<Wea
     ArrayPush(lineIDs, npcID);
     i += 1;
   }
+  TDOInfo("FalconBolt", s"Line: \(ArraySize(lineHostiles)) NPC(s) tagged with EMP/Electrocuted");
 
   let nearby: array<wref<NPCPuppet>> = TDO_Falcon_GetNearbyHostiles(player, 25.0);
   let j: Int32 = 0;
@@ -172,7 +200,48 @@ public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<Wea
     j += 1;
   }
 
-  let maxHealth: Float = statsSystem.GetStatValue(Cast<StatsObjectID>(playerID), gamedataStatType.Health);
+  let empRecord: ref<Attack_Record> = TweakDBInterface.GetAttackRecord(t"Attacks.TDO_FalconBoltEMP");
+  if !IsDefined(empRecord) {
+    TDOWarn("FalconBolt", "Attacks.TDO_FalconBoltEMP missing");
+  } else {
+    let empHostiles: array<wref<NPCPuppet>> = TDO_Falcon_GetHostilesNearPoint(player, impactPos, 4.0);
+    let damageSys: ref<DamageSystem> = GameInstance.GetDamageSystem(gi);
+    let empCount: Int32 = 0;
+    let k: Int32 = 0;
+    while k < ArraySize(empHostiles) {
+      let target: wref<NPCPuppet> = empHostiles[k];
+      let targetID: EntityID = target.GetEntityID();
+      if !ArrayContains(lineIDs, targetID) {
+        let attackContext: AttackInitContext;
+        attackContext.record = empRecord;
+        attackContext.instigator = player;
+        attackContext.source = player;
+        attackContext.weapon = weapon;
+        let attack: ref<IAttack> = IAttack.Create(attackContext);
+
+        let hit: ref<gameHitEvent> = new gameHitEvent();
+        hit.attackData = new AttackData();
+        hit.target = target;
+        hit.attackData.SetAttackDefinition(attack);
+        hit.attackData.SetSource(player);
+        hit.attackData.SetInstigator(player);
+        hit.attackData.SetWeapon(weapon);
+        damageSys.QueueHitEvent(hit, target);
+
+        StatusEffectHelper.ApplyStatusEffect(target, t"BaseStatusEffect.EMP", playerID);
+        StatusEffectHelper.ApplyStatusEffect(target, t"BaseStatusEffect.Electrocuted", playerID);
+        GameObjectEffectHelper.StartEffectEvent(target, n"emp_hit");
+        GameObjectEffectHelper.StartEffectEvent(target, n"weakspot_overload");
+        empCount += 1;
+      }
+      k += 1;
+    }
+    TDOInfo("FalconBolt", s"EMP impact: \(empCount) hit, \(ArraySize(empHostiles) - empCount) filtered as line overlap");
+  }
+
+  let stats: ref<StatsSystem> = GameInstance.GetStatsSystem(gi);
+  let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(gi);
+  let maxHealth: Float = stats.GetStatValue(Cast<StatsObjectID>(playerID), gamedataStatType.Health);
   let selfDamage: Float = maxHealth * TDOConfig.FalconPhaseRoundSelfDamagePercent();
   pools.RequestChangingStatPoolValue(Cast<StatsObjectID>(playerID), gamedataStatPoolType.Health, -selfDamage, player, false, false);
 }
