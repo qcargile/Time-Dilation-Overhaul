@@ -172,9 +172,61 @@ public func TDO_Tanto_ExecuteTeleport(player: ref<PlayerPuppet>, target: ref<NPC
   targetForward.Z = 0.0;
   targetForward = Vector4.Normalize(targetForward);
   let offset: Float = TDOConfig.TantoTeleportBehindOffset();
-  let finalPos: Vector4 = targetPos - (targetForward * offset);
-  finalPos.Z = targetPos.Z;
-  let finalRot: EulerAngles = Vector4.ToRotation(targetForward);
+  let primary: Vector4 = targetPos - (targetForward * offset);
+  primary.Z = targetPos.Z;
+
+  let qs: ref<SpatialQueriesSystem> = GameInstance.GetSpatialQueriesSystem(player.GetGame());
+  let finalPos: Vector4 = primary;
+  let candidate: Vector4;
+  let accepted: Bool = false;
+  if IsDefined(qs) {
+    if TDO_Quantum_TryCandidate(player, qs, primary, 0.0, candidate) {
+      finalPos = candidate;
+      accepted = true;
+    } else {
+      let front: Vector4 = targetPos + (targetForward * offset);
+      front.Z = targetPos.Z;
+      if TDO_Quantum_TryCandidate(player, qs, front, 0.0, candidate) {
+        finalPos = candidate;
+        accepted = true;
+        TDODebug("Tanto", "Phantom Strike: behind blocked, used in-front fallback");
+      } else {
+        let right: Vector4 = Vector4.Cross(targetForward, new Vector4(0.0, 0.0, 1.0, 0.0));
+        right = Vector4.Normalize(right);
+        let rightPos: Vector4 = targetPos + (right * offset);
+        rightPos.Z = targetPos.Z;
+        if TDO_Quantum_TryCandidate(player, qs, rightPos, 0.0, candidate) {
+          finalPos = candidate;
+          accepted = true;
+          TDODebug("Tanto", "Phantom Strike: behind/front blocked, used right-side fallback");
+        } else {
+          let leftPos: Vector4 = targetPos - (right * offset);
+          leftPos.Z = targetPos.Z;
+          if TDO_Quantum_TryCandidate(player, qs, leftPos, 0.0, candidate) {
+            finalPos = candidate;
+            accepted = true;
+            TDODebug("Tanto", "Phantom Strike: behind/front/right blocked, used left-side fallback");
+          } else {
+            finalPos = targetPos;
+            accepted = true;
+            TDOWarn("Tanto", "Phantom Strike: all 4 sides blocked, landing on target position (overlap accepted)");
+          }
+        }
+      }
+    }
+  }
+  if !accepted {
+    TDOWarn("Tanto", "Phantom Strike: no SpatialQueriesSystem, using raw behind-target");
+  }
+
+  let faceDir: Vector4 = targetPos - finalPos;
+  faceDir.Z = 0.0;
+  if Vector4.Length(faceDir) < 0.01 {
+    faceDir = targetForward;
+  }
+  faceDir = Vector4.Normalize(faceDir);
+  let finalRot: EulerAngles = Vector4.ToRotation(faceDir);
+
   GameInstance.GetTeleportationFacility(player.GetGame()).Teleport(player, finalPos, finalRot);
   TDOInfo("Tanto", "Phantom Strike teleport behind id=" + ToString(target.GetEntityID()));
   GameObjectEffectHelper.StartEffectEvent(player, n"dash");

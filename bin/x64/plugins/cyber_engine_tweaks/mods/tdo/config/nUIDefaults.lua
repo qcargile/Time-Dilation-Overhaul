@@ -140,6 +140,7 @@ return {
 		useVanilla = false,
 	},
 	bulletTrail = {
+		enabled = true,
 		at10 = 95.0,
 		at20 = 85.0,
 		at30 = 75.0,
