@@ -340,6 +340,26 @@ public class TDOConfig {
     return 0.15;
   }
 
+  public static func FalconBoltEMPDamage_T1() -> Float {
+    return 200.0;
+  }
+
+  public static func FalconBoltEMPDamage_T2() -> Float {
+    return 400.0;
+  }
+
+  public static func FalconBoltEMPDamage_T3() -> Float {
+    return 600.0;
+  }
+
+  public static func FalconBoltEMPDamage_T4() -> Float {
+    return 800.0;
+  }
+
+  public static func FalconBoltEMPDamage_T5() -> Float {
+    return 1000.0;
+  }
+
   
   public static func FalconTrickShotEnabled() -> Bool {
     return true;

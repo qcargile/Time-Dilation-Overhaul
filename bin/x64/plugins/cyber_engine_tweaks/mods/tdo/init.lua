@@ -278,6 +278,16 @@ local function applyFalconTweaks(config)
 		local critDmgPct = lerpTier(config.falcon.critDmgMin, config.falcon.critDmgMax, tier, totalTiers)
 		TweakDB:SetFlat(flats.item .. flats.critDmg .. ".value", critDmgPct / 100.0)
 	end
+	TweakDB:SetFlat("Attacks.TDO_FalconBoltEMP_MK4_Damage.value",        config.falcon.boltEMPDamageT1)
+	TweakDB:SetFlat("Attacks.TDO_FalconBoltEMP_MK4Plus_Damage.value",    config.falcon.boltEMPDamageT2)
+	TweakDB:SetFlat("Attacks.TDO_FalconBoltEMP_MK5_Damage.value",        config.falcon.boltEMPDamageT3)
+	TweakDB:SetFlat("Attacks.TDO_FalconBoltEMP_MK5Plus_Damage.value",    config.falcon.boltEMPDamageT4)
+	TweakDB:SetFlat("Attacks.TDO_FalconBoltEMP_MK5PlusPlus_Damage.value", config.falcon.boltEMPDamageT5)
+	TweakDB:Update("Attacks.TDO_FalconBoltEMP_MK4")
+	TweakDB:Update("Attacks.TDO_FalconBoltEMP_MK4Plus")
+	TweakDB:Update("Attacks.TDO_FalconBoltEMP_MK5")
+	TweakDB:Update("Attacks.TDO_FalconBoltEMP_MK5Plus")
+	TweakDB:Update("Attacks.TDO_FalconBoltEMP_MK5PlusPlus")
 end
 
 local function createFalconMechanic(nativeSettings, path, nuiTxt, config, default)
@@ -296,6 +306,11 @@ local function createFalconMechanic(nativeSettings, path, nuiTxt, config, defaul
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critChanceMax"]["opt"]..nuiTxt[cat]["critChanceMax"]["optUnit"], nuiTxt[cat]["critChanceMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.falcon.critChanceMax, default.falcon.critChanceMax, function(value) config.falcon.critChanceMax = value applyFalconTweaks(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critDmgMin"]["opt"]..nuiTxt[cat]["critDmgMin"]["optUnit"], nuiTxt[cat]["critDmgMin"]["des"], 0.0, 200.0, 1.0, "%.0f", config.falcon.critDmgMin, default.falcon.critDmgMin, function(value) config.falcon.critDmgMin = value applyFalconTweaks(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critDmgMax"]["opt"]..nuiTxt[cat]["critDmgMax"]["optUnit"], nuiTxt[cat]["critDmgMax"]["des"], 0.0, 200.0, 1.0, "%.0f", config.falcon.critDmgMax, default.falcon.critDmgMax, function(value) config.falcon.critDmgMax = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["boltEMPDamageT1"]["opt"]..nuiTxt[cat]["boltEMPDamageT1"]["optUnit"], nuiTxt[cat]["boltEMPDamageT1"]["des"], 0.0, 2000.0, 25.0, "%.0f", config.falcon.boltEMPDamageT1, default.falcon.boltEMPDamageT1, function(value) config.falcon.boltEMPDamageT1 = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["boltEMPDamageT2"]["opt"]..nuiTxt[cat]["boltEMPDamageT2"]["optUnit"], nuiTxt[cat]["boltEMPDamageT2"]["des"], 0.0, 2000.0, 25.0, "%.0f", config.falcon.boltEMPDamageT2, default.falcon.boltEMPDamageT2, function(value) config.falcon.boltEMPDamageT2 = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["boltEMPDamageT3"]["opt"]..nuiTxt[cat]["boltEMPDamageT3"]["optUnit"], nuiTxt[cat]["boltEMPDamageT3"]["des"], 0.0, 2000.0, 25.0, "%.0f", config.falcon.boltEMPDamageT3, default.falcon.boltEMPDamageT3, function(value) config.falcon.boltEMPDamageT3 = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["boltEMPDamageT4"]["opt"]..nuiTxt[cat]["boltEMPDamageT4"]["optUnit"], nuiTxt[cat]["boltEMPDamageT4"]["des"], 0.0, 2000.0, 25.0, "%.0f", config.falcon.boltEMPDamageT4, default.falcon.boltEMPDamageT4, function(value) config.falcon.boltEMPDamageT4 = value applyFalconTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["boltEMPDamageT5"]["opt"]..nuiTxt[cat]["boltEMPDamageT5"]["optUnit"], nuiTxt[cat]["boltEMPDamageT5"]["des"], 0.0, 2000.0, 25.0, "%.0f", config.falcon.boltEMPDamageT5, default.falcon.boltEMPDamageT5, function(value) config.falcon.boltEMPDamageT5 = value applyFalconTweaks(config) saveSettings(config) end))
 
 	return handles
 end
@@ -1157,6 +1172,11 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "FalconCritChanceMax;",  function() return config.falcon.critChanceMax  end)
 		Override("TDOConfig", "FalconCritDmgMin;",     function() return config.falcon.critDmgMin     end)
 		Override("TDOConfig", "FalconCritDmgMax;",     function() return config.falcon.critDmgMax     end)
+		Override("TDOConfig", "FalconBoltEMPDamage_T1;", function() return config.falcon.boltEMPDamageT1 end)
+		Override("TDOConfig", "FalconBoltEMPDamage_T2;", function() return config.falcon.boltEMPDamageT2 end)
+		Override("TDOConfig", "FalconBoltEMPDamage_T3;", function() return config.falcon.boltEMPDamageT3 end)
+		Override("TDOConfig", "FalconBoltEMPDamage_T4;", function() return config.falcon.boltEMPDamageT4 end)
+		Override("TDOConfig", "FalconBoltEMPDamage_T5;", function() return config.falcon.boltEMPDamageT5 end)
 
 		Override("TDOConfig", "ApogeeEnabled;",        function() return config.apogee.enabled end)
 		Override("TDOConfig", "ApogeeStrainMultiplierCap;", function() return config.apogee.strainMultiplierCap end)
