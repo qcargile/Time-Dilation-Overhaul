@@ -332,10 +332,6 @@ public class TDOConfig {
     return true;
   }
 
-  public static func FalconPhaseRoundDamageMultiplier() -> Float {
-    return 1.5;
-  }
-
   public static func FalconPhaseRoundLineRadius() -> Float {
     return 2.0;
   }

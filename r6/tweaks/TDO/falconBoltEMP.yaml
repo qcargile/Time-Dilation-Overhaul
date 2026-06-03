@@ -1,0 +1,3 @@
+Attacks.TDO_FalconBoltEMP:
+  $base: Attacks.PlasmaProjectileEMP
+  range: 4
