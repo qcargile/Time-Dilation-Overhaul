@@ -24,14 +24,6 @@ public func TDO_Falcon_GrantKillCredit(player: ref<PlayerPuppet>, npc: wref<NPCP
   RPGManager.AwardExperienceFromDamage(hit, damagePercent);
 }
 
-public func TDO_Falcon_IsWeaponFullyCharged(weapon: ref<WeaponObject>, scriptInterface: ref<StateGameScriptInterface>) -> Bool {
-  let chargeValue: Float = scriptInterface.GetStatPoolsSystem().GetStatPoolValue(
-    Cast<StatsObjectID>(weapon.GetEntityID()),
-    gamedataStatPoolType.WeaponCharge,
-    false);
-  return chargeValue >= WeaponObject.GetBaseMaxChargeThreshold(weapon);
-}
-
 public func TDO_Falcon_GetOnLineHostiles(player: ref<PlayerPuppet>, lineStart: Vector4, lineEnd: Vector4, lineRadius: Float) -> array<wref<NPCPuppet>> {
   let result: array<wref<NPCPuppet>>;
   let playerPos: Vector4 = lineStart;
@@ -138,13 +130,36 @@ public func TDO_Falcon_GetHostilesNearPoint(player: ref<PlayerPuppet>, center: V
   return result;
 }
 
+public func TDO_Falcon_SpawnImpactExplosion(player: ref<PlayerPuppet>, impactPos: Vector4) -> Void {
+  let fxSystem: ref<FxSystem> = GameInstance.GetFxSystem(player.GetGame());
+  if !IsDefined(fxSystem) {
+    TDOWarn("FalconBolt", "impact explosion fx skipped (no FxSystem)");
+    return;
+  }
+  let raRef: ResourceAsyncRef = new ResourceAsyncRef();
+  ResourceAsyncRef.SetPath(raRef, r"base\\fx\\weapons\\cyberware\\microgenerator_emp_explosion.effect");
+  let fxRes: FxResource;
+  fxRes.effect = raRef;
+  let pos: WorldPosition;
+  WorldPosition.SetVector4(pos, impactPos);
+  let transform: WorldTransform;
+  WorldTransform.SetWorldPosition(transform, pos);
+  WorldTransform.SetOrientationFromDir(transform, player.GetWorldForward());
+  fxSystem.SpawnEffect(fxRes, transform, true);
+  TDOInfo("FalconBolt", "spawned EMP explosion VFX at impact");
+}
+
 public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<WeaponObject>) -> Void {
   if TDO_IsPlayerInVehicle(player) {
+    TDODebug("FalconBolt", "abort — player in vehicle");
     return;
   }
   let gi: GameInstance = player.GetGame();
   let camera: ref<FPPCameraComponent> = player.GetFPPCameraComponent();
-  if !IsDefined(camera) { return; }
+  if !IsDefined(camera) {
+    TDOWarn("FalconBolt", "abort — no FPP camera");
+    return;
+  }
   let camMatrix: Matrix = camera.GetLocalToWorld();
   let camPos: Vector4 = Matrix.GetTranslation(camMatrix);
   let camFwd: Vector4 = Vector4.Normalize(Matrix.GetDirectionVector(camMatrix));
@@ -160,13 +175,15 @@ public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<Wea
     impactPos = endPos;
   }
 
-  TDOInfo("FalconBolt", s"Bolt fired, impact distance=\(Vector4.Distance(camPos, impactPos))");
+  TDOInfo("FalconBolt", s"FirePhaseRound — impactDist=\(Vector4.Distance(camPos, impactPos)), didRaycast=\(didHit)");
 
   GameObjectEffectHelper.StartEffectEvent(player, n"blackwall_use_force");
   GameObjectEffectHelper.StartEffectEvent(player, n"laser_targetting");
   GameObjectEffectHelper.StartEffectEvent(player, n"trail_electric");
   GameObjectEffectHelper.StartEffectEvent(weapon, n"trail_electric");
   GameObjectEffectHelper.StartEffectEvent(weapon, n"emp_hit");
+
+  TDO_Falcon_SpawnImpactExplosion(player, impactPos);
 
   let playerID: EntityID = player.GetEntityID();
   let lineIDs: array<EntityID>;
@@ -187,18 +204,21 @@ public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<Wea
     ArrayPush(lineIDs, npcID);
     i += 1;
   }
-  TDOInfo("FalconBolt", s"Line: \(ArraySize(lineHostiles)) NPC(s) tagged with EMP/Electrocuted");
+  TDOInfo("FalconBolt", s"Line scan: \(ArraySize(lineHostiles)) NPC(s) tagged");
 
   let nearby: array<wref<NPCPuppet>> = TDO_Falcon_GetNearbyHostiles(player, 25.0);
+  let bystanderCount: Int32 = 0;
   let j: Int32 = 0;
   while j < ArraySize(nearby) {
     let bystander: wref<NPCPuppet> = nearby[j];
     if !ArrayContains(lineIDs, bystander.GetEntityID()) {
       GameObjectEffectHelper.StartEffectEvent(bystander, n"weakspot_overload");
       GameObjectEffectHelper.StartEffectEvent(bystander, n"emp_hit");
+      bystanderCount += 1;
     }
     j += 1;
   }
+  TDOInfo("FalconBolt", s"Bystander VFX applied to \(bystanderCount) NPC(s) within 25m");
 
   let empRecord: ref<Attack_Record> = TweakDBInterface.GetAttackRecord(t"Attacks.TDO_FalconBoltEMP");
   if !IsDefined(empRecord) {
@@ -244,25 +264,73 @@ public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<Wea
   let maxHealth: Float = stats.GetStatValue(Cast<StatsObjectID>(playerID), gamedataStatType.Health);
   let selfDamage: Float = maxHealth * TDOConfig.FalconPhaseRoundSelfDamagePercent();
   pools.RequestChangingStatPoolValue(Cast<StatsObjectID>(playerID), gamedataStatPoolType.Health, -selfDamage, player, false, false);
+  TDOInfo("FalconBolt", s"Self-damage applied: \(selfDamage) HP (\(TDOConfig.FalconPhaseRoundSelfDamagePercent() * 100.0)% of \(maxHealth))");
+}
+
+@wrapMethod(SandevistanEvents)
+protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if !IsDefined(player) { return; }
+  if !TDO_Falcon_IsEquipped(player) { return; }
+  StatusEffectHelper.ApplyStatusEffect(player, t"StatusEffects.TDO_FalconBoltPierce", player.GetEntityID());
+  TDOInfo("FalconBolt", "Pierce SE applied on Falcon sandy enter");
+}
+
+@wrapMethod(SandevistanEvents)
+protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if !IsDefined(player) { return; }
+  StatusEffectHelper.RemoveStatusEffect(player, t"StatusEffects.TDO_FalconBoltPierce");
+  TDOInfo("FalconBolt", "Pierce SE removed on sandy exit");
+}
+
+@wrapMethod(SandevistanEvents)
+protected final func OnForcedExit(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if !IsDefined(player) { return; }
+  StatusEffectHelper.RemoveStatusEffect(player, t"StatusEffects.TDO_FalconBoltPierce");
+  TDOInfo("FalconBolt", "Pierce SE removed on sandy forced exit");
 }
 
 @wrapMethod(ShootEvents)
 protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  let weapon: ref<WeaponObject> = TDO_Falcon_GetHeldWeapon(player);
+  let shouldFire: Bool = false;
+  let gateReason: String = "ok";
+
+  if !TDOConfig.FalconPhaseRoundEnabled() {
+    gateReason = "config disabled";
+  } else if !IsDefined(player) {
+    gateReason = "no player";
+  } else if !IsDefined(weapon) {
+    gateReason = "no weapon";
+  } else if !TDO_Falcon_IsSandyActive(player) {
+    gateReason = "sandy not active";
+  } else if !TDO_Falcon_IsEquipped(player) {
+    gateReason = "Falcon not equipped";
+  } else if !TDO_Falcon_IsTechWeapon(weapon) {
+    gateReason = "not tech weapon";
+  } else {
+    let hasPerfectChargeSE: Bool = StatusEffectSystem.ObjectHasStatusEffectWithTag(player, n"PerfectChargeIndication");
+    let chargeNormalized: Float = WeaponObject.GetWeaponChargeNormalized(weapon);
+    let chargePool: Float = scriptInterface.GetStatPoolsSystem().GetStatPoolValue(Cast<StatsObjectID>(weapon.GetEntityID()), gamedataStatPoolType.WeaponCharge, false);
+    TDOInfo("FalconBolt", s"Wrap entry — perfectChargeSE=\(hasPerfectChargeSE), chargeNorm=\(chargeNormalized), chargePool=\(chargePool)");
+    if hasPerfectChargeSE {
+      shouldFire = true;
+      gateReason = "bolt detected (PerfectChargeIndication SE)";
+    } else {
+      gateReason = "no PerfectChargeIndication SE — not a bolt";
+    }
+  }
+  TDOInfo("FalconBolt", s"ShootEvents.OnEnter gate: \(gateReason)");
+
   wrappedMethod(stateContext, scriptInterface);
 
-  if !TDOConfig.FalconPhaseRoundEnabled() { return; }
-
-  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
-  if !IsDefined(player) { return; }
-
-  if !TDO_Falcon_IsSandyActive(player) { return; }
-  if !TDO_Falcon_IsEquipped(player) { return; }
-
-  let weapon: ref<WeaponObject> = TDO_Falcon_GetHeldWeapon(player);
-  if !IsDefined(weapon) { return; }
-
-  if !TDO_Falcon_IsTechWeapon(weapon) { return; }
-  if !TDO_Falcon_IsWeaponFullyCharged(weapon, scriptInterface) { return; }
-
-  TDO_Falcon_FirePhaseRound(player, weapon);
+  if shouldFire {
+    TDO_Falcon_FirePhaseRound(player, weapon);
+  }
 }

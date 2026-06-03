@@ -1,0 +1,106 @@
+StatusEffects.TDO_FalconBoltPierce:
+  $type: gamedataStatusEffect_Record
+  duration: StatusEffects.TDO_FalconBoltPierce_Dur
+  dynamicDuration: False
+  isAffectedByTimeDilationNPC: False
+  isAffectedByTimeDilationPlayer: False
+  maxStacks: RTDB.StatusEffect_inline0
+  reapplyPackagesOnMaxStacks: False
+  removeAllStacksWhenDurationEnds: False
+  removeOnStoryTier: False
+  replicated: False
+  savable: False
+  statusEffectType: BaseStatusEffectTypes.Misc
+  stopActiveSfxOnDeactivate: False
+  debugTags: []
+  gameplayTags:
+    - Buff
+  immunityStats: []
+  packages: []
+  SFX: []
+  VFX: []
+  uiData:
+    $type: gamedataStatusEffectUIData_Record
+    displayName: LocKey#94149
+    description: LocKey#94149
+    iconPath: blank
+    priority: 10
+    floatValues: []
+    intValues: []
+    nameValues: []
+    stats: []
+
+StatusEffects.TDO_FalconBoltPierce_Dur:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_FalconBoltPierce_DurMod
+
+StatusEffects.TDO_FalconBoltPierce_DurMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxDuration
+  value: -1
+
+Character.Player_Puppet_Base.effectors:
+  - !append-once StatusEffects.TDO_FalconBoltPierce_Effector
+
+StatusEffects.TDO_FalconBoltPierce_Effector:
+  $type: ApplyStatGroupEffector
+  applicationTarget: Weapon
+  removeWithEffector: True
+  statGroup: StatusEffects.TDO_FalconBoltPierce_StatGroup
+  effectorClassName: ApplyStatGroupEffector
+  prereqRecord: StatusEffects.TDO_FalconBoltPierce_Prereq_Combined
+  removeAfterActionCall: False
+  removeAfterPrereqCheck: False
+  statModifierGroups: []
+
+StatusEffects.TDO_FalconBoltPierce_Prereq_Combined:
+  $type: MultiPrereq
+  aggregationType: AND
+  prereqClassName: gameMultiPrereq
+  nestedPrereqs:
+    - Prereqs.TechWeaponHeldPrereq
+    - StatusEffects.TDO_FalconBoltPierce_Prereq_SE
+
+StatusEffects.TDO_FalconBoltPierce_Prereq_SE:
+  $type: StatusEffectPrereq
+  evaluateOnRegister: False
+  invert: False
+  statusEffect: StatusEffects.TDO_FalconBoltPierce
+  prereqClassName: StatusEffectPrereq
+
+StatusEffects.TDO_FalconBoltPierce_StatGroup:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_FalconBoltPierce_Mod_TechPierceEnabled
+    - StatusEffects.TDO_FalconBoltPierce_Mod_TechPierceScanAngle
+    - StatusEffects.TDO_FalconBoltPierce_Mod_TechPierceChargeLevel
+
+StatusEffects.TDO_FalconBoltPierce_Mod_TechPierceEnabled:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.TechPierceEnabled
+  value: 1
+
+StatusEffects.TDO_FalconBoltPierce_Mod_TechPierceScanAngle:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.TechPierceScanAngle
+  value: 10
+
+StatusEffects.TDO_FalconBoltPierce_Mod_TechPierceChargeLevel:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Multiplier
+  statType: BaseStats.TechPierceChargeLevel
+  value: 0
