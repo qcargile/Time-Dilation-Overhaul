@@ -278,6 +278,11 @@ return {
             critChanceMax = { opt = "Crit Chance at MK5++", optUnit = " (%)", des = "Crit Chance bonus while Falcon is active, at MK5++." },
             critDmgMin = { opt = "Crit Damage at MK4", optUnit = " (%)", des = "Crit Damage bonus while Falcon is active, at MK4. Gameplay-only (not displayed on card)." },
             critDmgMax = { opt = "Crit Damage at MK5++", optUnit = " (%)", des = "Crit Damage bonus while Falcon is active, at MK5++." },
+            boltEMPDamageT1 = { opt = "Bolt EMP Damage at MK4", optUnit = "", des = "Extra Electric damage on the bolt's EMP impact blast at MK4. Stacks on top of vanilla EMP grenade base damage." },
+            boltEMPDamageT2 = { opt = "Bolt EMP Damage at MK4+", optUnit = "", des = "Extra Electric damage on the bolt's EMP impact blast at MK4+." },
+            boltEMPDamageT3 = { opt = "Bolt EMP Damage at MK5", optUnit = "", des = "Extra Electric damage on the bolt's EMP impact blast at MK5." },
+            boltEMPDamageT4 = { opt = "Bolt EMP Damage at MK5+", optUnit = "", des = "Extra Electric damage on the bolt's EMP impact blast at MK5+." },
+            boltEMPDamageT5 = { opt = "Bolt EMP Damage at MK5++", optUnit = "", des = "Extra Electric damage on the bolt's EMP impact blast at MK5++." },
         },
         kurosawa = {
             header = "Fuyutsuki \"Kurosawa\" Sandevistan",

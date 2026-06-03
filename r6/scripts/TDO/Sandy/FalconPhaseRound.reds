@@ -220,9 +220,16 @@ public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<Wea
   }
   TDOInfo("FalconBolt", s"Bystander VFX applied to \(bystanderCount) NPC(s) within 25m");
 
-  let empRecord: ref<Attack_Record> = TweakDBInterface.GetAttackRecord(t"Attacks.TDO_FalconBoltEMP");
+  let tier: Int32 = TDO_Falcon_GetEquippedTier(player);
+  let empRecordID: TweakDBID = t"Attacks.TDO_FalconBoltEMP_MK4";
+  if tier == 5 { empRecordID = t"Attacks.TDO_FalconBoltEMP_MK5PlusPlus"; }
+  else if tier == 4 { empRecordID = t"Attacks.TDO_FalconBoltEMP_MK5Plus"; }
+  else if tier == 3 { empRecordID = t"Attacks.TDO_FalconBoltEMP_MK5"; }
+  else if tier == 2 { empRecordID = t"Attacks.TDO_FalconBoltEMP_MK4Plus"; }
+  let empRecord: ref<Attack_Record> = TweakDBInterface.GetAttackRecord(empRecordID);
+  TDOInfo("FalconBolt", s"Tier=\(tier), EMP record selected");
   if !IsDefined(empRecord) {
-    TDOWarn("FalconBolt", "Attacks.TDO_FalconBoltEMP missing");
+    TDOWarn("FalconBolt", "Tier-specific EMP record missing");
   } else {
     let empHostiles: array<wref<NPCPuppet>> = TDO_Falcon_GetHostilesNearPoint(player, impactPos, 4.0);
     let damageSys: ref<DamageSystem> = GameInstance.GetDamageSystem(gi);

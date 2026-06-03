@@ -196,6 +196,11 @@ return {
 		critChanceMax = 15.0,
 		critDmgMin = 10.0,
 		critDmgMax = 50.0,
+		boltEMPDamageT1 = 200.0,
+		boltEMPDamageT2 = 400.0,
+		boltEMPDamageT3 = 600.0,
+		boltEMPDamageT4 = 800.0,
+		boltEMPDamageT5 = 1000.0,
 	},
 	warpDancer = {
 		enabled = true,

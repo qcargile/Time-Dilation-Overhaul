@@ -1,3 +1,59 @@
-Attacks.TDO_FalconBoltEMP:
-  $base: Attacks.PlasmaProjectileEMP
+Attacks.TDO_FalconBoltEMP_MK4:
+  $base: Attacks.EMPGrenadeLegendary
   range: 4
+  statModifiers:
+    - !append Attacks.TDO_FalconBoltEMP_MK4_Damage
+
+Attacks.TDO_FalconBoltEMP_MK4_Damage:
+  $type: gamedataConstantStatModifier_Record
+  value: 200
+  modifierType: Additive
+  statType: BaseStats.ElectricDamage
+
+Attacks.TDO_FalconBoltEMP_MK4Plus:
+  $base: Attacks.EMPGrenadeLegendary
+  range: 4
+  statModifiers:
+    - !append Attacks.TDO_FalconBoltEMP_MK4Plus_Damage
+
+Attacks.TDO_FalconBoltEMP_MK4Plus_Damage:
+  $type: gamedataConstantStatModifier_Record
+  value: 400
+  modifierType: Additive
+  statType: BaseStats.ElectricDamage
+
+Attacks.TDO_FalconBoltEMP_MK5:
+  $base: Attacks.EMPGrenadeLegendary
+  range: 4
+  statModifiers:
+    - !append Attacks.TDO_FalconBoltEMP_MK5_Damage
+
+Attacks.TDO_FalconBoltEMP_MK5_Damage:
+  $type: gamedataConstantStatModifier_Record
+  value: 600
+  modifierType: Additive
+  statType: BaseStats.ElectricDamage
+
+Attacks.TDO_FalconBoltEMP_MK5Plus:
+  $base: Attacks.EMPGrenadeLegendary
+  range: 4
+  statModifiers:
+    - !append Attacks.TDO_FalconBoltEMP_MK5Plus_Damage
+
+Attacks.TDO_FalconBoltEMP_MK5Plus_Damage:
+  $type: gamedataConstantStatModifier_Record
+  value: 800
+  modifierType: Additive
+  statType: BaseStats.ElectricDamage
+
+Attacks.TDO_FalconBoltEMP_MK5PlusPlus:
+  $base: Attacks.EMPGrenadeLegendary
+  range: 4
+  statModifiers:
+    - !append Attacks.TDO_FalconBoltEMP_MK5PlusPlus_Damage
+
+Attacks.TDO_FalconBoltEMP_MK5PlusPlus_Damage:
+  $type: gamedataConstantStatModifier_Record
+  value: 1000
+  modifierType: Additive
+  statType: BaseStats.ElectricDamage
