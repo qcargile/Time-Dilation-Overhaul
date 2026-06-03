@@ -47,6 +47,28 @@ protected cb func OnTick(eventData: ref<gameprojectileTickEvent>) -> Bool {
   let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(this.GetGame());
   let maxHP: Float = stats.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.Health);
   let damage: Float = maxHP * 0.10;  // 10% HP cap per ricochet hit
+
+  let bulletAttackRecord: ref<Attack_Record> = TweakDBInterface.GetAttackRecord(t"Attacks.NPCBulletEffect");
+  if IsDefined(bulletAttackRecord) && IsDefined(activeWeapon) {
+    let attackContext: AttackInitContext;
+    attackContext.record = bulletAttackRecord;
+    attackContext.instigator = player;
+    attackContext.source = player;
+    attackContext.weapon = activeWeapon;
+    let attack: ref<IAttack> = IAttack.Create(attackContext);
+
+    let hit: ref<gameHitEvent> = new gameHitEvent();
+    hit.attackData = new AttackData();
+    hit.target = player;
+    hit.attackData.SetAttackDefinition(attack);
+    hit.attackData.AddFlag(hitFlag.DealNoDamage, n"TDOFalconRicochetSelfHit");
+    hit.attackData.SetSource(player);
+    hit.attackData.SetInstigator(player);
+    hit.attackData.SetWeapon(activeWeapon);
+    let damageSys: ref<DamageSystem> = GameInstance.GetDamageSystem(this.GetGame());
+    damageSys.QueueHitEvent(hit, player);
+  }
+
   pools.RequestChangingStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.Health, -damage, player, false, false);
 
   TDOInfo("FalconRicochet", s"Self-hit by own ricochet at dist=\(dist), dealt \(damage) (10% of \(maxHP))");

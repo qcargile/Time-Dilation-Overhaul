@@ -15,6 +15,7 @@ public class TDOConfig {
     return 0.10;
   }
 
+  public static func BulletTrailVelocityEnabled() -> Bool { return true; }
   public static func BulletTrailVelocityAt10() -> Float { return 95.0; }
   public static func BulletTrailVelocityAt20() -> Float { return 85.0; }
   public static func BulletTrailVelocityAt30() -> Float { return 75.0; }
@@ -337,7 +338,7 @@ public class TDOConfig {
   }
 
   public static func FalconPhaseRoundSelfDamagePercent() -> Float {
-    return 0.15;
+    return 0.10;
   }
 
   public static func FalconBoltEMPDamage_T1() -> Float {

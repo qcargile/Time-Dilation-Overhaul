@@ -76,6 +76,10 @@ protected cb func OnProjectileInitialize(eventData: ref<gameprojectileSetUpEvent
     }
   }
 
+  if !TDOConfig.BulletTrailVelocityEnabled() {
+    return wrappedMethod(eventData);
+  }
+
   let v: Float = TDO_BulletTrailVelocity(eventData.weapon);
   if v > 0.0 {
     this.m_startVelocity = v;
@@ -88,6 +92,9 @@ protected cb func OnProjectileInitialize(eventData: ref<gameprojectileSetUpEvent
 
 @wrapMethod(sampleBullet)
 protected cb func OnTick(eventData: ref<gameprojectileTickEvent>) -> Bool {
+  if !TDOConfig.BulletTrailVelocityEnabled() {
+    return wrappedMethod(eventData);
+  }
   if !this.m_tdoNeedsVelocityRestore {
     return wrappedMethod(eventData);
   }

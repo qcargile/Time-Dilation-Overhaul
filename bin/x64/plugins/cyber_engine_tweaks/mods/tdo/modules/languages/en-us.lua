@@ -131,6 +131,7 @@ return {
         },
         bulletTrail = {
             header = "Bullet Trails",
+            enabled = { opt = "Enabled", des = "Master toggle for the TDO bullet trail feature. When off, bullets fly at vanilla speed under time dilation (no visible trails); when on, bullets are slowed by the per-slow-% sliders below." },
             at10 = { opt = "Bullet speed at 10% TD", optUnit = " (m/s)", des = "Bullet launch speed at 10% slow. Higher = faster bullet. Slow %s in between blend the two nearest sliders. Bullets in flight snap back to vanilla 90 m/s the moment Sandevistan ends." },
             at20 = { opt = "Bullet speed at 20% TD", optUnit = " (m/s)", des = "Bullet launch speed at 20% slow." },
             at30 = { opt = "Bullet speed at 30% TD", optUnit = " (m/s)", des = "Bullet launch speed at 30% slow." },

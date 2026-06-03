@@ -950,6 +950,8 @@ registerForEvent("onInit", function()
 		cat = "bulletTrail"
 		nativeSettings.addSubcategory("/tdo/bulletTrail", nuiTxt[cat]["header"])
 
+		nativeSettings.addSwitch("/tdo/bulletTrail", nuiTxt[cat]["enabled"]["opt"], nuiTxt[cat]["enabled"]["des"], config.bulletTrail.enabled, default.bulletTrail.enabled, function(state) config.bulletTrail.enabled = state saveSettings(config) end)
+
 		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at10"]["opt"]..nuiTxt[cat]["at10"]["optUnit"], nuiTxt[cat]["at10"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at10, default.bulletTrail.at10, function(value) config.bulletTrail.at10 = value saveSettings(config) end)
 
 		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at20"]["opt"]..nuiTxt[cat]["at20"]["optUnit"], nuiTxt[cat]["at20"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at20, default.bulletTrail.at20, function(value) config.bulletTrail.at20 = value saveSettings(config) end)
@@ -970,6 +972,7 @@ registerForEvent("onInit", function()
 
 		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at99"]["opt"]..nuiTxt[cat]["at99"]["optUnit"], nuiTxt[cat]["at99"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at99, default.bulletTrail.at99, function(value) config.bulletTrail.at99 = value saveSettings(config) end)
 
+		Override("TDOConfig", "BulletTrailVelocityEnabled;", function() return config.bulletTrail.enabled end)
 		Override("TDOConfig", "BulletTrailVelocityAt10;", function() return config.bulletTrail.at10 end)
 		Override("TDOConfig", "BulletTrailVelocityAt20;", function() return config.bulletTrail.at20 end)
 		Override("TDOConfig", "BulletTrailVelocityAt30;", function() return config.bulletTrail.at30 end)
