@@ -52,6 +52,7 @@ public class MeleeDefenseEffector extends ModifyAttackEffector {
             if (RandRange(0, 100) > 50) {
               let speed = AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanSpeed(owner as ScriptedPuppet);
               (owner as NPCPuppet).SetIndividualTimeDilation(n"sandevistanAbility", speed);
+
               AISubActionApplyTimeDilation_Record_Implementation.ApplyCooldownAndDurationStacks(owner as ScriptedPuppet, 2, false);
               AISubActionApplyTimeDilation_Record_Implementation.ApplyDefensiveUseCooldown(owner as ScriptedPuppet);
             }
@@ -60,3 +61,4 @@ public class MeleeDefenseEffector extends ModifyAttackEffector {
     }
   }
 }
+

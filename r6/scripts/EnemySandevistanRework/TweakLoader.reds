@@ -26,39 +26,6 @@ class TweakLoader extends ScriptableService {
       }
 
       this.initialized = true;
-
-
-      // AddAbilityTo(t"ESR_HasStimPackAbilityGroup", [
-      //   t"Character.ep1_scavenger_grunt1_melee1_fists_ma_inline0",
-      //   t"Character.ep1_scavenger_grunt1_melee1_fists_wa_inline0",
-      //   t"Character.ep1_scavenger_grunt1_ranged1_nova_ma_inline0",
-      //   t"Character.ep1_scavenger_grunt1_ranged1_nova_wa_inline0",
-      //   t"Character.ep1_scavenger_grunt1_ranged1_slaughtomatic_ma_inline0",
-      //   t"Character.ep1_scavenger_grunt1_ranged1_slaughtomatic_wa_inline0",
-      //   t"Character.ep1_scavenger_grunt2_melee2_baseball_ma_inline22",
-      //   t"Character.ep1_scavenger_grunt2_melee2_knife_ma_inline4",
-      //   t"Character.ep1_scavenger_grunt2_melee2_knife_wa_inline4",
-      //   t"Character.ep1_scavenger_grunt2_ranged2_copperhead_ma_inline0",
-      //   t"Character.ep1_scavenger_grunt2_ranged2_copperhead_wa_inline0",
-      //   t"Character.ep1_scavenger_grunt2_ranged2_pulsar_ma_inline0",
-      //   t"Character.ep1_scavenger_grunt2_ranged2_pulsar_wa_inline0",
-      //   t"Character.ep1_scavenger_grunt2_ranged2_pulsar_wa_inline0",
-      //   t"Character.scavenger_grunt1_melee1_fists_ma_inline0",
-      //   t"Character.scavenger_grunt1_melee1_fists_wa_inline0",
-      //   t"Character.scavenger_grunt1_melee1_fists_wa_inline0",
-      //   t"Character.scavenger_grunt1_melee1_tireiron_ma_inline4",
-      //   t"Character.scavenger_grunt1_melee1_tireiron_wa_inline4",
-      //   t"Character.scavenger_grunt1_melee1_pipewrench_ma_inline4",
-      //   t"Character.scavenger_grunt1_melee1_pipewrench_wa_inline4",
-      //   t"Character.scavenger_grunt1_ranged1_nova_ma_inline0",
-      //   t"Character.scavenger_grunt1_ranged1_nova_wa_inline0",
-      //   t"Character.scavenger_grunt1_ranged1_slaughtomatic_ma_inline0",
-      //   t"Character.scavenger_grunt1_ranged1_slaughtomatic_wa_inline0",
-      //   t"Character.scavenger_grunt2_melee2_baseball_ma_inline22",
-      //   t"Character.scavenger_grunt2_melee2_knife_ma_inline4",
-      //   t"Character.scavenger_grunt2_melee2_knife_wa_inline4" 
-      // ]);
-
       // test new abilities on this?
       // 
 
@@ -199,6 +166,92 @@ class TweakLoader extends ScriptableService {
       t"Ability.ESR_HasSandevistanTier3"
     ]);
     
+    // Ayo Zarin
+    AddAbilitiesToCharacter(t"Character.we_ep1_05_mini_boss", [
+      t"Ability.ESR_HasSandevistanTier3"
+    ]);
+
+        // Yasha
+    AddAbilitiesToCharacter(t"Character.sts_ep1_03_miniboss_placeholder", [
+      t"Ability.ESR_HasKerenzikov"
+    ]);
+
+    // Boris
+    AddAbilitiesToCharacter(t"Character.sts_ep1_08_kgb_boss", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier3"
+    ]);
+    
+    // Kurt
+
+    AddAbilitiesToCharacter(t"Character.q304_kurt_miniboss", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier1"
+    ]);
+
+    AddAbilitiesToCharacter(t"Character.kurtz", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier1"
+    ]);
+
+    // Max Tac
+
+    AddAbilitiesToCharacter(t"Character.q305_maxtac_droid", [
+      t"Ability.ESR_HasSandevistanTier1"
+    ]);
+
+    
+    AddAbilitiesToCharacter(t"Character.q305_maxtac_miniboss_netrunner_ma", [
+      t"Ability.ESR_HasKerenzikov"
+    ]);
+
+    AddAbilitiesToCharacter(t"Character.maxtac_av_netrunner_ma", [
+      t"Ability.ESR_HasKerenzikov"
+    ]);
+
+    AddAbilitiesToCharacter(t"Character.maxtac_av_netrunner_ma_2nd_wave", [
+      t"Ability.ESR_HasKerenzikov"
+    ]);
+    
+    AddAbilitiesToCharacter(t"Character.q305_maxtac_miniboss_frifle_wa", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier2"
+    ]);
+    AddAbilitiesToCharacter(t"Character.maxtac_av_riffle_ma", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier2"
+    ]);
+    AddAbilitiesToCharacter(t"Character.maxtac_av_sniper_wa_elite_2nd_wave", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier2"
+    ]);
+    AddAbilitiesToCharacter(t"Character.maxtac_av_riffle_ma_2nd_wave", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier2"
+    ]);
+    AddAbilitiesToCharacter(t"Character.maxtac_av_sniper_wa_elite", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier2"
+    ]);
+    
+
+    AddAbilitiesToCharacter(t"Character.q305_maxtac_miniboss_mantis_ma", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier3"
+    ]);
+
+    AddAbilitiesToCharacter(t"Character.maxtac_av_mantis_wa", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier3"
+    ]);
+
+    AddAbilitiesToCharacter(t"Character.maxtac_av_mantis_wa_2nd_wave", [
+      t"Ability.ESR_HasKerenzikov",
+      t"Ability.ESR_HasSandevistanTier3"
+    ]);
+
+
+
   }
 
   private func InitializePsychos() {
@@ -253,7 +306,50 @@ class TweakLoader extends ScriptableService {
     // Cederic
 
     AddAbilitiesToCharacter(t"Character.ma_cct_dtn_03_cyberpsycho", [t"Ability.ESR_HasSandevistanTier1"]);
+    // Oda
     
+    AddAbilitiesToCharacter(t"Character.Cyberninja_Oda", [
+      t"Ability.ESR_HasSandevistanTier4", t"Ability.ESR_HasKerenzikov"
+    ]);
+
+    // junkies
+    AddAbilitiesToCharacter(t"Character.cbj_ep1_001_cyberjunkie", [
+      t"Ability.ESR_HasSandevistanTier1", t"Ability.ESR_HasKerenzikov"
+    ]);
+
+    if (this.configs.enableStimPack) {
+      AddAbilitiesToCharacter(t"Character.cbj_ep1_004_cyberjunkie", [t"Ability.ESR_HasStimPack"]); // Tom Ayer
+    }
+
+    AddAbilitiesToCharacter(t"Character.cbj_ep1_005_cyberjunkie", [
+      t"Ability.ESR_HasSandevistanTier3"
+    ]);
+
+    if (this.configs.enableStimPack) {
+      AddAbilitiesToCharacter(t"Character.cbj_ep1_006_cyberjunkie", [t"Ability.ESR_HasStimPack"]); 
+    }
+
+    if (this.configs.enableStimPack) {
+      AddAbilitiesToCharacter(t"Character.cbj_ep1_008_cyberjunkie", [t"Ability.ESR_HasStimPack"]); 
+    }
+
+    AddAbilitiesToCharacter(t"Character.cbj_ep1_008_cyberjunkie", [
+      t"Ability.ESR_HasSandevistanTier1"
+    ]);
+
+    AddAbilitiesToCharacter(t"Character.cbj_ep1_011_cyberjunkie", [
+      t"Ability.ESR_HasSandevistanTier1", t"Ability.ESR_HasKerenzikov"
+    ]);
+
+    // Smasher
+
+    AddAbilitiesToCharacter(t"Character.q113_smasher_arasaka_mantis", [
+      t"Ability.ESR_HasSandevistanTier1", t"Ability.ESR_HasKerenzikov"
+    ]);
+
+    AddAbilitiesToCharacter(t"Character.q113_boss_smasher", [
+      t"Ability.ESR_HasSandevistanTier5", t"Ability.ESR_HasKerenzikov"
+    ]);
 
   }
 
@@ -274,6 +370,7 @@ class TweakLoader extends ScriptableService {
       ]); 
 
       AddAbilityTo(t"ESR_HasSandevistanTier2AbilityGroup", [       
+          t"Character.ep1_voodooboys_grunt3coat_shotgun3_zhuo_ma_elite_inline4", // Punisher
           t"Character.voodooboys_grunt3coat_shotgun3_zhuo_ma_elite_inline4" // Punisher
       ]); 
   }
@@ -523,6 +620,21 @@ class TweakLoader extends ScriptableService {
           t"Character.militech_ranger1_ranged1_lexington_ma_inline0" // Recon Support
         ]); 
       }
+
+      // Black Ops
+      AddAbilitiesToCharacter(t"Character.q306_black_ops_wa", [
+        t"Ability.ESR_HasKerenzikov", t"Ability.ESR_HasSandevistanTier1"
+      ]);
+
+      AddAbilitiesToCharacter(t"Character.q306_black_ops_fast_ranged", [
+        t"Ability.ESR_HasKerenzikov"
+      ]);
+      
+      AddAbilitiesToCharacter(t"Character.q306_black_ops_HMG", [
+        t"Ability.ESR_HasSandevistanTier1"
+      ]);
+
+      
   }
 
   private func InitializeArasaka() {

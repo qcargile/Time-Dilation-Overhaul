@@ -4,7 +4,7 @@ public class EnemySandevistanSettings {
     public let enabled: Bool = true;
     public let replaceOGAbilities: Bool = true;
     public let enemyMinimumSvS: Float = 0.5;
-    public let playerMinimumSvS: Float = 0.5;
+    public let playerMinimumSvS: Float = 0.0;
     public let offensiveUseCD: Int32 = 10;
     public let defensiveUseCD: Int32 = 10;
 
@@ -26,12 +26,12 @@ public class EnemySandevistanSettings {
     public let mk3CD: Float = 30.0;
 
     public let mk4Strength: Float = 85.0;
-    public let mk4Duration: Float = 6.0;
-    public let mk4CD: Float = 20.0;
+    public let mk4Duration: Float = 8.0;
+    public let mk4CD: Float = 16.0;
 
-    public let mk5Strength: Float = 90.0;
-    public let mk5Duration: Float = 9.0;
-    public let mk5CD: Float = 27.0;
+    public let mk5Strength: Float = 85.0;
+    public let mk5Duration: Float = 15.0;
+    public let mk5CD: Float = 15.0;
 
     public let enableStimPack: Bool = true;
     public let enableStimPackCustomSound: Bool = true;
@@ -45,7 +45,7 @@ public class ESRConfig {
     public static func Enabled() -> Bool { return true; }
     public static func ReplaceOGAbilities() -> Bool { return true; }
     public static func EnemyMinimumSvS() -> Float { return 0.5; }
-    public static func PlayerMinimumSvS() -> Float { return 0.5; }
+    public static func PlayerMinimumSvS() -> Float { return 0.0; }
     public static func OffensiveUseCD() -> Int32 { return 10; }
     public static func DefensiveUseCD() -> Int32 { return 10; }
 
@@ -67,12 +67,12 @@ public class ESRConfig {
     public static func Mk3CD() -> Float { return 30.0; }
 
     public static func Mk4Strength() -> Float { return 85.0; }
-    public static func Mk4Duration() -> Float { return 6.0; }
-    public static func Mk4CD() -> Float { return 20.0; }
+    public static func Mk4Duration() -> Float { return 8.0; }
+    public static func Mk4CD() -> Float { return 16.0; }
 
-    public static func Mk5Strength() -> Float { return 90.0; }
-    public static func Mk5Duration() -> Float { return 9.0; }
-    public static func Mk5CD() -> Float { return 27.0; }
+    public static func Mk5Strength() -> Float { return 95.0; }
+    public static func Mk5Duration() -> Float { return 15.0; }
+    public static func Mk5CD() -> Float { return 15.0; }
 
     public static func EnableStimPack() -> Bool { return true; }
     public static func EnableStimPackCustomSound() -> Bool { return true; }

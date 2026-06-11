@@ -94,12 +94,6 @@ public final static func GetAvailableKerenzikovDuration(puppet: ref<ScriptedPupp
     let baseDuration = AISubActionApplyTimeDilation_Record_Implementation.GetBaseKerenzikovDuration(puppet);
     let baseCooldown = AISubActionApplyTimeDilation_Record_Implementation.GetBaseKerenzikovCooldown(puppet);
 
-    // LogChannel(n"DEBUG", "z1: " + ToString(currentCooldown));
-    // LogChannel(n"DEBUG", "z2: " + ToString(baseCooldown));
-    // LogChannel(n"DEBUG", "z3: " + ToString((1.0 - (currentCooldown / baseCooldown))));
-    // LogChannel(n"DEBUG", "z4: " + ToString(baseDuration));
-    // LogChannel(n"DEBUG", "z5: " + ToString(baseDuration * (1.0 - (currentCooldown / baseCooldown))));
-
     return baseDuration * (1.0 - (currentCooldown / baseCooldown));
 }
 
