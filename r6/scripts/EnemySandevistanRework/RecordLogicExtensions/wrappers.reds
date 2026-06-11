@@ -6,7 +6,6 @@ import Phoenicia.EnemySandevistanRework.Configurations.*
 
 @wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func Activate(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>) -> Void {
-
     let suppressOwner = ScriptExecutionContext.GetOwner(context) as ScriptedPuppet;
     if IsDefined(suppressOwner) && StatusEffectSystem.ObjectHasStatusEffectWithTag(suppressOwner, n"TDO_TDSuppress") {
         return;
@@ -44,8 +43,6 @@ public final static func Activate(context: ScriptExecutionContext, record: wref<
             let enemyTimeDilation = AISubActionApplyTimeDilation_Record_Implementation.GetSandevistanVsSandevistanSpeed(context);
             blackboard.SetFloat(GetAllBlackboardDefs().AIAction.ownerGlobalTimeDilation, enemyTimeDilation);
             
-            // LogChannel(n"DEBUG", "1.1: " + ToString(playerTimeDilation));
-            // LogChannel(n"DEBUG", "1.2: " + ToString(enemyTimeDilation));
         };
     } else {
         wrappedMethod(context, record);
@@ -56,15 +53,7 @@ public final static func Activate(context: ScriptExecutionContext, record: wref<
     
 }
 
-// @wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
-// public final static func Update(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>, const duration: Float) -> AIbehaviorUpdateOutcome {
-//     // LogChannel(n"DEBUG", "2");
-//     if !AISubActionApplyTimeDilation_Record_Implementation.IsConditionFulfilled(context, record) {
-//         return AIbehaviorUpdateOutcome.SUCCESS;
-//     };
-//     AISubActionApplyTimeDilation_Record_Implementation.SetTimeDilation(context, record);
-//     return AIbehaviorUpdateOutcome.IN_PROGRESS;
-// }
+
 
 @wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func Deactivate(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>, const duration: Float, interrupted: Bool) -> Void {
@@ -130,13 +119,8 @@ public final static func SetTimeDilation(context: ScriptExecutionContext, record
     isGlobalSandevistan = Equals(record.Reason(), n"sandevistanVersusSandevistan");
     if isGlobalSandevistan {
       dilation = globalDilation;
-
-
-
         if (!StatusEffectSystem.ObjectHasStatusEffectWithTag(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, n"ESR_Sandi_Buff")) {
-                // LogChannel(n"DEBUG", "apply this bitch");
               if (AISubActionApplyTimeDilation_Record_Implementation.GetAvailableSandevistanDuration(context) < 1.0 && AISubActionApplyTimeDilation_Record_Implementation.GetAvailableKerenzikovDuration(context) < 1.0) {
-                // LogChannel(n"DEBUG", "disable Biatch");
                 AISubActionApplyTimeDilation_Record_Implementation.ForceDeactivateSandevistan(context, true);
                 return false;
               } else {
@@ -180,7 +164,6 @@ public final static func SetTimeDilation(context: ScriptExecutionContext, record
     };
     duration = record.Duration() < 0.00 ? 600.00 : record.Duration() * dilation;
     
-    // LogChannel(n"DEBUG", "update timeD: " + ToString(dilation));
     ScriptExecutionContext.GetOwner(context).SetIndividualTimeDilation(record.Reason(), dilation, duration, record.EaseIn(), record.EaseOut(), false, record.UseRealTime());
     return true;
   }

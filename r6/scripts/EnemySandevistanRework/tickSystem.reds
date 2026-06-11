@@ -3,6 +3,7 @@ module Phoenicia.EnemySandevistanRework.TickSystem
 import Phoenicia.EnemySandevistanRework.Configurations.*
 import Phoenicia.EnemySandevistanRework.Utils.*
 import Phoenicia.EnemySandevistanRework.Effectors.*
+import Phoenicia.EnemySandevistanRework.Smasher.*
 
 public class TickSystem extends ScriptableSystem {
     private let player: wref<PlayerPuppet>;
@@ -43,10 +44,14 @@ public class TickSystem extends ScriptableSystem {
                 this.ConsiderStimPack(entities[i] as NPCPuppet);
             }
 
-            if (AISubActionApplyTimeDilation_Record_Implementation.GetSandevistanTier(entities[i] as NPCPuppet) > 0 || AISubActionApplyTimeDilation_Record_Implementation.GetKerenzikovTier(entities[i] as NPCPuppet) > 0) {
-                // LogChannel(n"DEBUG", "tr1: ");
-                // GameInstance.GetFxSystem(GetGameInstance()).SpawnEffect(r"fx_sandevistan_trails_smasher", npc);
+            let sandevistanTier = AISubActionApplyTimeDilation_Record_Implementation.GetSandevistanTier(entities[i] as NPCPuppet);
+
+            if (sandevistanTier != 5 && (sandevistanTier > 0 || AISubActionApplyTimeDilation_Record_Implementation.GetKerenzikovTier(entities[i] as NPCPuppet) > 0)) {
                 this.TriggerOffensiveAction(entities[i] as NPCPuppet, AISubActionApplyTimeDilation_Record_Implementation.GetSandevistanTier(entities[i] as NPCPuppet) > 0, AISubActionApplyTimeDilation_Record_Implementation.GetKerenzikovTier(entities[i] as NPCPuppet) > 0);
+            }
+
+            if (sandevistanTier == 5) {
+                this.HandleSmasherOffensiveSandiActivations(entities[i] as NPCPuppet);
             }
 
             if (AISubActionApplyTimeDilation_Record_Implementation.GetKerenzikovTier(entities[i] as NPCPuppet) > 0) {
@@ -56,7 +61,53 @@ public class TickSystem extends ScriptableSystem {
             i+= 1;
         }
 
-        this.delaySystem.DelayCallback(EnemySandevistanReworkCallback.Create(this), 1, false);
+        this.delaySystem.DelayCallback(EnemySandevistanReworkCallback.Create(this), 1, true);
+    }
+
+    private func HandleSmasherOffensiveSandiActivations(puppet: ref<NPCPuppet>) {
+        if (NPCPuppet.IsInCombatWithTarget(puppet, this.player) && 
+            this.CommonOffensiveRestrictions(puppet) &&
+            !HasSmasherSandevistanBlocker(puppet) &&
+            !StatusEffectSystem.ObjectHasStatusEffectWithTag(puppet, n"ESR_Sandi_Buff")) {
+                let baseChance = 5;
+                let distanceToPlayer = Vector4.Distance(puppet.GetWorldPosition(), this.player.GetWorldPosition());
+                
+                let isPhase1 = !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Destroyed_Plate") && StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Phase1");
+                let isPhase15 = StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Destroyed_Plate") && StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Phase1");
+                let isLastPhase = StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Emergency");
+
+                if (StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Smasher_Single_Shot_Dps_Modifier")) {
+                    baseChance += (isPhase1 || isLastPhase || isPhase15 ? 35 : 15);
+                } else if (StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Shooting")) {
+                    baseChance += (isPhase1 || isPhase15 ? 15 : 5);
+                    baseChance += (isLastPhase ? 35 : 10);
+                }   
+
+                if (isPhase1 && (distanceToPlayer < 12.0 || distanceToPlayer > 35.0)) {
+                    baseChance += 25;
+                }
+
+                if (isPhase15) {
+                    baseChance += 5;
+                }
+
+                if (isLastPhase && distanceToPlayer < 15.0) {
+                    baseChance += 25;
+                }
+
+                let randomNumber = RandRange(0, 100);
+                if (baseChance > randomNumber) {
+                    let speed = AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanSpeed(puppet);
+
+                    let stacks = 2;
+                    stacks += (isPhase1 ? 4 : 0);
+                    stacks += (isPhase15 ? 2 : 0);
+
+                    AISubActionApplyTimeDilation_Record_Implementation.ApplyCooldownAndDurationStacks(puppet, stacks, false);
+                    puppet.SetIndividualTimeDilation(n"sandevistanAbility", speed);
+                    AISubActionApplyTimeDilation_Record_Implementation.ApplyOffensiveUseCooldown(puppet);
+                }
+            }
     }
 
     public func HandleKerenzikovVsSandevistanActivation(puppet: ref<NPCPuppet>) {
@@ -135,8 +186,6 @@ public class TickSystem extends ScriptableSystem {
                !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_SVS_Buff") &&
                !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_SVK_Buff") &&
                !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_Offensive_CD");
-
-
     }
 
     public func TriggerOffensiveAction(puppet: ref<NPCPuppet>, hasSandi: Bool, hasKerenzikov: Bool) {
@@ -183,10 +232,10 @@ public class TickSystem extends ScriptableSystem {
             }
 
             if (playerHasSandi && !(pistolOrRevolver && hasKerenzikov && AISubActionApplyTimeDilation_Record_Implementation.GetAvailableKerenzikovDuration(puppet) == kerenzikovDuration)) {
-                baseChance -= 10;
+                baseChance -= 5;
 
                 if (playerHasSandiCharges) {
-                    baseChance -= 30;
+                    baseChance -= 20;
                 }
             }
 
@@ -203,7 +252,6 @@ public class TickSystem extends ScriptableSystem {
             }
 
             let randomNumber = RandRange(0, 100);
-            // LogChannel(n"DEBUG", "chance: " + ToString(baseChance) + " | " + ToString(randomNumber));
             if (baseChance > randomNumber) {
                 if (pistolOrRevolver) {
                     if (hasKerenzikov && AISubActionApplyTimeDilation_Record_Implementation.GetAvailableKerenzikovDuration(puppet) >= 2.0) {

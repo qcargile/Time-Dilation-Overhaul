@@ -137,6 +137,9 @@ Ability.ESR_HasSandevistanTier4:
   $type: GameplayAbility
   abilityPackage: 
     $type: GameplayLogicPackage
+    effectors:
+      - !append Ability.ESR_MeleeDefenseEffector
+      - !append Ability.ESR_MeleeSurvivalEffector
     stats:
       - $type: ConstantStatModifier
         modifierType: Additive
@@ -167,10 +170,57 @@ ESR_HasSandevistanTier4AbilityGroup:
   abilities: 
     - Ability.ESR_HasSandevistanTier4
 
+
+Ability.ESR_SmasherSurvivalEffector:
+  $type: Effector
+  effectorClassName: Phoenicia.EnemySandevistanRework.Smasher.SurvivalSmasherEffector
+  removeAfterActionCall: true
+  prereqRecord: 
+    $type: MultiPrereq
+    prereqClassName: gameMultiPrereq
+    aggregationType: AND
+    nestedPrereqs: 
+      - $type: HitPrereq
+        callbackType: HitReceived
+        conditions: 
+          - $type: HitPrereqCondition
+            type: Prereqs.WeaponType
+            weaponType: Ranged       
+        ignoreSelfInflictedPressureWave: true
+        isSynchronous: true
+        pipelineStage: Process
+        pipelineType: Damage
+        prereqClassName: HitReceivedPrereq
+
+
+Ability.ESR_MeleeSmasherDefenseEffector:
+  $type: Effector
+  effectorClassName: Phoenicia.EnemySandevistanRework.Smasher.MeleeDefenseSmasherEffector
+  removeAfterActionCall: true
+  prereqRecord: 
+    $type: MultiPrereq
+    prereqClassName: gameMultiPrereq
+    aggregationType: AND
+    nestedPrereqs: 
+      - $type: HitPrereq
+        callbackType: HitReceived
+        conditions: 
+          - $type: HitPrereqCondition
+            type: Prereqs.WeaponType
+            weaponType: Melee       
+        ignoreSelfInflictedPressureWave: true
+        isSynchronous: true
+        pipelineStage: Process
+        pipelineType: Damage
+        prereqClassName: HitReceivedPrereq
+
 Ability.ESR_HasSandevistanTier5:
   $type: GameplayAbility
   abilityPackage: 
     $type: GameplayLogicPackage
+    effectors:
+      - !append Ability.ESR_SmasherSurvivalEffector
+      - !append Ability.ESR_MeleeSmasherDefenseEffector
     stats:
       - $type: ConstantStatModifier
         modifierType: Additive

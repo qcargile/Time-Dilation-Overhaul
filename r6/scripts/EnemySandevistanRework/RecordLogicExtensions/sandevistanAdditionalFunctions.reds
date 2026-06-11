@@ -131,6 +131,12 @@ public final static func GetBaseSandevistanSpeed(puppet: ref<ScriptedPuppet>) ->
 
     let sandevistanTier = AISubActionApplyTimeDilation_Record_Implementation.GetSandevistanTier(puppet);
 
+    if (sandevistanTier == 5 && !(StatusEffectSystem.ObjectHasStatusEffect(GetPlayer(GetGameInstance()), t"BaseStatusEffect.SandevistanPlayerBuff") || StatusEffectSystem.ObjectHasStatusEffect(GetPlayer(GetGameInstance()), t"BaseStatusEffect.CooldownedSandevistanPlayerBuff"))) {
+      if (StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Phase1")) {
+        sandevistanTier = 2;
+      }
+    }
+    
     switch (sandevistanTier) {
       case 5:
         return 1.0 / (1.0 - (settings.mk5Strength / 100.0));
@@ -146,7 +152,6 @@ public final static func GetBaseSandevistanSpeed(puppet: ref<ScriptedPuppet>) ->
         return 1.45;
     }    
 }
-
 
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func GetBaseSandevistanSpeed(context: ScriptExecutionContext) -> Float {
@@ -238,7 +243,11 @@ public final static func GetSandevistanVsSandevistanSpeed(context: ScriptExecuti
     if (playerTimeDilation > baseSandevistanSpeed) {
         return MaxF(baseSandevistanSpeed, playerTimeDilation * settings.enemyMinimumSvS);
     } else {
-        return MinF(baseSandevistanSpeed, playerTimeDilation * (1.0 / (settings.playerMinimumSvS == 0.0 ? 0.001 : settings.playerMinimumSvS)));
+
+      return MinF(
+          baseSandevistanSpeed,
+          settings.playerMinimumSvS == 0.0 ? baseSandevistanSpeed : playerTimeDilation / settings.playerMinimumSvS
+      );
     }
 }
 
