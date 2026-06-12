@@ -296,7 +296,7 @@ return {
             healMax = { opt = "POP Heal % (Max Tier)", optUnit = " (%)", des = "Percent of max HP healed on POP, at the Epic+ tier." },
         },
         sogimsu = {
-            header = "Arasaka \"Sogimsu\" Operating System",
+            header = "Arasaka \"Watchdog\" Operating System",
             durationMin = { opt = "Watchdog Duration (Min Tier)", optUnit = " (s)", des = "Watchdog active duration at the lowest tier." },
             durationMax = { opt = "Watchdog Duration (Max Tier)", optUnit = " (s)", des = "Watchdog active duration at the highest tier." },
             cooldownMin = { opt = "Cooldown (Min)", optUnit = " (s)", des = "Shortest cooldown, reached at the highest tier." },

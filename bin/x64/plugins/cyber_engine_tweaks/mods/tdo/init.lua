@@ -11,7 +11,7 @@ local Initialized = false
 local ExternalMods = {}
 
 local TDO_VERSION = "v1.0"
-local ESR_VERSION = "d2026.5.25"
+local ESR_VERSION = "d2026.6.11"
 
 local function lerpTier(v1, vTop, tier, total)
 	if total <= 1 then return v1 end
