@@ -102,6 +102,10 @@ public class TDOConfig {
     return true;
   }
 
+  public static func DOTCurveType() -> Int32 {
+    return 0; // 0=Linear, 1=Squared, 2=InverseSquared
+  }
+
   
   public static func KurosawaEnabled() -> Bool {
     return true;
@@ -859,6 +863,34 @@ public class TDOConfig {
 
   public static func QuantumTeleportFallbackFarOffset() -> Float {
     return 1.0; // second fallback search offset, meters
+  }
+
+  public static func QuantumLandingStimEnabled() -> Bool {
+    return true;
+  }
+
+  public static func QuantumLandingStimRadius() -> Float {
+    return 20.0; // bump stim radius on landing, meters
+  }
+
+  public static func UIHideAll() -> Bool {
+    return false;
+  }
+
+  public static func UIHideScanBar() -> Bool {
+    return false;
+  }
+
+  public static func UIHideQuantumMarker() -> Bool {
+    return false;
+  }
+
+  public static func UIShouldHideScanBar() -> Bool {
+    return TDOConfig.UIHideAll() || TDOConfig.UIHideScanBar();
+  }
+
+  public static func UIShouldHideQuantumMarker() -> Bool {
+    return TDOConfig.UIHideAll() || TDOConfig.UIHideQuantumMarker();
   }
 
 

@@ -78,6 +78,10 @@ public func TDO_Quantum_SpawnWarpFx(player: ref<PlayerPuppet>, pos: Vector4) -> 
 }
 
 public func TDO_Quantum_UpdateMarker(player: ref<PlayerPuppet>, pos: Vector4) -> Void {
+  if TDOConfig.UIShouldHideQuantumMarker() {
+    TDO_Quantum_ClearMarker(player);
+    return;
+  }
   let ms: ref<MappinSystem> = GameInstance.GetMappinSystem(player.GetGame());
   if !IsDefined(ms) {
     return;
@@ -173,6 +177,13 @@ public func TDO_Quantum_ExecuteTeleport(player: ref<PlayerPuppet>) -> Bool {
   TDOInfo("QuantumTeleport", "teleport executed");
   TDO_Quantum_SpawnWarpFx(player, dest);
   TDO_Quantum_TriggerMalware(player);
+  if TDOConfig.QuantumLandingStimEnabled() {
+    let investigateData: stimInvestigateData;
+    investigateData.skipReactionDelay = true;
+    investigateData.skipInitialAnimation = false;
+    StimBroadcasterComponent.BroadcastStim(player, gamedataStimType.Bump, TDOConfig.QuantumLandingStimRadius(), investigateData, true);
+    TDODebug("QuantumTeleport", "landing bump stim broadcast radius=" + ToString(TDOConfig.QuantumLandingStimRadius()));
+  }
   return true;
 }
 
