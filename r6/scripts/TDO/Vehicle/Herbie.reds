@@ -345,3 +345,24 @@ protected cb func OnGameAttached() -> Bool {
     GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(tick, TDOConfig.HerbieTickInterval(), false);
   }
 }
+
+@wrapMethod(VehicleComponentPS)
+protected final func OnVehicleStartedUnmountingEvent(evt: ref<VehicleStartedUnmountingEvent>) -> EntityNotificationType {
+  let result: EntityNotificationType = wrappedMethod(evt);
+  if !TDOConfig.HerbieEnabled() {
+    return result;
+  }
+  if evt.isMounting {
+    return result;
+  }
+  if !IsDefined(evt.character) || !evt.character.IsPlayer() {
+    return result;
+  }
+  let player: ref<PlayerPuppet> = evt.character as PlayerPuppet;
+  if !IsDefined(player) || !player.m_tdoHerbieActive {
+    return result;
+  }
+  TDO_Herbie_Disengage(player, player.GetGame());
+  TDOInfo("HerbieEject", "vehicle eject detected, force-disengaged");
+  return result;
+}

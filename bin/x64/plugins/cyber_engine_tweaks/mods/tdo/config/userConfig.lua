@@ -1,5 +1,5 @@
 return {
-	configVersion = 11.5,
+	configVersion = 11.6,
 	fusilladeShow = true,
 	juggernautShow = true,
 	kurosawaShow = true,
@@ -54,6 +54,12 @@ return {
 		mitigationCap = 0.75,
 		mitigationRefStatCap = 15.0,
 		canKill = true,
+		curveType = 0,
+	},
+	ui = {
+		hideAll = false,
+		hideScanBar = false,
+		hideQuantumMarker = false,
 	},
 	kurosawa = {
 		enemySlowMult = 0.1,

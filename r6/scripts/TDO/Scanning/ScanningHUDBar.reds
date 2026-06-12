@@ -97,6 +97,6 @@ public class TDO_ScanningBar {
     this.m_widgetSlot.SetTranslation(TDOConfig.ScanningBarPosX(), TDOConfig.ScanningBarPosY());
     this.m_bg.SetSize(Vector2(w, h));
     this.m_fill.SetSize(Vector2(w * c, h));
-    this.m_widgetSlot.SetVisible(scannerOpen);
+    this.m_widgetSlot.SetVisible(scannerOpen && !TDOConfig.UIShouldHideScanBar());
   }
 }

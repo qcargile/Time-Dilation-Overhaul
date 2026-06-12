@@ -74,7 +74,7 @@ function saveSettings(stuff)
 end
 
 function loadSettings()
-	local file = io.open("config/nUISettings.json", "r");
+	local file = io.open("config/nUISettings.json", "r")
 
 	if file == nil then
 		print("["..modName.."] CAUTION: Could not open nUISettings.json file. Reverting to userConfig.lua settings. This is totally normal on the first run of this mod.")

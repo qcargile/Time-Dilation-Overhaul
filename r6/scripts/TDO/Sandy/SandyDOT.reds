@@ -52,6 +52,18 @@ public func TDO_DOT_GetActiveSandyRefStat(player: ref<PlayerPuppet>) -> gamedata
   return strongestRefStat;
 }
 
+public func TDO_DOT_ApplyCurve(t: Float) -> Float {
+  let curve: Int32 = TDOConfig.DOTCurveType();
+  if curve == 1 {
+    return t * t;
+  }
+  if curve == 2 {
+    let inv: Float = 1.0 - t;
+    return 1.0 - inv * inv;
+  }
+  return t;
+}
+
 public func TDO_DOT_ComputeTickInterval(slowPct: Float) -> Float {
   let minInterval: Float = TDOConfig.DOTTickMinInterval();
   let maxInterval: Float = TDOConfig.DOTTickMaxInterval();
@@ -62,7 +74,8 @@ public func TDO_DOT_ComputeTickInterval(slowPct: Float) -> Float {
     return maxInterval;
   }
   let clamped: Float = MinF(MaxF((slowPct - rangeMin) / span, 0.0), 1.0);
-  return maxInterval - clamped * (maxInterval - minInterval);
+  let shaped: Float = TDO_DOT_ApplyCurve(clamped);
+  return maxInterval - shaped * (maxInterval - minInterval);
 }
 
 public func TDO_DOT_ComputeMitigation(player: ref<PlayerPuppet>, refStat: gamedataStatType) -> Float {

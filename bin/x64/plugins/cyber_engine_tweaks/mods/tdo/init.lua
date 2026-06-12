@@ -10,7 +10,7 @@ local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
 
-local TDO_VERSION = "v0.5"
+local TDO_VERSION = "v1.0"
 local ESR_VERSION = "d2026.5.25"
 
 local function lerpTier(v1, vTop, tier, total)
@@ -882,7 +882,27 @@ registerForEvent("onInit", function()
 
 		nativeSettings.addSubcategory("/tdo/note", nuiTxt["reloadWarning"])
 
-		
+		nativeSettings.addSubcategory("/tdo/cinematic", "Cinematic / Screenshot Mode")
+
+		nativeSettings.addSwitch("/tdo/cinematic", "Hide All TDO UI", "Master toggle: hides every TDO-added HUD element (scanning bar, teleport markers). Useful for screenshots and cinematic recording.", config.ui.hideAll, default.ui.hideAll, function(state)
+			config.ui.hideAll = state
+			saveSettings(config)
+		end)
+
+		nativeSettings.addSwitch("/tdo/cinematic", "Hide Scanning Charge Bar", "Hides the scanner time-dilation charge bar at the bottom of the screen. Bar still functions, just invisible.", config.ui.hideScanBar, default.ui.hideScanBar, function(state)
+			config.ui.hideScanBar = state
+			saveSettings(config)
+		end)
+
+		nativeSettings.addSwitch("/tdo/cinematic", "Hide Quantum Teleport Marker", "Hides the destination marker while plotting a Quantum teleport. Teleport still works, just no marker.", config.ui.hideQuantumMarker, default.ui.hideQuantumMarker, function(state)
+			config.ui.hideQuantumMarker = state
+			saveSettings(config)
+		end)
+
+		Override("TDOConfig", "UIHideAll;", function() return config.ui.hideAll end)
+		Override("TDOConfig", "UIHideScanBar;", function() return config.ui.hideScanBar end)
+		Override("TDOConfig", "UIHideQuantumMarker;", function() return config.ui.hideQuantumMarker end)
+
 		local cat = "DOT"
 		nativeSettings.addSubcategory("/tdo/DOT", nuiTxt[cat]["header"])
 
@@ -936,6 +956,11 @@ registerForEvent("onInit", function()
 			saveSettings(config)
 		end)
 
+		nativeSettings.addSelectorString("/tdo/DOT", "Damage Curve", "How DOT damage scales with slow strength. Linear = constant ramp. Squared = soft start, bites hard at high slow. InverseSquared = bites early, softens at high slow.", {"Linear", "Squared", "InverseSquared"}, config.dot.curveType + 1, default.dot.curveType + 1, function(value)
+			config.dot.curveType = value - 1
+			saveSettings(config)
+		end)
+
 		Override("TDOConfig", "DOTEnabled;", function() return config.dot.enabled end)
 		Override("TDOConfig", "DOTBaseRatePct;", function() return config.dot.baseRatePct end)
 		Override("TDOConfig", "DOTSlowThresholdPct;", function() return config.dot.slowThresholdPct end)
@@ -946,6 +971,7 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "DOTMitigationCap;", function() return config.dot.mitigationCap end)
 		Override("TDOConfig", "DOTMitigationRefStatCap;", function() return config.dot.mitigationRefStatCap end)
 		Override("TDOConfig", "DOTCanKill;", function() return config.dot.canKill end)
+		Override("TDOConfig", "DOTCurveType;", function() return config.dot.curveType end)
 
 		cat = "bulletTrail"
 		nativeSettings.addSubcategory("/tdo/bulletTrail", nuiTxt[cat]["header"])
@@ -1752,6 +1778,27 @@ function TDODumpWeapon()
 end
 
 registerForEvent("onShutdown", function()
+end)
+
+registerHotkey("TDOCinematicHideAll", "Cinematic — Toggle Hide All TDO UI", function()
+	if type(config) ~= "table" or type(config.ui) ~= "table" then return end
+	config.ui.hideAll = not config.ui.hideAll
+	saveSettings(config)
+	print("[TDO] Hide All UI: " .. tostring(config.ui.hideAll))
+end)
+
+registerHotkey("TDOCinematicHideScanBar", "Cinematic — Toggle Hide Scanning Bar", function()
+	if type(config) ~= "table" or type(config.ui) ~= "table" then return end
+	config.ui.hideScanBar = not config.ui.hideScanBar
+	saveSettings(config)
+	print("[TDO] Hide Scanning Bar: " .. tostring(config.ui.hideScanBar))
+end)
+
+registerHotkey("TDOCinematicHideQuantumMarker", "Cinematic — Toggle Hide Quantum Marker", function()
+	if type(config) ~= "table" or type(config.ui) ~= "table" then return end
+	config.ui.hideQuantumMarker = not config.ui.hideQuantumMarker
+	saveSettings(config)
+	print("[TDO] Hide Quantum Marker: " .. tostring(config.ui.hideQuantumMarker))
 end)
 
 function TDOZetatechDebug()
