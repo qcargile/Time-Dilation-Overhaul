@@ -104,6 +104,14 @@ public func TDO_Shrike_IsADS(player: ref<PlayerPuppet>) -> Bool {
   return upper == EnumInt(gamePSMUpperBodyStates.Aim);
 }
 
+public func TDO_Shrike_IsRangedWeaponEquipped(player: ref<PlayerPuppet>) -> Bool {
+  let weapon: ref<WeaponObject> = GameObject.GetActiveWeapon(player);
+  if !IsDefined(weapon) {
+    return false;
+  }
+  return weapon.IsRanged();
+}
+
 public func TDO_Shrike_IsSandyChargeFull(player: ref<PlayerPuppet>) -> Bool {
   let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(player.GetGame());
   return pools.HasStatPoolValueReachedMax(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.SandevistanCharge);
@@ -140,6 +148,12 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
     return true;
   }
   if !isShrike {
+    TDO_Shrike_ScheduleMarkTick(this);
+    return true;
+  }
+
+  if !TDO_Shrike_IsRangedWeaponEquipped(this) {
+    this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
