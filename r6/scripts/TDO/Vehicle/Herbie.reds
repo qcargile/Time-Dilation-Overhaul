@@ -302,32 +302,79 @@ public func TDO_Herbie_SetSteer(v: Float) -> Void {
 
 public class TDO_HerbieTick extends DelayCallback {
 
-  public let m_player: ref<PlayerPuppet>;
+  public let m_playerID: EntityID;
 
   public func Call() -> Void {
-    let player: ref<PlayerPuppet> = this.m_player;
+    let gi: GameInstance = GetGameInstance();
+    let player: ref<PlayerPuppet> = GameInstance.FindEntityByID(gi, this.m_playerID) as PlayerPuppet;
     if !IsDefined(player) {
       return;
     }
-    let gi: GameInstance = player.GetGame();
 
-    let enabled: Bool = TDOConfig.HerbieEnabled();
+    if !TDOConfig.HerbieEnabled() {
+      if player.m_tdoHerbieActive {
+        TDO_Herbie_Disengage(player, gi);
+      }
+      player.m_tdoHerbieTickScheduled = false;
+      return;
+    }
+
     let vehicle: wref<VehicleObject> = TDO_Herbie_GetDriverVehicle(player, gi);
-    let eligible: Bool = enabled && IsDefined(vehicle) && TDO_Herbie_IsSandyActive(player) && TDO_Herbie_IsRealSandy(player);
+    if !IsDefined(vehicle) {
+      if player.m_tdoHerbieActive {
+        TDO_Herbie_Disengage(player, gi);
+      }
+      player.m_tdoHerbieTickScheduled = false;
+      return;
+    }
 
+    let eligible: Bool = TDO_Herbie_IsSandyActive(player) && TDO_Herbie_IsRealSandy(player);
     if eligible && !player.m_tdoHerbieActive {
       TDO_Herbie_Engage(player, gi, vehicle);
     }
     if !eligible && player.m_tdoHerbieActive {
       TDO_Herbie_Disengage(player, gi);
     }
-    if player.m_tdoHerbieActive && IsDefined(vehicle) {
+    if player.m_tdoHerbieActive {
       TDO_Herbie_ApplyImpulses(player, vehicle);
     }
 
     let next: ref<TDO_HerbieTick> = new TDO_HerbieTick();
-    next.m_player = player;
+    next.m_playerID = this.m_playerID;
     GameInstance.GetDelaySystem(gi).DelayCallback(next, TDOConfig.HerbieTickInterval(), false);
+  }
+}
+
+public func TDO_Herbie_ArmTick(player: ref<PlayerPuppet>) -> Void {
+  if player.m_tdoHerbieTickScheduled {
+    return;
+  }
+  player.m_tdoHerbieTickScheduled = true;
+  let tick: ref<TDO_HerbieTick> = new TDO_HerbieTick();
+  tick.m_playerID = player.GetEntityID();
+  GameInstance.GetDelaySystem(player.GetGame()).DelayCallback(tick, TDOConfig.HerbieTickInterval(), false);
+}
+
+public class TDO_HerbieArmCheck extends DelayCallback {
+
+  public let m_playerID: EntityID;
+
+  public func Call() -> Void {
+    let gi: GameInstance = GetGameInstance();
+    let player: ref<PlayerPuppet> = GameInstance.FindEntityByID(gi, this.m_playerID) as PlayerPuppet;
+    if !IsDefined(player) {
+      return;
+    }
+    if !TDOConfig.HerbieEnabled() {
+      return;
+    }
+    if player.m_tdoHerbieTickScheduled {
+      return;
+    }
+    let vehicle: wref<VehicleObject> = TDO_Herbie_GetDriverVehicle(player, gi);
+    if IsDefined(vehicle) {
+      TDO_Herbie_ArmTick(player);
+    }
   }
 }
 
@@ -338,12 +385,21 @@ protected cb func OnGameAttached() -> Bool {
   this.m_tdoHerbieTDMod = null;
   this.m_tdoHerbieRadioWasOn = false;
   this.m_tdoHerbieRadioVehicle = null;
-  if !this.m_tdoHerbieTickScheduled {
-    this.m_tdoHerbieTickScheduled = true;
-    let tick: ref<TDO_HerbieTick> = new TDO_HerbieTick();
-    tick.m_player = this;
-    GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(tick, TDOConfig.HerbieTickInterval(), false);
+  this.m_tdoHerbieTickScheduled = false;
+  let armCheck: ref<TDO_HerbieArmCheck> = new TDO_HerbieArmCheck();
+  armCheck.m_playerID = this.GetEntityID();
+  GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(armCheck, 1.0, false); // save-in-vehicle arm probe, one-shot
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnMountingEvent(evt: ref<MountingEvent>) -> Bool {
+  let result: Bool = wrappedMethod(evt);
+  if TDOConfig.HerbieEnabled() && IsDefined(evt) && IsDefined(evt.request) {
+    if Equals(evt.request.lowLevelMountingInfo.slotId.id, n"seat_front_left") {
+      TDO_Herbie_ArmTick(this);
+    }
   }
+  return result;
 }
 
 @wrapMethod(VehicleComponentPS)

@@ -9,7 +9,10 @@ public let m_tdoScanCharge: Float;
 public let m_tdoScanTDActive: Bool;
 
 @addField(PlayerPuppet)
-public let m_tdoScanTickScheduled: Bool;
+public let m_tdoScanTickID: DelayID;
+
+@addField(PlayerPuppet)
+public let m_tdoScanVisListener: ref<CallbackHandle>;
 
 @addField(PlayerPuppet)
 public let m_tdoScanBar: ref<TDO_ScanningBar>;
@@ -56,14 +59,15 @@ public func TDO_Scanning_IsLookingAtScannable(gi: GameInstance) -> Bool {
 
 public class TDO_ScanningTick extends DelayCallback {
 
-  public let m_player: ref<PlayerPuppet>;
+  public let m_playerID: EntityID;
 
   public func Call() -> Void {
-    let player: ref<PlayerPuppet> = this.m_player;
+    let gi: GameInstance = GetGameInstance();
+    let player: ref<PlayerPuppet> = GameInstance.FindEntityByID(gi, this.m_playerID) as PlayerPuppet;
     if !IsDefined(player) {
       return;
     }
-    let gi: GameInstance = player.GetGame();
+    player.m_tdoScanTickID = GetInvalidDelayID();
 
     if !TDOConfig.ScanningEnabled() {
       if player.m_tdoScanTDActive {
@@ -74,31 +78,29 @@ public class TDO_ScanningTick extends DelayCallback {
       if IsDefined(player.m_tdoScanBar) {
         player.m_tdoScanBar.Update(player.m_tdoScanCharge, false);
       }
-    } else {
+      return;
+    }
+
+    let scannerOpen: Bool = TDO_Scanning_IsScannerOpen(gi);
+
+    if scannerOpen {
       let step: Float = TDOConfig.ScanningTickInterval();
       let intScale: Float = TDO_Scanning_IntScale(player);
+      let onTarget: Bool = TDO_Scanning_IsLookingAtScannable(gi);
 
-      let scannerOpen: Bool = TDO_Scanning_IsScannerOpen(gi);
-      let onTarget: Bool = scannerOpen && TDO_Scanning_IsLookingAtScannable(gi);
-
-      if !scannerOpen {
-        player.m_tdoScanGraceActive = false;
+      if onTarget {
+        player.m_tdoScanGraceActive = true;
         player.m_tdoScanGraceTimer = 0.0;
       } else {
-        if onTarget {
-          player.m_tdoScanGraceActive = true;
-          player.m_tdoScanGraceTimer = 0.0;
-        } else {
-          if player.m_tdoScanGraceActive {
-            player.m_tdoScanGraceTimer += step;
-            if player.m_tdoScanGraceTimer >= TDOConfig.ScanningGracePeriodSec() {
-              player.m_tdoScanGraceActive = false;
-            }
+        if player.m_tdoScanGraceActive {
+          player.m_tdoScanGraceTimer += step;
+          if player.m_tdoScanGraceTimer >= TDOConfig.ScanningGracePeriodSec() {
+            player.m_tdoScanGraceActive = false;
           }
         }
       }
 
-      let effectivelyOnTarget: Bool = onTarget || (scannerOpen && player.m_tdoScanGraceActive);
+      let effectivelyOnTarget: Bool = onTarget || player.m_tdoScanGraceActive;
       let hasResource: Bool = !player.m_tdoScanLockedOut && player.m_tdoScanCharge > 0.0;
       let wantTD: Bool = effectivelyOnTarget && hasResource;
 
@@ -134,12 +136,65 @@ public class TDO_ScanningTick extends DelayCallback {
         player.m_tdoScanBar = new TDO_ScanningBar();
       }
       player.m_tdoScanBar.EnsureCreated();
-      player.m_tdoScanBar.Update(player.m_tdoScanCharge, scannerOpen);
-    }
+      player.m_tdoScanBar.Update(player.m_tdoScanCharge, true);
 
-    let next: ref<TDO_ScanningTick> = new TDO_ScanningTick();
-    next.m_player = player;
-    GameInstance.GetDelaySystem(gi).DelayCallback(next, TDOConfig.ScanningTickInterval(), false);
+      TDO_Scanning_ArmTick(player, TDOConfig.ScanningTickInterval());
+    } else {
+      if player.m_tdoScanTDActive {
+        TimeDilationHelper.UnSetTimeDilation(player, n"TDOScannerTD", n"Linear");
+        player.m_tdoScanTDActive = false;
+        TDOInfo("ScanningTD", "TD OFF (scanner closed)");
+      }
+      player.m_tdoScanGraceActive = false;
+      player.m_tdoScanGraceTimer = 0.0;
+
+      if player.m_tdoScanCharge < 1.0 {
+        let step: Float = 0.5; // slow recharge heartbeat interval while scanner closed
+        player.m_tdoScanCharge += (TDOConfig.ScanningRechargePerSec() * TDO_Scanning_IntScale(player)) * step;
+        player.m_tdoScanCharge = ClampF(player.m_tdoScanCharge, 0.0, 1.0);
+        if player.m_tdoScanLockedOut && player.m_tdoScanCharge >= 1.0 {
+          player.m_tdoScanLockedOut = false;
+        }
+        if IsDefined(player.m_tdoScanBar) {
+          player.m_tdoScanBar.Update(player.m_tdoScanCharge, false);
+        }
+        TDO_Scanning_ArmTick(player, step);
+      } else {
+        if IsDefined(player.m_tdoScanBar) {
+          player.m_tdoScanBar.Update(player.m_tdoScanCharge, false);
+        }
+      }
+    }
+  }
+}
+
+public func TDO_Scanning_ArmTick(player: ref<PlayerPuppet>, interval: Float) -> Void {
+  let ds: ref<DelaySystem> = GameInstance.GetDelaySystem(player.GetGame());
+  if player.m_tdoScanTickID != GetInvalidDelayID() {
+    ds.CancelDelay(player.m_tdoScanTickID);
+  }
+  let tick: ref<TDO_ScanningTick> = new TDO_ScanningTick();
+  tick.m_playerID = player.GetEntityID();
+  player.m_tdoScanTickID = ds.DelayCallback(tick, interval, false);
+}
+
+public class TDO_ScanningSetup extends DelayCallback {
+
+  public let m_playerID: EntityID;
+
+  public func Call() -> Void {
+    let gi: GameInstance = GetGameInstance();
+    let player: ref<PlayerPuppet> = GameInstance.FindEntityByID(gi, this.m_playerID) as PlayerPuppet;
+    if !IsDefined(player) {
+      return;
+    }
+    if IsDefined(player.m_tdoScanVisListener) {
+      return;
+    }
+    let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().UI_Scanner);
+    if IsDefined(bb) {
+      player.m_tdoScanVisListener = bb.RegisterListenerBool(GetAllBlackboardDefs().UI_Scanner.UIVisible, player, n"OnTDOScannerVisibleChanged", true);
+    }
   }
 }
 
@@ -151,12 +206,32 @@ protected cb func OnGameAttached() -> Bool {
   this.m_tdoScanLockedOut = false;
   this.m_tdoScanGraceTimer = 0.0;
   this.m_tdoScanGraceActive = false;
-  if !this.m_tdoScanTickScheduled {
-    this.m_tdoScanTickScheduled = true;
-    let tick: ref<TDO_ScanningTick> = new TDO_ScanningTick();
-    tick.m_player = this;
-    GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(tick, TDOConfig.ScanningTickInterval(), false);
+  this.m_tdoScanTickID = GetInvalidDelayID();
+  this.m_tdoScanVisListener = null;
+  let setup: ref<TDO_ScanningSetup> = new TDO_ScanningSetup();
+  setup.m_playerID = this.GetEntityID();
+  GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(setup, 1.0, false); // defer listener registration until UI blackboards are ready, one-shot
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnDetach() -> Bool {
+  let result: Bool = wrappedMethod();
+  if IsDefined(this.m_tdoScanVisListener) {
+    let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_Scanner);
+    if IsDefined(bb) {
+      bb.UnregisterListenerBool(GetAllBlackboardDefs().UI_Scanner.UIVisible, this.m_tdoScanVisListener);
+    }
+    this.m_tdoScanVisListener = null;
   }
+  return result;
+}
+
+@addMethod(PlayerPuppet)
+protected cb func OnTDOScannerVisibleChanged(visible: Bool) -> Bool {
+  if visible && TDOConfig.ScanningEnabled() {
+    TDO_Scanning_ArmTick(this, TDOConfig.ScanningTickInterval());
+  }
+  return true;
 }
 
 @wrapMethod(TimeDilationFocusModeDecisions)
