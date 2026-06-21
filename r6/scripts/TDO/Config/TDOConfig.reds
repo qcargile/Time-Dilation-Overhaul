@@ -149,37 +149,34 @@ public class TDOConfig {
   }
 
 
-  public static func ApogeeEnabled() -> Bool {
-    return false;
-  }
+  public static func ApogeeEnabled() -> Bool { return true; }
 
-  public static func ApogeeStrainMultiplierCap() -> Float {
-    return 8.0;
-  }
+  public static func ApogeeRechargeMin() -> Float { return 30.0; }
+  public static func ApogeeRechargeMax() -> Float { return 20.0; }
 
-  public static func ApogeeSlowTimeMinPct() -> Float {
-    return 85.0;
-  }
+  public static func ApogeeCritChanceMin() -> Float { return 15.0; }
+  public static func ApogeeCritChanceMax() -> Float { return 35.0; }
+  public static func ApogeeCritDmgMin() -> Float { return 50.0; }
+  public static func ApogeeCritDmgMax() -> Float { return 150.0; }
+  public static func ApogeeHeadshotMin() -> Float { return 33.0; }
+  public static func ApogeeHeadshotMax() -> Float { return 100.0; }
 
-  public static func ApogeeSlowTimeMaxPct() -> Float {
-    return 90.0;
-  }
-
-  public static func ApogeeDurationMin() -> Float {
-    return 6.0;
-  }
-
-  public static func ApogeeDurationMax() -> Float {
-    return 10.0;
-  }
-
-  public static func ApogeeRechargeMin() -> Float {
-    return 30.0;
-  }
-
-  public static func ApogeeRechargeMax() -> Float {
-    return 20.0;
-  }
+  public static func ApogeeTickInterval() -> Float { return 0.05; }
+  public static func ApogeeStillSlowPct() -> Float { return 99.0; }
+  public static func ApogeeCamLookSlowPct() -> Float { return 90.0; }
+  public static func ApogeeAimSlowPct() -> Float { return 80.0; }
+  public static func ApogeeMoveThreshold() -> Float { return 0.4; }
+  public static func ApogeeCamLookThreshold() -> Float { return 0.005; }
+  public static func ApogeeFireWindow() -> Float { return 0.15; }
+  public static func ApogeeActionSlowPct() -> Float { return 10.0; }
+  public static func ApogeeProjectileSpeedMult() -> Float { return 2.5; }
+  public static func ApogeeChargeRefillThreshold() -> Float { return 50.0; }
+  public static func ApogeeStrainGrace() -> Float { return 2.0; }
+  public static func ApogeeStrainGraceCap() -> Float { return 5.0; }
+  public static func ApogeeStrainRampDuration() -> Float { return 10.0; }
+  public static func ApogeeStrainCapPctPerSec() -> Float { return 3.0; }
+  public static func ApogeeStrainCanKill() -> Bool { return false; }
+  public static func ApogeeStrainReflexGraceScale() -> Float { return 0.1; }
 
   public static func SandyVFXEnabled() -> Bool {
     return false;

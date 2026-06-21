@@ -49,8 +49,9 @@ protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
   this.m_tdoFusilladeRampHits = 0;
   this.m_tdoFusilladeShotInFlight = false;
 
-  this.m_apogeeActivationCount = 0;
-  this.m_apogeeLastActivationTime = 0.0;
+  if this.m_tdoApogeeActive {
+    this.TDO_Apogee_Disarm();
+  }
 
   TDOInfo("DeathCleanup", "unset all custom TD reasons and reset attunement state on player death");
   return result;

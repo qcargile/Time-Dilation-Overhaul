@@ -1,5 +1,5 @@
 return {
-	configVersion = 11.6,
+	configVersion = 11.8,
 	fusilladeShow = true,
 	juggernautShow = true,
 	kurosawaShow = true,
@@ -72,13 +72,14 @@ return {
 	},
 	apogee = {
 		enabled = true,
-		strainMultiplierCap = 8.0,
-		slowTimeMinPct = 85.0,
-		slowTimeMaxPct = 90.0,
-		durationMin = 10.0,
-		durationMax = 12.0,
 		rechargeMin = 30.0,
 		rechargeMax = 20.0,
+		critChanceMin = 15.0,
+		critChanceMax = 35.0,
+		critDmgMin = 50.0,
+		critDmgMax = 150.0,
+		headshotMin = 33.0,
+		headshotMax = 100.0,
 	},
 	fusillade = {
 		timeScale = 0.25,
