@@ -141,4 +141,14 @@ return {
 	{ version = 10.4, resetKeys = {"bulletTrail"} },
 	{ version = 10.5, resetKeys = {"scanning.gracePeriodSec"} },
 	{ version = 10.6, resetKeys = {"bulletTrail"} },
+	{ version = 11.7, resetKeys = {
+		"apogee.critChanceMin", "apogee.critChanceMax",
+		"apogee.critDmgMin", "apogee.critDmgMax",
+		"apogee.headshotMin", "apogee.headshotMax",
+	} },
+	{ version = 11.8, resetKeys = {
+		"apogee.critChanceMin", "apogee.critChanceMax",
+		"apogee.critDmgMin", "apogee.critDmgMax",
+		"apogee.headshotMin", "apogee.headshotMax",
+	} },
 }

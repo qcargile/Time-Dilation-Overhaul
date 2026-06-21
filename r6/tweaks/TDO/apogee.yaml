@@ -5,3 +5,33 @@ Attunements.TDO_ApogeeLoc:
   intValues: []
   nameValues: []
   stats: []
+
+Attunements.TDO_Apogee:
+  $type: gamedataGameplayLogicPackage_Record
+  stackable: False
+  UIData: Attunements.TDO_Apogee_UI
+  animationWrapperOverrides: []
+  effectors: []
+  items: []
+  statPools: []
+  stats:
+    - $type: CombinedStatModifier
+      opSymbol: '*'
+      refObject: Player
+      refStat: BaseStats.Reflexes
+      value: 0.005
+      modifierType: Additive
+      statType: BaseStats.AttunementHelper
+
+Attunements.TDO_Apogee_UI:
+  $type: gamedataGameplayLogicPackageUIData_Record
+  iconPath: UIIcon.Reflexes
+  localizedName: LocKey#Attunement-TDO-Apogee-Name
+  localizedDescription: LocKey#Attunement-TDO-Apogee-Desc
+  floatValues:
+    - 0.1
+    - 0
+  intValues: []
+  nameValues: []
+  stats:
+    - BaseStats.AttunementHelper

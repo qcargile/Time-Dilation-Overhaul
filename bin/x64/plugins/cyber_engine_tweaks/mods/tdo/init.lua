@@ -316,60 +316,10 @@ local function createFalconMechanic(nativeSettings, path, nuiTxt, config, defaul
 end
 
 local APOGEE_TIER_FLATS = {
-	[1] = { item="Items.AdvancedSandevistanApogee",         dur="_inline19", ts="_inline20", rchrg="_inline21" },
-	[2] = { item="Items.AdvancedSandevistanApogeePlus",     dur="_inline18", ts="_inline19", rchrg="_inline20" },
-	[3] = { item="Items.AdvancedSandevistanApogeePlusPlus", dur="_inline18", ts="_inline19", rchrg="_inline20" },
+	[1] = { item="Items.AdvancedSandevistanApogee",         dur="_inline19", ts="_inline20", rchrg="_inline21", critCh="_inline8", critDmg="_inline9", headshot="_inline10" },
+	[2] = { item="Items.AdvancedSandevistanApogeePlus",     dur="_inline18", ts="_inline19", rchrg="_inline20", critCh="_inline8", critDmg="_inline9", headshot="_inline10" },
+	[3] = { item="Items.AdvancedSandevistanApogeePlusPlus", dur="_inline18", ts="_inline19", rchrg="_inline20", critCh="_inline8", critDmg="_inline9", headshot="_inline10" },
 }
-
-local function refToString(ref)
-	if type(ref) ~= "userdata" then return tostring(ref) end
-	local ok, s = pcall(function() return TDBID.ToStringDEBUG(ref) end)
-	if ok and s ~= nil then return s end
-	return ""
-end
-
-local function stripSetBonusesContaminationFromApogee(itemPath)
-	local selfRefPattern = itemPath:gsub("([%%%.%+%-%*%?%[%]%(%)%^%$])", "%%%1") .. "%.statModifiers%$"
-	local statMods = TweakDB:GetFlat(itemPath .. ".statModifiers")
-	if statMods ~= nil then
-		local cleaned = {}
-		local removed = 0
-		for _, ref in ipairs(statMods) do
-			local refStr = refToString(ref)
-			local isContamination = refStr ~= "" and (
-				string.find(refStr, "^Items%.apart_") ~= nil
-				or refStr == "Quality.IconicItem"
-				or string.find(refStr, selfRefPattern) ~= nil
-			)
-			if isContamination then
-				removed = removed + 1
-			else
-				table.insert(cleaned, ref)
-			end
-		end
-		if removed > 0 then
-			TweakDB:SetFlat(itemPath .. ".statModifiers", cleaned)
-			print(string.format("[TDO] %s.statModifiers: stripped %d Set Bonuses contamination entr(ies)", itemPath, removed))
-		end
-	end
-	local onEquip = TweakDB:GetFlat(itemPath .. ".OnEquip")
-	if onEquip ~= nil then
-		local cleaned = {}
-		local removed = 0
-		for _, ref in ipairs(onEquip) do
-			local refStr = refToString(ref)
-			if refStr ~= "" and string.find(refStr, "^Items%.apart_") then
-				removed = removed + 1
-			else
-				table.insert(cleaned, ref)
-			end
-		end
-		if removed > 0 then
-			TweakDB:SetFlat(itemPath .. ".OnEquip", cleaned)
-			print(string.format("[TDO] %s.OnEquip: stripped %d Set Bonuses contamination entr(ies)", itemPath, removed))
-		end
-	end
-end
 
 local function applyApogeeTweaks(config)
 	if config.apogee == nil or config.apogee.enabled == false then return end
@@ -377,16 +327,21 @@ local function applyApogeeTweaks(config)
 	local apLocActive = TweakDB:GetFlat("Attunements.TDO_ApogeeLoc.localizedDescription")
 	if apLocActive ~= nil then apLocActive = tostring(apLocActive) end
 	for tier, flats in ipairs(APOGEE_TIER_FLATS) do
-		local slowPct = lerpTier(config.apogee.slowTimeMinPct, config.apogee.slowTimeMaxPct, tier, totalTiers)
-		TweakDB:SetFlat(flats.item .. flats.ts .. ".value", 1.0 - slowPct / 100.0)
-		local durSec = lerpTier(config.apogee.durationMin, config.apogee.durationMax, tier, totalTiers)
-		TweakDB:SetFlat(flats.item .. flats.dur .. ".value", durSec)
+		TweakDB:SetFlat(flats.item .. flats.ts .. ".value", 0.01)
+		TweakDB:SetFlat(flats.item .. flats.dur .. ".value", 999.0)
 		local rchrgSec = lerpTier(config.apogee.rechargeMin, config.apogee.rechargeMax, tier, totalTiers)
 		TweakDB:SetFlat(flats.item .. flats.rchrg .. ".value", rchrgSec)
+		local critChPct = lerpTier(config.apogee.critChanceMin, config.apogee.critChanceMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.critCh .. ".value", critChPct)
+		local critDmgPct = lerpTier(config.apogee.critDmgMin, config.apogee.critDmgMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.critDmg .. ".value", critDmgPct)
+		local headshotPct = lerpTier(config.apogee.headshotMin, config.apogee.headshotMax, tier, totalTiers)
+		TweakDB:SetFlat(flats.item .. flats.headshot .. ".value", 1.0 + headshotPct / 100.0)
 		if apLocActive ~= nil then
 			TweakDB:SetFlat(flats.item .. "_inline1.localizedDescription", apLocActive)
 		end
-		stripSetBonusesContaminationFromApogee(flats.item)
+		removeFlatsFromFlatArr(flats.item .. ".OnEquip", { "Attunements.ReflexesSandyProlong", flats.item .. "_inline2" })
+		addFlatsToFlatArr(flats.item .. ".OnEquip", { "Attunements.TDO_Apogee" })
 		TweakDB:Update(flats.item)
 	end
 end
@@ -397,17 +352,15 @@ local function createApogeeMechanic(nativeSettings, path, nuiTxt, config, defaul
 
 	applyApogeeTweaks(config)
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMinPct"]["opt"]..nuiTxt[cat]["slowTimeMinPct"]["optUnit"], nuiTxt[cat]["slowTimeMinPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.apogee.slowTimeMinPct, default.apogee.slowTimeMinPct, function(value) config.apogee.slowTimeMinPct = value applyApogeeTweaks(config) saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMaxPct"]["opt"]..nuiTxt[cat]["slowTimeMaxPct"]["optUnit"], nuiTxt[cat]["slowTimeMaxPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.apogee.slowTimeMaxPct, default.apogee.slowTimeMaxPct, function(value) config.apogee.slowTimeMaxPct = value applyApogeeTweaks(config) saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.apogee.durationMin, default.apogee.durationMin, function(value) config.apogee.durationMin = value applyApogeeTweaks(config) saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 1.0, 30.0, 0.5, "%.1f", config.apogee.durationMax, default.apogee.durationMax, function(value) config.apogee.durationMax = value applyApogeeTweaks(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMin"]["opt"]..nuiTxt[cat]["rechargeMin"]["optUnit"], nuiTxt[cat]["rechargeMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.apogee.rechargeMin, default.apogee.rechargeMin, function(value) config.apogee.rechargeMin = value applyApogeeTweaks(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMax"]["opt"]..nuiTxt[cat]["rechargeMax"]["optUnit"], nuiTxt[cat]["rechargeMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.apogee.rechargeMax, default.apogee.rechargeMax, function(value) config.apogee.rechargeMax = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critChanceMin"]["opt"]..nuiTxt[cat]["critChanceMin"]["optUnit"], nuiTxt[cat]["critChanceMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.apogee.critChanceMin, default.apogee.critChanceMin, function(value) config.apogee.critChanceMin = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critChanceMax"]["opt"]..nuiTxt[cat]["critChanceMax"]["optUnit"], nuiTxt[cat]["critChanceMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.apogee.critChanceMax, default.apogee.critChanceMax, function(value) config.apogee.critChanceMax = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critDmgMin"]["opt"]..nuiTxt[cat]["critDmgMin"]["optUnit"], nuiTxt[cat]["critDmgMin"]["des"], 0.0, 200.0, 1.0, "%.0f", config.apogee.critDmgMin, default.apogee.critDmgMin, function(value) config.apogee.critDmgMin = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critDmgMax"]["opt"]..nuiTxt[cat]["critDmgMax"]["optUnit"], nuiTxt[cat]["critDmgMax"]["des"], 0.0, 200.0, 1.0, "%.0f", config.apogee.critDmgMax, default.apogee.critDmgMax, function(value) config.apogee.critDmgMax = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["headshotMin"]["opt"]..nuiTxt[cat]["headshotMin"]["optUnit"], nuiTxt[cat]["headshotMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.apogee.headshotMin, default.apogee.headshotMin, function(value) config.apogee.headshotMin = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["headshotMax"]["opt"]..nuiTxt[cat]["headshotMax"]["optUnit"], nuiTxt[cat]["headshotMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.apogee.headshotMax, default.apogee.headshotMax, function(value) config.apogee.headshotMax = value applyApogeeTweaks(config) saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainMultiplierCap"]["opt"]..nuiTxt[cat]["strainMultiplierCap"]["optUnit"], nuiTxt[cat]["strainMultiplierCap"]["des"], 1.0, 32.0, 0.5, "%.1f", config.apogee.strainMultiplierCap, default.apogee.strainMultiplierCap, function(value)
-		config.apogee.strainMultiplierCap = value
-		saveSettings(config)
-	end))
 	return handles
 end
 
@@ -1208,13 +1161,14 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "FalconBoltEMPDamage_T5;", function() return config.falcon.boltEMPDamageT5 end)
 
 		Override("TDOConfig", "ApogeeEnabled;",        function() return config.apogee.enabled end)
-		Override("TDOConfig", "ApogeeStrainMultiplierCap;", function() return config.apogee.strainMultiplierCap end)
-		Override("TDOConfig", "ApogeeSlowTimeMinPct;", function() return config.apogee.slowTimeMinPct end)
-		Override("TDOConfig", "ApogeeSlowTimeMaxPct;", function() return config.apogee.slowTimeMaxPct end)
-		Override("TDOConfig", "ApogeeDurationMin;",    function() return config.apogee.durationMin    end)
-		Override("TDOConfig", "ApogeeDurationMax;",    function() return config.apogee.durationMax    end)
 		Override("TDOConfig", "ApogeeRechargeMin;",    function() return config.apogee.rechargeMin    end)
 		Override("TDOConfig", "ApogeeRechargeMax;",    function() return config.apogee.rechargeMax    end)
+		Override("TDOConfig", "ApogeeCritChanceMin;",  function() return config.apogee.critChanceMin  end)
+		Override("TDOConfig", "ApogeeCritChanceMax;",  function() return config.apogee.critChanceMax  end)
+		Override("TDOConfig", "ApogeeCritDmgMin;",     function() return config.apogee.critDmgMin     end)
+		Override("TDOConfig", "ApogeeCritDmgMax;",     function() return config.apogee.critDmgMax     end)
+		Override("TDOConfig", "ApogeeHeadshotMin;",    function() return config.apogee.headshotMin    end)
+		Override("TDOConfig", "ApogeeHeadshotMax;",    function() return config.apogee.headshotMax    end)
 
 		Override("TDOConfig", "QuantumPlayerSlowTimePct;",  function() return config.quantum.playerSlowTimePct  end)
 		Override("TDOConfig", "QuantumMalwareSlowTimePct;", function() return config.quantum.malwareSlowTimePct end)
@@ -1350,9 +1304,6 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "WarpDancerRewindDurationSec;", function() return config.warpDancer.rewindDurationSec end)
 		Override("TDOConfig", "WarpDancerStaggerDurationMinSec;", function() return config.warpDancer.staggerDurationMinSec end)
 		Override("TDOConfig", "WarpDancerStaggerDurationMaxSec;", function() return config.warpDancer.staggerDurationMaxSec end)
-
-		Override("TDOConfig", "ApogeeEnabled;", function() return config.apogee.enabled end)
-		Override("TDOConfig", "ApogeeStrainMultiplierCap;", function() return config.apogee.strainMultiplierCap end)
 
 		if config.warpDancer.enabled then
 			local warpDancerTierSuffixes = {"MK3", "MK3Plus", "MK4", "MK4Plus", "MK5", "MK5Plus", "MK5PlusPlus"}

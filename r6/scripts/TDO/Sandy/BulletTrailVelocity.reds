@@ -74,6 +74,10 @@ protected cb func OnProjectileInitialize(eventData: ref<gameprojectileSetUpEvent
       player.m_tdoShrikePendingHitscanBullets -= 1;
       return wrappedMethod(eventData);
     }
+    if IsDefined(player) && player.m_tdoApogeeActive {
+      this.m_startVelocity = this.m_startVelocity * TDOConfig.ApogeeProjectileSpeedMult();
+      return wrappedMethod(eventData);
+    }
   }
 
   if !TDOConfig.BulletTrailVelocityEnabled() {
