@@ -481,23 +481,23 @@ Vendors.TDO_SogimsuStock$(tier):
   quantity:
     - Vendors.Always_Present
 
-Vendors.vik.itemStock:
+Vendors.wat_lch_ripperdoc_01.itemStock:
   - !append Vendors.TDO_SogimsuStockRare
   - !append Vendors.TDO_SogimsuStockEpic
   - !append Vendors.TDO_SogimsuStockLegendary
 
-Vendors.wat_kab_ripdoc_01.itemStock:
+Vendors.wat_kab_ripperdoc_01.itemStock:
   - !append Vendors.TDO_SogimsuStockRare
   - !append Vendors.TDO_SogimsuStockEpic
 
-Vendors.cct_cpz_ripdoc_01.itemStock:
+Vendors.cz_monument_ripperdoc_farida.itemStock:
   - !append Vendors.TDO_SogimsuStockRare
   - !append Vendors.TDO_SogimsuStockEpic
   - !append Vendors.TDO_SogimsuStockLegendary
 
-Vendors.wbr_jpn_ripdoc_01.itemStock:
+Vendors.wbr_jpn_ripperdoc_01.itemStock:
   - !append Vendors.TDO_SogimsuStockEpic
   - !append Vendors.TDO_SogimsuStockLegendary
 
-Vendors.hey_spr_ripdoc_01.itemStock:
+Vendors.hey_spr_ripperdoc_01.itemStock:
   - !append Vendors.TDO_SogimsuStockLegendary

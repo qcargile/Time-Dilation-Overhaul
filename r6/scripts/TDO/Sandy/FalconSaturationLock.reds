@@ -259,6 +259,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   wrappedMethod(stateContext, scriptInterface);
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   if !IsDefined(player) { return; }
+  if !TDOConfig.FalconSaturationLockEnabled() { return; }
   if !TDO_Falcon_IsEquipped(player) { return; }
   player.m_tdoFalconSmartShotCount = 0;
   player.m_tdoFalconPenaltySession += 1;

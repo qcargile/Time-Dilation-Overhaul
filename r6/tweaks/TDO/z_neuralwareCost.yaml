@@ -1,0 +1,22 @@
+Items.TDO_NeuralCostPerSec:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.CyberwareNeuralCost
+  value: 0.4
+
+Items.$(tier):
+  $instances:
+    - { tier: TDO_Fusillade }
+    - { tier: TDO_FusilladePlus }
+    - { tier: TDO_Kurosawa }
+    - { tier: TDO_KurosawaPlus }
+    - { tier: TDO_Quantum }
+    - { tier: TDO_QuantumPlus }
+    - { tier: TDO_QuantumAdvanced }
+    - { tier: TDO_QuantumAdvancedPlus }
+    - { tier: TDO_QuantumAdvancedPlusPlus }
+  tags:
+    - !append-once ChipwareExpansion.CyberwareWithNeuralCost
+    - !append-once ChipwareExpansion.PerSecCost
+  statModifiers:
+    - !append-once Items.TDO_NeuralCostPerSec

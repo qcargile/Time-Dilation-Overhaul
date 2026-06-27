@@ -12,6 +12,7 @@ public let m_tdoFalconHasBeenFar: Bool;
 protected cb func OnTick(eventData: ref<gameprojectileTickEvent>) -> Bool {
   let result: Bool = wrappedMethod(eventData);
   if this.m_tdoFalconSelfHitApplied { return result; }
+  if !TDOConfig.FalconEnabled() { return result; }
 
   let playerSys: ref<PlayerSystem> = GameInstance.GetPlayerSystem(this.GetGame());
   if !IsDefined(playerSys) { return result; }

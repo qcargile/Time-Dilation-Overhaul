@@ -457,13 +457,13 @@ Vendors.TDO_JuggernautStock$(tier):
   quantity:
     - Vendors.Always_Present
 
-Vendors.vik.itemStock:
+Vendors.wat_lch_ripperdoc_01.itemStock:
   - !append Vendors.TDO_JuggernautStockRare
   - !append Vendors.TDO_JuggernautStockEpic
 
-Vendors.cct_cpz_ripdoc_01.itemStock:
+Vendors.cz_monument_ripperdoc_farida.itemStock:
   - !append Vendors.TDO_JuggernautStockEpic
   - !append Vendors.TDO_JuggernautStockLegendary
 
-Vendors.hey_spr_ripdoc_01.itemStock:
+Vendors.hey_spr_ripperdoc_01.itemStock:
   - !append Vendors.TDO_JuggernautStockLegendary
