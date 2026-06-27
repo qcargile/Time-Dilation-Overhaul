@@ -7,6 +7,7 @@ public let m_tdoTechChargeFalconMod: ref<gameConstantStatModifierData>;
 
 public func TDO_TechChargeFalconFix_ShouldApply(player: ref<PlayerPuppet>, weapon: ref<WeaponObject>) -> Bool {
   if !IsDefined(player) || !IsDefined(weapon) { return false; }
+  if !TDOConfig.FalconEnabled() { return false; }
   if !TDO_Falcon_IsEquipped(player) { return false; }
   if !TDO_Falcon_IsSandyActive(player) { return false; }
   if !TDO_Falcon_IsTechWeapon(weapon) { return false; }

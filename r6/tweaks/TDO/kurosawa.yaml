@@ -277,7 +277,7 @@ Vendors.TDO_KurosawaStock:
   quantity:
     - Vendors.Always_Present
 
-Vendors.wbr_jpn_ripdoc_01.itemStock:
+Vendors.wbr_jpn_ripperdoc_01.itemStock:
   - !append Vendors.TDO_KurosawaStock
 
 Items.TDO_KurosawaPlus:

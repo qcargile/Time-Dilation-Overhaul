@@ -84,17 +84,15 @@ public final static func Deactivate(context: ScriptExecutionContext, record: wre
 
 
 
-@replaceMethod(AISubActionApplyTimeDilation_Record_Implementation)
+@wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func SetTimeDilation(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>) -> Bool {
     let blackboard: ref<IBlackboard>;
-    let canUsePlayerDilationOverride: Bool;
     let currentDilation: Float;
     let dilation: Float;
     let duration: Float;
     let globalDilation: Float;
     let globalSandevistanActive: Bool;
     let isGlobalSandevistan: Bool;
-    let player: ref<PlayerPuppet>;
 
     let sandiBuffActive = StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_Sandi_Buff");
     let kerenzikovBuffActive = StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_SVK_Buff");
@@ -139,17 +137,7 @@ public final static func SetTimeDilation(context: ScriptExecutionContext, record
         }
 
     } else {
-      player = GameInstance.GetPlayerSystem(ScriptExecutionContext.GetOwner(context).GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
-      canUsePlayerDilationOverride = record.OverrideMultiplerWhenPlayerInTimeDilation() > 0.00 && IsDefined(player) && GameInstance.GetTimeSystem(player.GetGame()).IsTimeDilationActive();
-      if !canUsePlayerDilationOverride {
-        dilation = record.Multiplier();
-      } else {
-        if globalDilation <= 0.00 {
-          dilation = record.OverrideMultiplerWhenPlayerInTimeDilation();
-        } else {
-          dilation = MaxF(globalDilation + 1.00, record.OverrideMultiplerWhenPlayerInTimeDilation());
-        };
-      };
+      return wrappedMethod(context, record);
     };
     if dilation < 0.00 || dilation == currentDilation {
       return false;

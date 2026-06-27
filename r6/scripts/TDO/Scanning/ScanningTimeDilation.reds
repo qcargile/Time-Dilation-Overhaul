@@ -57,6 +57,14 @@ public func TDO_Scanning_IsLookingAtScannable(gi: GameInstance) -> Bool {
   return EntityID.IsDefined(scanned);
 }
 
+public func TDO_Scanning_IsInBraindance(gi: GameInstance) -> Bool {
+  let bb: ref<IBlackboard> = GameInstance.GetBlackboardSystem(gi).Get(GetAllBlackboardDefs().Braindance);
+  if !IsDefined(bb) {
+    return false;
+  }
+  return bb.GetBool(GetAllBlackboardDefs().Braindance.IsActive);
+}
+
 public class TDO_ScanningTick extends DelayCallback {
 
   public let m_playerID: EntityID;
@@ -81,7 +89,7 @@ public class TDO_ScanningTick extends DelayCallback {
       return;
     }
 
-    let scannerOpen: Bool = TDO_Scanning_IsScannerOpen(gi);
+    let scannerOpen: Bool = TDO_Scanning_IsScannerOpen(gi) && !TDO_Scanning_IsInBraindance(gi);
 
     if scannerOpen {
       let step: Float = TDOConfig.ScanningTickInterval();

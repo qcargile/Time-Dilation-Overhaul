@@ -150,6 +150,7 @@ public func TDO_Falcon_SpawnImpactExplosion(player: ref<PlayerPuppet>, impactPos
 }
 
 public func TDO_Falcon_FirePhaseRound(player: ref<PlayerPuppet>, weapon: ref<WeaponObject>) -> Void {
+  if !TDOConfig.FalconEnabled() { return; }
   if TDO_IsPlayerInVehicle(player) {
     TDODebug("FalconBolt", "abort — player in vehicle");
     return;
@@ -279,6 +280,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   wrappedMethod(stateContext, scriptInterface);
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   if !IsDefined(player) { return; }
+  if !TDOConfig.FalconEnabled() { return; }
   if !TDO_Falcon_IsEquipped(player) { return; }
   StatusEffectHelper.ApplyStatusEffect(player, t"StatusEffects.TDO_FalconBoltPierce", player.GetEntityID());
   TDOInfo("FalconBolt", "Pierce SE applied on Falcon sandy enter");
