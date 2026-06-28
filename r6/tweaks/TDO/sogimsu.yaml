@@ -86,7 +86,7 @@ Items.TDO_Sogimsu$(tier):
     - TDO
     - Sogimsu
   variants:
-    - Variants.Humanity$(humanity)Cost
+    - Variants.Humanity30Cost
   visualTags: []
   effectors: []
   weakspots: []
