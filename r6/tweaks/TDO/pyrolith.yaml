@@ -84,7 +84,7 @@ Items.TDO_Pyrolith$(tier):
     - TDO
     - Pyrolith
   variants:
-    - Variants.Humanity$(humanity)Cost
+    - Variants.Humanity30Cost
   visualTags: []
   effectors: []
   weakspots: []

@@ -84,7 +84,7 @@ Items.TDO_Juggernaut$(tier):
     - TDO
     - Juggernaut
   variants:
-    - Variants.Humanity$(humanity)Cost
+    - Variants.Humanity30Cost
   visualTags: []
   effectors: []
   weakspots: []
