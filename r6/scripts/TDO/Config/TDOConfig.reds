@@ -174,9 +174,11 @@ public class TDOConfig {
   public static func ApogeeStrainGrace() -> Float { return 2.0; }
   public static func ApogeeStrainGraceCap() -> Float { return 5.0; }
   public static func ApogeeStrainRampDuration() -> Float { return 10.0; }
+  public static func ApogeeStrainBleedSpeed() -> Float { return 2.0; }
   public static func ApogeeStrainCapPctPerSec() -> Float { return 3.0; }
   public static func ApogeeStrainCanKill() -> Bool { return false; }
   public static func ApogeeStrainReflexGraceScale() -> Float { return 0.1; }
+  public static func ApogeeStrainReflexRampScale() -> Float { return 0.1; }
 
   public static func SandyVFXEnabled() -> Bool {
     return false;
@@ -443,6 +445,10 @@ public class TDOConfig {
 
   public static func WarpDancerRecordIntervalSec() -> Float {
     return 0.033;
+  }
+
+  public static func WarpDancerMovementLockClearIntervalSec() -> Float {
+    return 0.25;
   }
 
   public static func WarpDancerRewindIntervalSec() -> Float {
@@ -802,10 +808,6 @@ public class TDOConfig {
     return 99.0;
   }
 
-  public static func QuantumTeleportMaxRange() -> Float {
-    return 50.0; // teleport range cap, meters
-  }
-
   public static func QuantumTeleportRangeMin() -> Float {
     return 5.0;
   }
@@ -815,7 +817,7 @@ public class TDOConfig {
   }
 
   public static func QuantumTeleportRangePerCool() -> Float {
-    return 1.75; // added teleport range per Cool point, meters
+    return 1.0;
   }
 
   public static func QuantumPlotTickInterval() -> Float {

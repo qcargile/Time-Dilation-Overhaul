@@ -3,30 +3,25 @@ module TDO.Sandy
 import TDO.Logging.*
 import TDO.Vehicle.*
 
-public func TDO_Apogee_IsEquipped(player: ref<PlayerPuppet>) -> Bool {
+public func TDO_Apogee_IsApogeeTDB(tdb: TweakDBID) -> Bool {
+  return Equals(tdb, t"Items.AdvancedSandevistanApogee")
+    || Equals(tdb, t"Items.AdvancedSandevistanApogeePlus")
+    || Equals(tdb, t"Items.AdvancedSandevistanApogeePlusPlus");
+}
+
+public func TDO_Apogee_IsActiveItem(player: ref<PlayerPuppet>) -> Bool {
   if !IsDefined(player) {
     return false;
   }
-  let es: ref<EquipmentSystem> = EquipmentSystem.GetInstance(player);
-  if !IsDefined(es) {
-    return false;
-  }
-  let pd: ref<EquipmentSystemPlayerData> = es.GetPlayerData(player);
+  let pd: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
   if !IsDefined(pd) {
     return false;
   }
-  let slotIdx: Int32 = 0;
-  while slotIdx < 3 {
-    let itemID: ItemID = pd.GetItemInEquipSlot(gamedataEquipmentArea.SystemReplacementCW, slotIdx);
-    if ItemID.IsValid(itemID) {
-      let tdb: TweakDBID = ItemID.GetTDBID(itemID);
-      if Equals(tdb, t"Items.AdvancedSandevistanApogee") { return true; }
-      if Equals(tdb, t"Items.AdvancedSandevistanApogeePlus") { return true; }
-      if Equals(tdb, t"Items.AdvancedSandevistanApogeePlusPlus") { return true; }
-    }
-    slotIdx += 1;
+  let itemID: ItemID = pd.GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
+  if !ItemID.IsValid(itemID) {
+    return false;
   }
-  return false;
+  return TDO_Apogee_IsApogeeTDB(ItemID.GetTDBID(itemID));
 }
 
 @addField(PlayerPuppet)
@@ -222,8 +217,8 @@ protected cb func OnTDO_ApogeeTickEvent(evt: ref<TDO_ApogeeTickEvent>) -> Bool {
     pools.RequestSettingStatPoolValue(playerID, gamedataStatPoolType.SandevistanCharge, 100.0, null, true);
   }
 
-  if isAct || ctrlLost {
-    this.m_tdoApogeeStillElapsed = 0.0;
+  if speed >= TDOConfig.ApogeeStrainBleedSpeed() || ctrlLost {
+    this.m_tdoApogeeStillElapsed = MaxF(this.m_tdoApogeeStillElapsed - tickInterval, 0.0);
   } else {
     if !isAim {
       this.m_tdoApogeeStillElapsed += tickInterval;
@@ -232,7 +227,7 @@ protected cb func OnTDO_ApogeeTickEvent(evt: ref<TDO_ApogeeTickEvent>) -> Bool {
 
   let reflexes: Float = stats.GetStatValue(playerID, gamedataStatType.Reflexes);
   let graceEff: Float = MinF(TDOConfig.ApogeeStrainGrace() + reflexes * TDOConfig.ApogeeStrainReflexGraceScale(), TDOConfig.ApogeeStrainGraceCap());
-  let rampEff: Float = TDOConfig.ApogeeStrainRampDuration();
+  let rampEff: Float = TDOConfig.ApogeeStrainRampDuration() + reflexes * TDOConfig.ApogeeStrainReflexRampScale();
   if !isAim && this.m_tdoApogeeStillElapsed > graceEff && rampEff > 0.0 {
     let t: Float = MinF(MaxF((this.m_tdoApogeeStillElapsed - graceEff) / rampEff, 0.0), 1.0);
     let restingHP: Float = stats.GetStatValue(playerID, gamedataStatType.Health);
@@ -263,7 +258,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   if !IsDefined(player) {
     return;
   }
-  if !TDO_Apogee_IsEquipped(player) {
+  if !TDO_Apogee_IsActiveItem(player) {
     return;
   }
   if TDO_IsPlayerInVehicle(player) {

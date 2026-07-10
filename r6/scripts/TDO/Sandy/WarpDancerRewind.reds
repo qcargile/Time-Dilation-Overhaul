@@ -29,6 +29,7 @@ public func TDO_WarpDancer_Begin(player: ref<PlayerPuppet>) -> Void {
   pools.RequestSettingStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.Stamina, 100.0, player, true);
 
   TDO_WarpDancer_ApplyMoveSpeed(player);
+  TDO_WarpDancer_ClearMovementLocks(player);
   TDO_WarpDancer_ScheduleRecordTick(player);
 }
 
@@ -54,6 +55,7 @@ protected cb func OnTDO_WarpDancerRecordTickEvent(evt: ref<TDO_WarpDancerRecordT
   ArrayPush(this.m_warpDancerRecord, frame);
   let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(this.GetGame());
   pools.RequestSettingStatPoolValue(Cast<StatsObjectID>(this.GetEntityID()), gamedataStatPoolType.Stamina, 100.0, this, true);
+  TDO_WarpDancer_ClearMovementLocksThrottled(this);
   TDO_WarpDancer_ScheduleRecordTick(this);
   return true;
 }

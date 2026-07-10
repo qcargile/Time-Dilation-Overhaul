@@ -2,6 +2,10 @@ module TDO.Sandy
 
 import TDO.Logging.*
 
+public func TDO_Quantum_Vec3Str(v: Vector4) -> String {
+  return ToString(v.X) + " / " + ToString(v.Y) + " / " + ToString(v.Z);
+}
+
 public func TDO_Quantum_IsEquipped(player: ref<PlayerPuppet>) -> Bool {
   if !IsDefined(player) {
     return false;
@@ -71,15 +75,17 @@ public func TDO_Quantum_TryCandidate(player: ref<PlayerPuppet>, qs: ref<SpatialQ
     return false;
   }
   let navSys: ref<AINavigationSystem> = GameInstance.GetAINavigationSystem(player.GetGame());
-  if IsDefined(navSys) {
-    let navResult: NavigationFindPointResult = navSys.FindPointInSphereForCharacter(grounded, TDOConfig.QuantumTeleportNavmeshSnapRadius(), player);
-    if Equals(navResult.status, worldNavigationRequestStatus.OK) {
-      grounded = navResult.point;
-      TDOTrace("QuantumSafety", "navmesh snap OK");
-    } else {
-      TDOTrace("QuantumSafety", "navmesh status=" + ToString(EnumInt(navResult.status)) + " continuing without snap");
-    }
+  if !IsDefined(navSys) {
+    TDOTrace("QuantumSafety", "navmesh system missing");
+    return false;
   }
+  let navResult: NavigationFindPointResult = navSys.FindPointInSphereForCharacter(grounded, TDOConfig.QuantumTeleportNavmeshSnapRadius(), player);
+  if !Equals(navResult.status, worldNavigationRequestStatus.OK) {
+    TDOTrace("QuantumSafety", "navmesh status=" + ToString(EnumInt(navResult.status)) + " rejected");
+    return false;
+  }
+  grounded = navResult.point;
+  TDOTrace("QuantumSafety", "navmesh snap OK");
   if !TDO_Quantum_HasCapsuleSpace(qs, grounded) {
     TDOTrace("QuantumSafety", "capsule overlap rejected");
     return false;
@@ -106,6 +112,7 @@ public func TDO_Quantum_ResolveAimPoint(player: ref<PlayerPuppet>, maxRange: Flo
   } else {
     raw = lineEnd;
   }
+  TDOTrace("QuantumAim", "hit=" + ToString(hit) + " range=" + ToString(maxRange) + " camPos=" + TDO_Quantum_Vec3Str(camPos) + " camFwd=" + TDO_Quantum_Vec3Str(camFwd) + " raw=" + TDO_Quantum_Vec3Str(raw));
   let candidate: Vector4;
   if TDO_Quantum_TryCandidate(player, qs, raw, lift, candidate) {
     hitPos = candidate;
@@ -146,6 +153,6 @@ public func TDO_Quantum_ResolveAimPoint(player: ref<PlayerPuppet>, maxRange: Flo
     TDODebug("QuantumSafety", "fallback left-near accepted");
     return true;
   }
-  TDODebug("QuantumSafety", "all fallbacks rejected, no valid destination");
+  TDODebug("QuantumSafety", "all candidates rejected");
   return false;
 }

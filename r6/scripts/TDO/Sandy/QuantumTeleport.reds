@@ -33,10 +33,6 @@ public func TDO_Quantum_GetTeleportRange(player: ref<PlayerPuppet>) -> Float {
   let stats: ref<StatsSystem> = GameInstance.GetStatsSystem(player.GetGame());
   let cool: Float = stats.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.Cool);
   let range: Float = TDO_Quantum_GetTeleportRangeBase(player) + cool * TDOConfig.QuantumTeleportRangePerCool();
-  let cap: Float = TDOConfig.QuantumTeleportMaxRange();
-  if range > cap {
-    range = cap;
-  }
   return range;
 }
 
@@ -88,6 +84,7 @@ public func TDO_Quantum_UpdateMarker(player: ref<PlayerPuppet>, pos: Vector4) ->
   }
   if player.m_tdoQMappinActive {
     ms.SetMappinPosition(player.m_tdoQMappinID, pos);
+    TDOTrace("QuantumMarker", "reposition to " + TDO_Quantum_Vec3Str(pos));
     return;
   }
   let md: MappinData;
@@ -97,6 +94,7 @@ public func TDO_Quantum_UpdateMarker(player: ref<PlayerPuppet>, pos: Vector4) ->
   md.visibleThroughWalls = true;
   player.m_tdoQMappinID = ms.RegisterMappin(md, pos);
   player.m_tdoQMappinActive = true;
+  TDOTrace("QuantumMarker", "register at " + TDO_Quantum_Vec3Str(pos));
 }
 
 public func TDO_Quantum_ClearMarker(player: ref<PlayerPuppet>) -> Void {
@@ -137,6 +135,8 @@ public func TDO_Quantum_BeginPlot(player: ref<PlayerPuppet>) -> Void {
   TimeDilationHelper.SetTimeDilation(player, n"TDOQuantumPlot", strength, 999.0, n"Linear", n"Linear", true);
   TimeDilationHelper.SetTimeDilationOnPlayer(player, n"TDOQuantumPlot", strength, 999.0, n"Linear", n"Linear", true);
 
+  TDO_Quantum_UpdateMarker(player, player.GetWorldPosition());
+  TDO_Quantum_UpdateAim(player);
   TDO_Quantum_SchedulePlotTick(player);
   GameObject.PlaySoundEvent(player, n"grenade_laser_start");
   TDODebug("QuantumTeleport", "plotting started, range=" + ToString(TDO_Quantum_GetTeleportRange(player)));
@@ -165,8 +165,10 @@ public func TDO_Quantum_EndPlot(player: ref<PlayerPuppet>) -> Void {
 
 public func TDO_Quantum_ExecuteTeleport(player: ref<PlayerPuppet>) -> Bool {
   if !player.m_tdoQDestValid {
+    TDODebug("QuantumTeleport", "execute BLOCKED: dest not valid");
     return false;
   }
+  TDODebug("QuantumTeleport", "execute teleport to " + TDO_Quantum_Vec3Str(player.m_tdoQDest));
   let dest: Vector4 = player.m_tdoQDest;
   let rot: EulerAngles = player.m_tdoQDestRot;
   GameInstance.GetTeleportationFacility(player.GetGame()).Teleport(player, dest, rot);
@@ -187,23 +189,28 @@ public func TDO_Quantum_ExecuteTeleport(player: ref<PlayerPuppet>) -> Bool {
   return true;
 }
 
+public func TDO_Quantum_UpdateAim(player: ref<PlayerPuppet>) -> Void {
+  let hitPos: Vector4;
+  let valid: Bool = TDO_Quantum_ResolveAimPoint(player, TDO_Quantum_GetTeleportRange(player), TDOConfig.QuantumMarkerLift(), hitPos);
+  TDOTrace("QuantumAim", "UpdateAim valid=" + ToString(valid) + " hitPos=" + TDO_Quantum_Vec3Str(hitPos));
+  if valid {
+    player.m_tdoQDest = hitPos;
+    player.m_tdoQDestRot = TDO_Quantum_LevelFacing(player, TDO_Quantum_GetCameraForward(player));
+    player.m_tdoQDestValid = true;
+    TDO_Quantum_UpdateMarker(player, hitPos);
+  } else {
+    player.m_tdoQDestValid = false;
+    TDO_Quantum_ClearMarker(player);
+  }
+}
+
 @addMethod(PlayerPuppet)
 protected cb func OnTDO_QuantumPlotTickEvent(evt: ref<TDO_QuantumPlotTickEvent>) -> Bool {
   this.m_tdoQPlotTickID = GetInvalidDelayID();
   if !this.m_tdoQPlotting {
     return false;
   }
-  let hitPos: Vector4;
-  let valid: Bool = TDO_Quantum_ResolveAimPoint(this, TDO_Quantum_GetTeleportRange(this), TDOConfig.QuantumMarkerLift(), hitPos);
-  if valid {
-    this.m_tdoQDest = hitPos;
-    this.m_tdoQDestRot = TDO_Quantum_LevelFacing(this, TDO_Quantum_GetCameraForward(this));
-    this.m_tdoQDestValid = true;
-    TDO_Quantum_UpdateMarker(this, hitPos);
-  } else {
-    this.m_tdoQDestValid = false;
-    TDO_Quantum_ClearMarker(this);
-  }
+  TDO_Quantum_UpdateAim(this);
   TDO_Quantum_SchedulePlotTick(this);
   return true;
 }
