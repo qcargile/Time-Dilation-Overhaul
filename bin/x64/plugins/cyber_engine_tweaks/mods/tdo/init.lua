@@ -11,7 +11,7 @@ local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
 
-local TDO_VERSION = "v2.2.1"
+local TDO_VERSION = "v2.3"
 local ESR_VERSION = "d2026.6.11"
 
 local function lerpTier(v1, vTop, tier, total)
@@ -30,6 +30,27 @@ local SHRIKE_TIER_FLATS = {
 	[8] = { item="Items.AdvancedSandevistanC1MK4Plus",     dur="_inline25", ts="_inline26", rchrg="_inline27" },
 	[9] = { item="Items.AdvancedSandevistanC1MK4PlusPlus", dur="_inline25", ts="_inline26", rchrg="_inline27" },
 }
+
+local bulletTrailCompatChecked = false
+local bulletTrailVelocityBlocked = false
+
+local function tweakFlatMatches(path, expected)
+	local value = TweakDB:GetFlat(path)
+	return type(value) == "number" and math.abs(value - expected) <= 0.0001
+end
+
+local function gunsRedoneOverhaulDetected()
+	if bulletTrailCompatChecked then return bulletTrailVelocityBlocked end
+
+	bulletTrailCompatChecked = true
+	bulletTrailVelocityBlocked = tweakFlatMatches("Items.PierceKolac_inline0.value", 1.0) and tweakFlatMatches("Items.NoPierceKolac_inline0.value", 0.0)
+
+	return bulletTrailVelocityBlocked
+end
+
+local function bulletTrailVelocityEnabled()
+	return config.bulletTrail ~= nil and config.bulletTrail.enabled and not gunsRedoneOverhaulDetected()
+end
 
 local function applyShrikeTweaks(config)
 	if config.zetatech == nil or config.zetatech.enabled == false then return end
@@ -529,8 +550,8 @@ local function createQuantumMechanic(nativeSettings, path, nuiTxt, config, defau
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 1.0, 120.0, 0.5, "%.1f", config.quantum.cooldownMin, default.quantum.cooldownMin, function(value) config.quantum.cooldownMin = value applyQuantumRecharge(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 1.0, 120.0, 0.5, "%.1f", config.quantum.cooldownMax, default.quantum.cooldownMax, function(value) config.quantum.cooldownMax = value applyQuantumRecharge(config) saveSettings(config) end))
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["teleportRangeMin"]["opt"]..nuiTxt[cat]["teleportRangeMin"]["optUnit"], nuiTxt[cat]["teleportRangeMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.quantum.teleportRangeMin, default.quantum.teleportRangeMin, function(value) config.quantum.teleportRangeMin = value saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["teleportRangeMax"]["opt"]..nuiTxt[cat]["teleportRangeMax"]["optUnit"], nuiTxt[cat]["teleportRangeMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.quantum.teleportRangeMax, default.quantum.teleportRangeMax, function(value) config.quantum.teleportRangeMax = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["teleportRangeMin"]["opt"]..nuiTxt[cat]["teleportRangeMin"]["optUnit"], nuiTxt[cat]["teleportRangeMin"]["des"], 0.0, 30.0, 1.0, "%.0f", config.quantum.teleportRangeMin, default.quantum.teleportRangeMin, function(value) config.quantum.teleportRangeMin = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["teleportRangeMax"]["opt"]..nuiTxt[cat]["teleportRangeMax"]["optUnit"], nuiTxt[cat]["teleportRangeMax"]["des"], 0.0, 30.0, 1.0, "%.0f", config.quantum.teleportRangeMax, default.quantum.teleportRangeMax, function(value) config.quantum.teleportRangeMax = value saveSettings(config) end))
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["malwareTargetsMin"]["opt"], nuiTxt[cat]["malwareTargetsMin"]["des"], 1.0, 20.0, 1.0, "%.0f", config.quantum.malwareTargetsMin, default.quantum.malwareTargetsMin, function(value) config.quantum.malwareTargetsMin = value saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["malwareTargetsMax"]["opt"], nuiTxt[cat]["malwareTargetsMax"]["des"], 1.0, 20.0, 1.0, "%.0f", config.quantum.malwareTargetsMax, default.quantum.malwareTargetsMax, function(value) config.quantum.malwareTargetsMax = value saveSettings(config) end))
@@ -808,6 +829,21 @@ registerForEvent("onInit", function()
 			saveSettings(config)
 		end
 
+		if config.quantum ~= nil then
+			local qtClamped = false
+			if type(config.quantum.teleportRangeMin) == "number" and config.quantum.teleportRangeMin > 30.0 then
+				config.quantum.teleportRangeMin = 30.0
+				qtClamped = true
+			end
+			if type(config.quantum.teleportRangeMax) == "number" and config.quantum.teleportRangeMax > 30.0 then
+				config.quantum.teleportRangeMax = 30.0
+				qtClamped = true
+			end
+			if qtClamped then
+				saveSettings(config)
+			end
+		end
+
 		if migrateSandysToVanillaSandyKeys(config, oldVersion) then
 			saveSettings(config)
 		end
@@ -952,7 +988,7 @@ registerForEvent("onInit", function()
 
 		nativeSettings.addRangeFloat("/tdo/bulletTrail", nuiTxt[cat]["at99"]["opt"]..nuiTxt[cat]["at99"]["optUnit"], nuiTxt[cat]["at99"]["des"], 5.0, 500.0, 5.0, "%.0f", config.bulletTrail.at99, default.bulletTrail.at99, function(value) config.bulletTrail.at99 = value saveSettings(config) end)
 
-		Override("TDOConfig", "BulletTrailVelocityEnabled;", function() return config.bulletTrail.enabled end)
+		Override("TDOConfig", "BulletTrailVelocityEnabled;", function() return bulletTrailVelocityEnabled() end)
 		Override("TDOConfig", "BulletTrailVelocityAt10;", function() return config.bulletTrail.at10 end)
 		Override("TDOConfig", "BulletTrailVelocityAt20;", function() return config.bulletTrail.at20 end)
 		Override("TDOConfig", "BulletTrailVelocityAt30;", function() return config.bulletTrail.at30 end)

@@ -425,9 +425,11 @@ public func TDO_Attunement_InjectLiveTotal(game: GameInstance, itemTDB: TweakDBI
       fv[1] = ta * fv[0];
       break;
     case TDO_AttunementKind.Apogee:
-      while ArraySize(fv) < 2 { ArrayPush(fv, 0.0); }
-      fv[0] = TDOConfig.ApogeeStrainReflexGraceScale();
-      fv[1] = MinF(reflexes * TDOConfig.ApogeeStrainReflexGraceScale(), TDOConfig.ApogeeStrainGraceCap() - TDOConfig.ApogeeStrainGrace());
+      if TDOConfig.ApogeeEnabled() {
+        while ArraySize(fv) < 2 { ArrayPush(fv, 0.0); }
+        fv[0] = TDOConfig.ApogeeStrainReflexGraceScale();
+        fv[1] = MinF(reflexes * TDOConfig.ApogeeStrainReflexGraceScale(), TDOConfig.ApogeeStrainGraceCap() - TDOConfig.ApogeeStrainGrace());
+      }
       break;
   }
 
@@ -584,6 +586,7 @@ public func TDO_Apogee_TierForItemTDB(itemTDB: TweakDBID) -> Int32 {
 
 public func TDO_Apogee_InjectActiveCardLiveValues(itemTDB: TweakDBID, dataPackage: ref<UILocalizationDataPackage>) -> Void {
   if !IsDefined(dataPackage) { return; }
+  if !TDOConfig.ApogeeEnabled() { return; }
   let tier: Int32 = TDO_Apogee_TierForItemTDB(itemTDB);
   if tier <= 0 { return; }
   let fv: array<Float> = dataPackage.floatValues;
