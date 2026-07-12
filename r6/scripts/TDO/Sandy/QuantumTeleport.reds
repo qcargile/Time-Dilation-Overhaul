@@ -190,14 +190,15 @@ public func TDO_Quantum_ExecuteTeleport(player: ref<PlayerPuppet>) -> Bool {
 }
 
 public func TDO_Quantum_UpdateAim(player: ref<PlayerPuppet>) -> Void {
+  let aimPos: Vector4;
   let hitPos: Vector4;
-  let valid: Bool = TDO_Quantum_ResolveAimPoint(player, TDO_Quantum_GetTeleportRange(player), TDOConfig.QuantumMarkerLift(), hitPos);
-  TDOTrace("QuantumAim", "UpdateAim valid=" + ToString(valid) + " hitPos=" + TDO_Quantum_Vec3Str(hitPos));
+  let valid: Bool = TDO_Quantum_ResolveAimPoint(player, TDO_Quantum_GetTeleportRange(player), TDOConfig.QuantumMarkerLift(), aimPos, hitPos);
+  TDOTrace("QuantumAim", "UpdateAim valid=" + ToString(valid) + " aimPos=" + TDO_Quantum_Vec3Str(aimPos) + " hitPos=" + TDO_Quantum_Vec3Str(hitPos));
   if valid {
     player.m_tdoQDest = hitPos;
     player.m_tdoQDestRot = TDO_Quantum_LevelFacing(player, TDO_Quantum_GetCameraForward(player));
     player.m_tdoQDestValid = true;
-    TDO_Quantum_UpdateMarker(player, hitPos);
+    TDO_Quantum_UpdateMarker(player, aimPos);
   } else {
     player.m_tdoQDestValid = false;
     TDO_Quantum_ClearMarker(player);
