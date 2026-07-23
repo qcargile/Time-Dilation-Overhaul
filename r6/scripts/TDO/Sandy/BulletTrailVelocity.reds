@@ -1,6 +1,15 @@
 @addField(sampleBullet)
 public let m_tdoNeedsVelocityRestore: Bool;
 
+public func TDO_BulletTrailVelocity_IsSandyActive(player: ref<PlayerPuppet>) -> Bool {
+  let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
+  if !IsDefined(bb) {
+    return false;
+  }
+  let td: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.TimeDilation);
+  return td == EnumInt(gamePSMTimeDilation.Sandevistan);
+}
+
 public func TDO_BulletTrailVelocity_GetSliderAt(pct: Int32) -> Float {
   switch pct {
     case 10: return TDOConfig.BulletTrailVelocityAt10();
@@ -56,16 +65,30 @@ public func TDO_BulletTrailVelocity(weaponObj: wref<GameObject>) -> Float {
   if !IsDefined(player) {
     return -1.0;
   }
+  if !TDO_BulletTrailVelocity_IsSandyActive(player) {
+    return -1.0;
+  }
+  if StatusEffectSystem.ObjectHasStatusEffect(player, t"BaseStatusEffect.DeadeyeSE") {
+    return -1.0;
+  }
   let timeScale: Float = stats.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.TimeDilationSandevistanTimeScale);
   if timeScale <= 0.0 || timeScale >= 1.0 {
     return -1.0;
   }
   let slowPct: Float = (1.0 - timeScale) * 100.0;
-  return TDO_BulletTrailVelocity_AtSlow(slowPct);
+  let v: Float = TDO_BulletTrailVelocity_AtSlow(slowPct);
+  let projectilesPerShot: Float = stats.GetStatValue(Cast<StatsObjectID>(weapon.GetEntityID()), gamedataStatType.ProjectilesPerShot);
+  let extremeSlowVelocity: Float = 15.0;
+  if projectilesPerShot >= 20.0 && v <= extremeSlowVelocity {
+    return -1.0;
+  }
+  return v;
 }
 
 @wrapMethod(sampleBullet)
 protected cb func OnProjectileInitialize(eventData: ref<gameprojectileSetUpEvent>) -> Bool {
+  this.m_tdoNeedsVelocityRestore = false;
+
   let playerSys: ref<PlayerSystem> = GameInstance.GetPlayerSystem(this.GetGame());
   if IsDefined(playerSys) {
     let player: ref<PlayerPuppet> = playerSys.GetLocalPlayerMainGameObject() as PlayerPuppet;
@@ -111,13 +134,7 @@ protected cb func OnTick(eventData: ref<gameprojectileTickEvent>) -> Bool {
   if !IsDefined(player) {
     return wrappedMethod(eventData);
   }
-  let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
-  if !IsDefined(bb) {
-    return wrappedMethod(eventData);
-  }
-
-  let td: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.TimeDilation);
-  if td == EnumInt(gamePSMTimeDilation.Sandevistan) {
+  if TDO_BulletTrailVelocity_IsSandyActive(player) {
     return wrappedMethod(eventData);
   }
 
