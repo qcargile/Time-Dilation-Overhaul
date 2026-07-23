@@ -29,9 +29,6 @@ public let m_warpDancerStoredNPCs: array<wref<NPCPuppet>>;
 @addField(PlayerPuppet)
 public let m_warpDancerComputedStride: Int32;
 
-@addField(PlayerPuppet)
-public let m_warpDancerLastLockClearTime: Float;
-
 public func TDO_WarpDancer_IsEquipped(player: ref<PlayerPuppet>) -> Bool {
   if !IsDefined(player) {
     return false;
@@ -150,22 +147,9 @@ public func TDO_WarpDancer_RemoveMoveSpeed(player: ref<PlayerPuppet>) -> Void {
 }
 
 public func TDO_WarpDancer_ClearMovementLocks(player: ref<PlayerPuppet>) -> Void {
-  if !IsDefined(player) {
-    return;
-  }
-  StatusEffectHelper.RemoveAllStatusEffectsByType(player, gamedataStatusEffectType.Stunned);
-  StatusEffectHelper.RemoveAllStatusEffectsByType(player, gamedataStatusEffectType.Stagger);
-  StatusEffectHelper.RemoveAllStatusEffectsByType(player, gamedataStatusEffectType.Knockdown);
-  player.m_warpDancerLastLockClearTime = EngineTime.ToFloat(GameInstance.GetEngineTime(player.GetGame()));
+  TDO_Sandy_ClearMovementLocks(player);
 }
 
 public func TDO_WarpDancer_ClearMovementLocksThrottled(player: ref<PlayerPuppet>) -> Void {
-  if !IsDefined(player) {
-    return;
-  }
-  let now: Float = EngineTime.ToFloat(GameInstance.GetEngineTime(player.GetGame()));
-  if now - player.m_warpDancerLastLockClearTime < TDOConfig.WarpDancerMovementLockClearIntervalSec() {
-    return;
-  }
-  TDO_WarpDancer_ClearMovementLocks(player);
+  TDO_Sandy_ClearMovementLocksThrottled(player);
 }
