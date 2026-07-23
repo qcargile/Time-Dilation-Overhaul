@@ -103,10 +103,6 @@ Items.TDO_Sogimsu$(tier):
       modifierType: Additive
       statType: BaseStats.IsItemIconic
     - $type: gamedataConstantStatModifier_Record
-      value: 1
-      modifierType: Additive
-      statType: BaseStats.HasSandevistan
-    - $type: gamedataConstantStatModifier_Record
       value: 999
       modifierType: Additive
       statType: BaseStats.TimeDilationSandevistanDuration

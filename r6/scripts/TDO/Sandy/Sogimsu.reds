@@ -48,17 +48,12 @@ public func TDO_Sogimsu_GetEquippedTier() -> Int32 {
     return 0;
   }
   let slotIdx: Int32 = 0;
-  while slotIdx < 3 {
+  let slotCount: Int32 = pd.GetNumberOfSlots(gamedataEquipmentArea.SystemReplacementCW, true);
+  while slotIdx < slotCount {
     let itemID: ItemID = pd.GetItemInEquipSlot(gamedataEquipmentArea.SystemReplacementCW, slotIdx);
     if ItemID.IsValid(itemID) {
-      let tdb: TweakDBID = ItemID.GetTDBID(itemID);
-      if Equals(tdb, t"Items.TDO_SogimsuRare") { return 1; }
-      if Equals(tdb, t"Items.TDO_SogimsuRarePlus") { return 2; }
-      if Equals(tdb, t"Items.TDO_SogimsuEpic") { return 3; }
-      if Equals(tdb, t"Items.TDO_SogimsuEpicPlus") { return 4; }
-      if Equals(tdb, t"Items.TDO_SogimsuLegendary") { return 5; }
-      if Equals(tdb, t"Items.TDO_SogimsuLegendaryPlus") { return 6; }
-      if Equals(tdb, t"Items.TDO_SogimsuLegendaryPlusPlus") { return 7; }
+      let tier: Int32 = TDO_Sogimsu_TierForItemTDB(ItemID.GetTDBID(itemID));
+      if tier > 0 { return tier; }
     }
     slotIdx += 1;
   }
