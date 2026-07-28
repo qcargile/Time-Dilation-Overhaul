@@ -35,9 +35,6 @@ public func TDO_Sandy_ShouldClearGutsLock(player: ref<PlayerPuppet>) -> Bool {
   if !IsDefined(player) {
     return false;
   }
-  if !TDOConfig.BulletTrailVelocityEnabled() {
-    return false;
-  }
   if !TDO_BulletTrailVelocity_IsSandyActive(player) {
     return false;
   }
