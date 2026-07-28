@@ -3,13 +3,37 @@ module TDO.Sandy
 import TDO.Logging.*
 import TDO.Vehicle.*
 
+@if(ModuleExists("CyberwareEx"))
+import CyberwareEx.*
+
 public func TDO_Apogee_IsApogeeTDB(tdb: TweakDBID) -> Bool {
   return Equals(tdb, t"Items.AdvancedSandevistanApogee")
     || Equals(tdb, t"Items.AdvancedSandevistanApogeePlus")
     || Equals(tdb, t"Items.AdvancedSandevistanApogeePlusPlus");
 }
 
-public func TDO_Apogee_IsActiveItem(player: ref<PlayerPuppet>) -> Bool {
+public func TDO_Apogee_IsEquipped(player: ref<PlayerPuppet>) -> Bool {
+  if !IsDefined(player) {
+    return false;
+  }
+  let pd: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
+  if !IsDefined(pd) {
+    return false;
+  }
+  let slotIdx: Int32 = 0;
+  let slotCount: Int32 = pd.GetNumberOfSlots(gamedataEquipmentArea.SystemReplacementCW, true);
+  while slotIdx < slotCount {
+    let itemID: ItemID = pd.GetItemInEquipSlot(gamedataEquipmentArea.SystemReplacementCW, slotIdx);
+    if ItemID.IsValid(itemID) && TDO_Apogee_IsApogeeTDB(ItemID.GetTDBID(itemID)) {
+      return true;
+    }
+    slotIdx += 1;
+  }
+  return false;
+}
+
+@if(!ModuleExists("CyberwareEx"))
+public func TDO_Apogee_ShouldArm(player: ref<PlayerPuppet>) -> Bool {
   if !IsDefined(player) {
     return false;
   }
@@ -18,6 +42,22 @@ public func TDO_Apogee_IsActiveItem(player: ref<PlayerPuppet>) -> Bool {
     return false;
   }
   let itemID: ItemID = pd.GetActiveItem(gamedataEquipmentArea.SystemReplacementCW);
+  if !ItemID.IsValid(itemID) {
+    return TDO_Apogee_IsEquipped(player);
+  }
+  return TDO_Apogee_IsApogeeTDB(ItemID.GetTDBID(itemID));
+}
+
+@if(ModuleExists("CyberwareEx"))
+public func TDO_Apogee_ShouldArm(player: ref<PlayerPuppet>) -> Bool {
+  if !IsDefined(player) {
+    return false;
+  }
+  let pd: ref<EquipmentSystemPlayerData> = EquipmentSystem.GetData(player);
+  if !IsDefined(pd) {
+    return false;
+  }
+  let itemID: ItemID = pd.GetTaggedItem(gamedataEquipmentArea.SystemReplacementCW, n"Sandevistan");
   if !ItemID.IsValid(itemID) {
     return false;
   }
@@ -38,6 +78,9 @@ public let m_tdoApogeeLastCamFwd: Vector4;
 
 @addField(PlayerPuppet)
 public let m_tdoApogeeLastFireTime: Float;
+
+@addField(PlayerPuppet)
+public let m_tdoApogeeMoveInput: Bool;
 
 @addField(PlayerPuppet)
 public let m_tdoApogeeShootCB: ref<CallbackHandle>;
@@ -125,6 +168,7 @@ public final func TDO_Apogee_Disarm() -> Void {
   this.m_tdoApogeeActive = false;
   this.m_tdoApogeeStillElapsed = 0.0;
   this.m_tdoApogeeLastFireTime = 0.0;
+  this.m_tdoApogeeMoveInput = false;
   this.TDO_Apogee_CancelTick();
   this.TDO_Apogee_UnregisterShoot();
   TimeDilationHelper.UnSetTimeDilation(this, n"sandevistan", n"None");
@@ -183,8 +227,10 @@ protected cb func OnTDO_ApogeeTickEvent(evt: ref<TDO_ApogeeTickEvent>) -> Bool {
   }
 
   let recentlyFired: Bool = (now - this.m_tdoApogeeLastFireTime) < TDOConfig.ApogeeFireWindow();
+  let moveInput: Bool = this.m_tdoApogeeMoveInput;
 
-  let isAct: Bool = speed >= TDOConfig.ApogeeMoveThreshold()
+  let isAct: Bool = moveInput
+    || speed >= TDOConfig.ApogeeMoveThreshold()
     || TDO_Apogee_IsActiveMovementState(loco)
     || recentlyFired
     || (melee >= EnumInt(gamePSMMeleeWeapon.ComboAttack) && melee < EnumInt(gamePSMMeleeWeapon.Default));
@@ -217,8 +263,9 @@ protected cb func OnTDO_ApogeeTickEvent(evt: ref<TDO_ApogeeTickEvent>) -> Bool {
     pools.RequestSettingStatPoolValue(playerID, gamedataStatPoolType.SandevistanCharge, 100.0, null, true);
   }
 
-  if speed >= TDOConfig.ApogeeStrainBleedSpeed() || ctrlLost {
-    this.m_tdoApogeeStillElapsed = MaxF(this.m_tdoApogeeStillElapsed - tickInterval, 0.0);
+  let strainRecovering: Bool = isAct || speed >= TDOConfig.ApogeeStrainBleedSpeed() || ctrlLost;
+  if strainRecovering {
+    this.m_tdoApogeeStillElapsed = MaxF(this.m_tdoApogeeStillElapsed - tickInterval * TDOConfig.ApogeeStrainBleedRate(), 0.0);
   } else {
     if !isAim {
       this.m_tdoApogeeStillElapsed += tickInterval;
@@ -228,7 +275,7 @@ protected cb func OnTDO_ApogeeTickEvent(evt: ref<TDO_ApogeeTickEvent>) -> Bool {
   let reflexes: Float = stats.GetStatValue(playerID, gamedataStatType.Reflexes);
   let graceEff: Float = MinF(TDOConfig.ApogeeStrainGrace() + reflexes * TDOConfig.ApogeeStrainReflexGraceScale(), TDOConfig.ApogeeStrainGraceCap());
   let rampEff: Float = TDOConfig.ApogeeStrainRampDuration() + reflexes * TDOConfig.ApogeeStrainReflexRampScale();
-  if !isAim && this.m_tdoApogeeStillElapsed > graceEff && rampEff > 0.0 {
+  if !strainRecovering && !isAim && this.m_tdoApogeeStillElapsed > graceEff && rampEff > 0.0 {
     let t: Float = MinF(MaxF((this.m_tdoApogeeStillElapsed - graceEff) / rampEff, 0.0), 1.0);
     let restingHP: Float = stats.GetStatValue(playerID, gamedataStatType.Health);
     let damage: Float = t * (TDOConfig.ApogeeStrainCapPctPerSec() / 100.0) * restingHP * tickInterval;
@@ -258,7 +305,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   if !IsDefined(player) {
     return;
   }
-  if !TDO_Apogee_IsActiveItem(player) {
+  if !TDO_Apogee_ShouldArm(player) {
     return;
   }
   if TDO_IsPlayerInVehicle(player) {
@@ -267,6 +314,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   player.m_tdoApogeeActive = true;
   player.m_tdoApogeeStillElapsed = 0.0;
   player.m_tdoApogeeLastFireTime = EngineTime.ToFloat(GameInstance.GetEngineTime(player.GetGame())) - 10.0;
+  player.m_tdoApogeeMoveInput = false;
   let camSys: ref<CameraSystem> = GameInstance.GetCameraSystem(player.GetGame());
   if IsDefined(camSys) {
     player.m_tdoApogeeLastCamFwd = camSys.GetActiveCameraForward();
@@ -274,6 +322,15 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   player.TDO_Apogee_RegisterShoot();
   player.TDO_Apogee_ScheduleTick();
   TDOInfo("Apogee", "Stillpoint armed");
+}
+
+@wrapMethod(SandevistanEvents)
+protected final func OnUpdate(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(timeDelta, stateContext, scriptInterface);
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(player) && player.m_tdoApogeeActive {
+    player.m_tdoApogeeMoveInput = scriptInterface.IsMoveInputConsiderable();
+  }
 }
 
 @wrapMethod(SandevistanEvents)

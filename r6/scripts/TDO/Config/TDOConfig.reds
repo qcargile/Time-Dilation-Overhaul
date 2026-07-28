@@ -174,7 +174,8 @@ public class TDOConfig {
   public static func ApogeeStrainGrace() -> Float { return 2.0; }
   public static func ApogeeStrainGraceCap() -> Float { return 5.0; }
   public static func ApogeeStrainRampDuration() -> Float { return 10.0; }
-  public static func ApogeeStrainBleedSpeed() -> Float { return 2.0; }
+  public static func ApogeeStrainBleedSpeed() -> Float { return 0.4; }
+  public static func ApogeeStrainBleedRate() -> Float { return 8.0; }
   public static func ApogeeStrainCapPctPerSec() -> Float { return 3.0; }
   public static func ApogeeStrainCanKill() -> Bool { return false; }
   public static func ApogeeStrainReflexGraceScale() -> Float { return 0.1; }

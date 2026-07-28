@@ -11,7 +11,7 @@ local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
 
-local TDO_VERSION = "v2.31"
+local TDO_VERSION = "v2.32"
 local ESR_VERSION = "d2026.6.11"
 
 local function lerpTier(v1, vTop, tier, total)
@@ -31,25 +31,8 @@ local SHRIKE_TIER_FLATS = {
 	[9] = { item="Items.AdvancedSandevistanC1MK4PlusPlus", dur="_inline25", ts="_inline26", rchrg="_inline27" },
 }
 
-local bulletTrailCompatChecked = false
-local bulletTrailVelocityBlocked = false
-
-local function tweakFlatMatches(path, expected)
-	local value = TweakDB:GetFlat(path)
-	return type(value) == "number" and math.abs(value - expected) <= 0.0001
-end
-
-local function gunsRedoneOverhaulDetected()
-	if bulletTrailCompatChecked then return bulletTrailVelocityBlocked end
-
-	bulletTrailCompatChecked = true
-	bulletTrailVelocityBlocked = tweakFlatMatches("Items.PierceKolac_inline0.value", 1.0) and tweakFlatMatches("Items.NoPierceKolac_inline0.value", 0.0)
-
-	return bulletTrailVelocityBlocked
-end
-
 local function bulletTrailVelocityEnabled()
-	return config.bulletTrail ~= nil and config.bulletTrail.enabled and not gunsRedoneOverhaulDetected()
+	return config.bulletTrail ~= nil and config.bulletTrail.enabled
 end
 
 local function applyShrikeTweaks(config)
@@ -118,9 +101,9 @@ local function applyTantoTweaks(config)
 		local rchrgSec = lerpTier(config.tanto.rechargeMin, config.tanto.rechargeMax, tier, totalTiers)
 		TweakDB:SetFlat(flats.item .. flats.rchrg .. ".value", rchrgSec)
 		local critChPct = lerpTier(config.tanto.critChanceMin, config.tanto.critChanceMax, tier, totalTiers)
-		TweakDB:SetFlat(flats.item .. flats.critCh .. ".value", critChPct / 100.0)
+		TweakDB:SetFlat(flats.item .. flats.critCh .. ".value", critChPct)
 		local critDmgPct = lerpTier(config.tanto.critDmgMin, config.tanto.critDmgMax, tier, totalTiers)
-		TweakDB:SetFlat(flats.item .. flats.critDmg .. ".value", critDmgPct / 100.0)
+		TweakDB:SetFlat(flats.item .. flats.critDmg .. ".value", critDmgPct)
 	end
 end
 
@@ -296,9 +279,9 @@ local function applyFalconTweaks(config)
 		local rchrgSec = lerpTier(config.falcon.rechargeMin, config.falcon.rechargeMax, tier, totalTiers)
 		TweakDB:SetFlat(flats.item .. flats.rchrg .. ".value", rchrgSec)
 		local critChPct = lerpTier(config.falcon.critChanceMin, config.falcon.critChanceMax, tier, totalTiers)
-		TweakDB:SetFlat(flats.item .. flats.critCh .. ".value", critChPct / 100.0)
+		TweakDB:SetFlat(flats.item .. flats.critCh .. ".value", critChPct)
 		local critDmgPct = lerpTier(config.falcon.critDmgMin, config.falcon.critDmgMax, tier, totalTiers)
-		TweakDB:SetFlat(flats.item .. flats.critDmg .. ".value", critDmgPct / 100.0)
+		TweakDB:SetFlat(flats.item .. flats.critDmg .. ".value", critDmgPct)
 	end
 	TweakDB:SetFlat("Attacks.TDO_FalconBoltEMP_MK4_Damage.value",        config.falcon.boltEMPDamageT1)
 	TweakDB:SetFlat("Attacks.TDO_FalconBoltEMP_MK4Plus_Damage.value",    config.falcon.boltEMPDamageT2)
