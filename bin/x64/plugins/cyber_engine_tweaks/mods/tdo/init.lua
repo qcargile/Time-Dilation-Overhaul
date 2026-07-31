@@ -407,7 +407,7 @@ end
 
 local function applyKurosawaTweaks(config)
 	if config.kurosawa == nil then return end
-	TweakDB:SetFlat("Items.TDO_Kurosawa_Duration.value", 999.0) -- buff cap
+	TweakDB:SetFlat("Items.TDO_Kurosawa_Duration.value", 999.0)
 	TweakDB:SetFlat("Items.TDO_Kurosawa_Recharge.value", config.kurosawa.cooldown)
 	TweakDB:SetFlat("Items.TDO_Kurosawa_DamageReduction.value", config.kurosawa.drMin)
 	TweakDB:SetFlat("Items.TDO_KurosawaPlus_DamageReduction.value", config.kurosawa.drMax)
@@ -750,7 +750,7 @@ registerForEvent("onInit", function()
 		ExternalMods[i] = v
 	end
 
-	
+
 	nativeSettings = GetMod("nativeSettings")
 	if nativeSettings ~= nil then
 		config = loadSettings()
@@ -777,7 +777,7 @@ registerForEvent("onInit", function()
 			end
 		end
 
-		
+
 		local migrationManifest = require("config/migrationManifest.lua")
 		local manifestApplied = false
 		for _, entry in ipairs(migrationManifest) do
@@ -982,7 +982,6 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "BulletTrailVelocityAt80;", function() return config.bulletTrail.at80 end)
 		Override("TDOConfig", "BulletTrailVelocityAt90;", function() return config.bulletTrail.at90 end)
 		Override("TDOConfig", "BulletTrailVelocityAt99;", function() return config.bulletTrail.at99 end)
-
 
 		cat = "sandyVFX"
 		nativeSettings.addSubcategory("/tdo/sandyVFX", nuiTxt[cat]["header"])
@@ -1209,7 +1208,7 @@ registerForEvent("onInit", function()
 			return createApogeeMechanic(ns, p, nuiTxt, config, default)
 		end)
 
-		
+
 		createCustomSandyShowHideMenu(nativeSettings, "/tdo/fusillade", nuiTxt.fusillade.header, nuiTxt, config, "fusilladeShow", function(ns, p)
 			return createFusilladeMechanic(ns, p, nuiTxt, config, default)
 		end)
@@ -1226,7 +1225,7 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "FusilladeRampStep;", function() return config.fusillade.rampStep end)
 		Override("TDOConfig", "FusilladeRecoilAmount;", function() return config.fusillade.recoil end)
 
-		
+
 		createCustomSandyShowHideMenu(nativeSettings, "/tdo/juggernaut", nuiTxt.juggernaut.header, nuiTxt, config, "juggernautShow", function(ns, p)
 			return createJuggernautMechanic(ns, p, nuiTxt, config, default)
 		end)
@@ -1240,7 +1239,7 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "JuggernautCooldownMin;", function() return config.juggernaut.cooldownMin end)
 		Override("TDOConfig", "JuggernautCooldownMax;", function() return config.juggernaut.cooldownMax end)
 
-		
+
 		createCustomSandyShowHideMenu(nativeSettings, "/tdo/kurosawa", nuiTxt.kurosawa.header, nuiTxt, config, "kurosawaShow", function(ns, p)
 			return createKurosawaMechanic(ns, p, nuiTxt, config, default)
 		end)
@@ -1253,7 +1252,7 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "KurosawaPOPHealPctBase;", function() return config.kurosawa.healMin end)
 		Override("TDOConfig", "KurosawaPOPHealPctPlus;", function() return config.kurosawa.healMax end)
 
-		
+
 		createCustomSandyShowHideMenu(nativeSettings, "/tdo/pyrolith", nuiTxt.pyrolith.header, nuiTxt, config, "pyrolithShow", function(ns, p)
 			return createPyrolithMechanic(ns, p, nuiTxt, config, default)
 		end)
@@ -1566,7 +1565,6 @@ registerForEvent("onInit", function()
 	print("[TDO] Initialized!")
 end)
 
-
 registerForEvent("onShutdown", function()
 end)
 
@@ -1590,7 +1588,6 @@ registerHotkey("TDOCinematicHideQuantumMarker", "Cinematic — Toggle Hide Quant
 	saveSettings(config)
 	print("[TDO] Hide Quantum Marker: " .. tostring(config.ui.hideQuantumMarker))
 end)
-
 
 return {
 	TDODumpSandyStructure = TDODumpSandyStructure,

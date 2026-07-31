@@ -1,0 +1,53 @@
+{
+  "schema": 2,
+  "alias": "tdo",
+  "name": "TDO",
+  "source": "D:\\Created Mods\\TDO",
+  "defaultRiskTier": 2,
+  "gitPolicy": "manual",
+  "syncAlias": "tdo",
+  "languages": ["RedScript", "Lua", "TweakDB YAML", "ArchiveXL XML", "PowerShell"],
+  "dependencies": [
+    { "name": "Cyber Engine Tweaks", "relationship": "required", "installedMod": "Cyber Engine Tweaks", "minimumVersion": null, "testedVersion": "1.37.1.0", "evidence": "README.md:89" },
+    { "name": "redscript", "relationship": "required", "installedMod": "redscript", "minimumVersion": null, "testedVersion": "0.5.31.0", "evidence": "README.md:90" },
+    { "name": "Codeware", "relationship": "required", "installedMod": "Codeware", "minimumVersion": null, "testedVersion": "1.20.3.0", "evidence": "README.md:92" },
+    { "name": "ArchiveXL", "relationship": "required", "installedMod": "ArchiveXL", "minimumVersion": null, "testedVersion": "1.26.8.0", "evidence": "README.md:93" },
+    { "name": "TweakXL", "relationship": "required", "installedMod": "TweakXL", "minimumVersion": null, "testedVersion": "1.11.3.0", "evidence": "README.md:94" },
+    { "name": "Native Settings UI", "relationship": "required", "installedMod": "Native Settings UI", "minimumVersion": null, "testedVersion": "1.96.0.0", "evidence": "README.md:95" },
+    { "name": "CyberwareEX", "relationship": "build-only", "installedMod": "CyberwareEX", "minimumVersion": null, "testedVersion": "1.5.6.0", "evidence": "mod-build.json:33" }
+  ],
+  "paths": {
+    "owned": ["r6", "bin", "archive", "scripts", "docs"],
+    "generated": [],
+    "vendored": []
+  },
+  "compatibility": [],
+  "riskContracts": {
+    "0": { "requiredOracles": ["manifest"] },
+    "1": { "requiredOracles": ["manifest", "compile", "structural", "compatibility"] },
+    "2": { "requiredOracles": ["manifest", "compile", "structural", "compatibility"] },
+    "3": { "requiredOracles": ["manifest", "compile", "structural", "compatibility"] }
+  },
+  "compile": { "kind": "redscript", "dependencyMod": "CyberwareEX" },
+  "validators": [
+    {
+      "name": "TDO compatibility contracts",
+      "minimumRisk": 1,
+      "kind": "powershell-glob",
+      "pattern": "scripts\\validate-*.ps1",
+      "oracles": ["structural", "compatibility"]
+    }
+  ],
+  "packaging": {
+    "formats": ["zip"],
+    "roots": ["r6", "bin", "archive"],
+    "artifactPatterns": ["TDO*.zip"],
+    "generatedFiles": [],
+    "forbiddenRoots": [".git", ".github", "docs", "scripts"]
+  },
+  "deployments": [
+    { "source": "r6", "destination": "D:\\Chrome & Blood - Compiled\\mods\\Time Dilation Overhaul\\r6" },
+    { "source": "bin", "destination": "D:\\Chrome & Blood - Compiled\\mods\\Time Dilation Overhaul\\bin" },
+    { "source": "archive", "destination": "D:\\Chrome & Blood - Compiled\\mods\\Time Dilation Overhaul\\archive" }
+  ]
+}

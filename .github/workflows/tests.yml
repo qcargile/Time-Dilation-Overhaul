@@ -1,0 +1,13 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  contracts:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - shell: pwsh
+        run: ./scripts/validate-bullet-trail-compat.ps1

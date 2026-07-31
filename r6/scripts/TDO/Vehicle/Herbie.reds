@@ -240,7 +240,7 @@ public func TDO_Herbie_ApplyImpulses(player: ref<PlayerPuppet>, vehicle: wref<Ve
   let carYaw: Float = TDOConfig.HerbieCarYaw();
   if carYaw > 0.001 && AbsF(steer) >= 0.05 && spd > 2.0 {
     let spdFactor: Float = ClampF(spd / 20.0, 0.0, 1.0);
-    let inertiaScale: Float = SqrtF(mass / 1500.0); // 1500 = mid-sedan reference mass; compensates for I scaling as mass × wb²
+    let inertiaScale: Float = SqrtF(mass / 1500.0);
     let yawMag: Float = carYaw * mass * inertiaScale * spdFactor * steer * dtScale;
     if yawMag > cap { yawMag = cap; }
     if yawMag < -cap { yawMag = -cap; }
@@ -267,12 +267,12 @@ public func TDO_Herbie_ApplyImpulses(player: ref<PlayerPuppet>, vehicle: wref<Ve
   if traction > 0.001 && AbsF(steer) >= 0.05 && spd > 5.0 {
     let currFwdSpd: Float = vel.X * fwd.X + vel.Y * fwd.Y + vel.Z * fwd.Z;
     if currFwdSpd > player.m_tdoHerbieTargetForwardSpd {
-      player.m_tdoHerbieTargetForwardSpd = currFwdSpd; // ratchet target to peak forward speed during this steer
+      player.m_tdoHerbieTargetForwardSpd = currFwdSpd;
     }
     let deficit: Float = player.m_tdoHerbieTargetForwardSpd - currFwdSpd;
     if deficit > 0.05 {
       let dt: Float = TDOConfig.HerbieTickInterval();
-      let maxDv: Float = 2.0 * traction * dt; // cap restoration rate so it can't fight braking
+      let maxDv: Float = 2.0 * traction * dt;
       let dv: Float = deficit;
       if dv > maxDv { dv = maxDv; }
       let restoreImpulse: Float = mass * dv;
@@ -286,7 +286,7 @@ public func TDO_Herbie_ApplyImpulses(player: ref<PlayerPuppet>, vehicle: wref<Ve
       vehicle.QueueEvent(evT);
     }
   } else {
-    player.m_tdoHerbieTargetForwardSpd = 0.0; // reset when not steering, fresh peak next turn
+    player.m_tdoHerbieTargetForwardSpd = 0.0;
   }
 
   player.m_tdoHerbieDiagN += 1;
@@ -388,7 +388,7 @@ protected cb func OnGameAttached() -> Bool {
   this.m_tdoHerbieTickScheduled = false;
   let armCheck: ref<TDO_HerbieArmCheck> = new TDO_HerbieArmCheck();
   armCheck.m_playerID = this.GetEntityID();
-  GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(armCheck, 1.0, false); // save-in-vehicle arm probe, one-shot
+  GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(armCheck, 1.0, false);
 }
 
 @wrapMethod(PlayerPuppet)

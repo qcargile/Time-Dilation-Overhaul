@@ -2,11 +2,6 @@ module Phoenicia.EnemySandevistanRework.Additions
 
 import Phoenicia.EnemySandevistanRework.Configurations.*
 
-//////////////////////////////////////////////////////////
-////////////////////// SANDEVISTAN ///////////////////////
-//////////////////////////////////////////////////////////
-
-// GetSandevistanTier
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func GetSandevistanTier(context: ScriptExecutionContext) -> Int32 {
     let puppet = ScriptExecutionContext.GetOwner(context) as ScriptedPuppet;
@@ -17,11 +12,11 @@ public final static func GetSandevistanTier(context: ScriptExecutionContext) -> 
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func GetSandevistanTier(puppet: ref<ScriptedPuppet>) -> Int32 {
     let statSystem = GameInstance.GetStatsSystem(GetGameInstance());
-    let sandiTier1 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier1"))); 
-    let sandiTier2 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier2"))); 
-    let sandiTier3 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier3"))); 
-    let sandiTier4 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier4"))); 
-    let sandiTier5 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier5"))); 
+    let sandiTier1 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier1")));
+    let sandiTier2 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier2")));
+    let sandiTier3 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier3")));
+    let sandiTier4 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier4")));
+    let sandiTier5 = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistanTier5")));
 
     if (sandiTier5 > 0.0) {
         return 5;
@@ -39,15 +34,13 @@ public final static func GetSandevistanTier(puppet: ref<ScriptedPuppet>) -> Int3
         return 2;
     }
 
-    if (sandiTier1 > 0.0) {      
+    if (sandiTier1 > 0.0) {
         return 1;
     }
 
     return 0;
 }
 
-
-// GetBaseSandevistanDuration
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func GetBaseSandevistanDuration(puppet: ref<ScriptedPuppet>) -> Float {
     let settings = ESR_Settings();
@@ -72,7 +65,7 @@ public final static func GetBaseSandevistanDuration(puppet: ref<ScriptedPuppet>)
       default:
         baseDuration = 10.0;
         break;
-    }    
+    }
 
     return baseDuration;
 }
@@ -83,9 +76,8 @@ public final static func GetBaseSandevistanDuration(context: ScriptExecutionCont
 
     return AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanDuration(puppet);
 }
- 
 
-// GetBaseSandevistanCooldown
+
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func GetBaseSandevistanCooldown(puppet: ref<ScriptedPuppet>) -> Float {
   let settings = ESR_Settings();
@@ -111,7 +103,7 @@ public final static func GetBaseSandevistanCooldown(puppet: ref<ScriptedPuppet>)
     default:
       baseCooldown = 40.0;
       break;
-  }    
+  }
 
   return baseCooldown;
 }
@@ -123,8 +115,6 @@ public final static func GetBaseSandevistanCooldown(context: ScriptExecutionCont
     return AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanCooldown(puppet);
 }
 
-
-// GetBaseSandevistanSpeed
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func GetBaseSandevistanSpeed(puppet: ref<ScriptedPuppet>) -> Float {
     let settings = ESR_Settings();
@@ -136,7 +126,7 @@ public final static func GetBaseSandevistanSpeed(puppet: ref<ScriptedPuppet>) ->
         sandevistanTier = 2;
       }
     }
-    
+
     switch (sandevistanTier) {
       case 5:
         return 1.0 / (1.0 - (settings.mk5Strength / 100.0));
@@ -150,7 +140,7 @@ public final static func GetBaseSandevistanSpeed(puppet: ref<ScriptedPuppet>) ->
         return 1.0 / (1.0 - (settings.mk1Strength / 100.0));
       default:
         return 1.45;
-    }    
+    }
 }
 
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
@@ -160,12 +150,10 @@ public final static func GetBaseSandevistanSpeed(context: ScriptExecutionContext
     return AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanSpeed(puppet);
 }
 
-
-// GetAvailableSandevistanDuration
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func GetAvailableSandevistanDuration(context: ScriptExecutionContext) -> Float {
     let puppet = ScriptExecutionContext.GetOwner(context) as ScriptedPuppet;
-    
+
     return AISubActionApplyTimeDilation_Record_Implementation.GetAvailableSandevistanDuration(puppet);
 }
 
@@ -173,16 +161,14 @@ public final static func GetAvailableSandevistanDuration(context: ScriptExecutio
 public final static func GetAvailableSandevistanDuration(puppet: ref<ScriptedPuppet>) -> Float {
     let statSystem = GameInstance.GetStatsSystem(GetGameInstance());
 
-    let currentCooldown = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"ESR_Sandi_CD_Counter"))); 
-    
+    let currentCooldown = statSystem.GetStatValue(Cast<StatsObjectID>(puppet.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"ESR_Sandi_CD_Counter")));
+
     let baseDuration = AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanDuration(puppet);
     let baseCooldown = AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanCooldown(puppet);
 
     return baseDuration * (1.0 - (currentCooldown / baseCooldown));
 }
 
-
-// ApplyCooldownAndDurationStacks
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func ApplyCooldownAndDurationStacks(puppet: ref<ScriptedPuppet>, durationInSeconds: Int32, isSvS: Bool) -> Void {
     let baseDuration = AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanDuration(puppet);
@@ -220,13 +206,6 @@ public final static func ApplyCooldownAndDurationStacks(context: ScriptExecution
 
     AISubActionApplyTimeDilation_Record_Implementation.ApplyCooldownAndDurationStacks(puppet, durationInSeconds, isSvS);
 }
-
-
-
-// Others
-
-
-
 
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func GetSandevistanVsSandevistanSpeed(context: ScriptExecutionContext) -> Float {

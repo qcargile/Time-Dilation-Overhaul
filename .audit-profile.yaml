@@ -1,0 +1,323 @@
+schema_version: 1
+project: TDO
+domain: cp2077-mod
+languages: [reds, lua, yaml]
+
+mode: enforcement
+mode_changed: 2026-05-15
+profile_reviewed: 2026-07-30
+review_due: 2027-01-30
+mode_change_reason: "Initial calibration completed via 2026-05-15 humanization pass."
+
+precedent_hierarchy:
+  - explicit_owner_intent
+  - vanilla_cdpr_scripts
+  - project_local_established
+  - shipped_mod_ecosystem
+
+calibrated_patterns:
+
+  - name: tier-dispatch-module-functions
+    description: |
+      Public module-scoped TDO_<Sandy>_Get<X>(tier: Int32) functions that switch on tier.
+      Replaced the previous TDO_<Sandy>Config class dispatcher pattern.
+    locations:
+      - r6/scripts/TDO/Sandy/Pyrolith.reds
+      - r6/scripts/TDO/Sandy/Juggernaut.reds
+      - r6/scripts/TDO/Sandy/Sogimsu.reds
+      - r6/scripts/TDO/Sandy/WarpDancerCore.reds
+    rationale: |
+      Matches existing TDO_Pyrolith_TierForItemTDB module-function style.
+      Calling site is 1-2 places per function; inlining the switch at callsites would
+      be 8+ lines x N callsites vs 11 lines x 1 dispatcher.
+    established: 2026-05-15
+    provenance: 2026-05-15 humanization pass; owner ratified
+
+  - name: per-sandy-getequippedtier-inline
+    description: |
+      Each Sandy file declares its own @addMethod(PlayerPuppet) TDO_<Sandy>_GetEquippedTier
+      with the Sandy's TDBID-to-tier mapping inline. Three near-identical functions exist.
+    locations:
+      - r6/scripts/TDO/Sandy/Pyrolith.reds:102
+      - r6/scripts/TDO/Sandy/Juggernaut.reds:74
+      - r6/scripts/TDO/Sandy/Sogimsu.reds:48
+    rationale: |
+      Domain-driven, not symmetry-driven. Each Sandy's TDBID list is unique.
+      Extracting to TDO_GetEquippedTier(tdbList: array<TweakDBID>) would be framework-thinking:
+      domain data passed as config. Inlining keeps the tier map next to the Sandy.
+    established: 2026-05-15
+    provenance: 2026-05-15 audit; verdict "keep inline"; owner ratified
+
+  - name: createXMechanic-explicit-slider-blocks
+    description: |
+      bin/x64/.../init.lua has 12 createXMechanic functions, each with explicit per-line
+      nativeSettings.addRangeFloat / addRangeInt calls. ~120 sequential calls total.
+    locations: [bin/x64/plugins/cyber_engine_tweaks/mods/tdo/init.lua]
+    rationale: |
+      Matches lua-cet rule, "Override chains repetitive on purpose." Extracting into a
+      helper kills the visual rhythm and obscures which slider corresponds to which key.
+      Flattened from tierStats-loop form on 2026-05-15.
+    established: 2026-05-15
+    provenance: lua-cet.md "Override chains repetitive on purpose"; 2026-05-15 humanization pass
+
+  - name: structurally-similar-sandy-files
+    description: |
+      Sandy .reds files share an internal shape, addField block -> predicate -> tier getter
+      -> OnActivate -> IsOnCooldown -> Engage -> Release/End -> callback class.
+    locations: [r6/scripts/TDO/Sandy/*.reds]
+    rationale: |
+      Each Sandy IS the same kind of domain object - tier-scaling activatable cyberware
+      with cooldown. Structural similarity reflects domain, not AI copy-paste. Audit
+      should NOT flag uniformity across these files unless a specific deviation appears
+      that contradicts the domain shape.
+    established: 2026-05-15
+    provenance: 2026-05-15 audit; verdict "domain-driven"; owner ratified
+
+  - name: predicate-naming-Is-Has-Can-Should
+    description: 35+ public func TDO_<Sandy>_Is<X> / TDO_<Sandy>_Has<X> predicate functions.
+    locations: [r6/scripts/TDO/Sandy/*.reds, r6/scripts/TDO/Core/*.reds]
+    rationale: Correct predicate naming. Audit should not flag.
+    established: 2026-05-15
+    provenance: redscript.md "Cross-cutting style" predicate convention
+
+  - name: central-config-class-static-getters
+    description: |
+      TDOConfig class with ~198 static methods returning hardcoded config values.
+      No instance state. Overridden at runtime by Lua via CET Override() chains.
+    locations: [r6/scripts/TDO/Config/TDOConfig.reds]
+    rationale: |
+      De facto CP2077 modding idiom (HUD Painter, MBN, MercProtocol all use the same
+      pattern). The class is THE config layer; getters are individually overridable at
+      runtime from Lua. Modularizing into per-subsystem classes would break the Override
+      pattern. Established convention, not drift.
+    matches_detector: namespace-class-no-state
+    established: 2026-05-15
+    provenance: 2026-05-15 cross-project audit; CP2077 modlist precedent
+
+  - name: intentional-raw-flush-armor-bypass
+    description: |
+      Several Sandy mechanics deal damage via raw StatPool drain
+      (RequestChangingStatPoolValue) or flat SetAttackValue substitution that
+      intentionally bypasses armor / resistance / damage-reduction mitigation.
+      WarpDancer stored-damage release, Falcon Phase Round + Saturation Volley,
+      Pyrolith bullet/cluster thermal.
+    locations:
+      - r6/scripts/TDO/Sandy/WarpDancerStoredDamage.reds
+      - r6/scripts/TDO/Sandy/FalconPhaseRound.reds
+      - r6/scripts/TDO/Sandy/FalconSaturationLock.reds
+      - r6/scripts/TDO/Sandy/Pyrolith.reds
+    rationale: |
+      Explicit owner intent (highest precedent). 2026-05-17: "nope, thats the
+      whole point and appeal of mechanics like this ... mechanics like that
+      contribute to balance, they stay." The mitigation bypass is the designed
+      payoff of these high-cost mechanics, not an oversight. Reviewer must NOT
+      flag "bypasses armor/DR/resist" as a defect on these mechanics.
+    established: 2026-05-18
+    provenance: explicit_owner_intent 2026-05-17 (W3 Falcon/WD/Pyrolith batches)
+
+  - name: intentional-runtime-toggle-polling-tick
+    description: |
+      Self-rescheduling DelayCallback feature ticks that keep ticking even when
+      the feature's config getter returns false, doing minimal disengage/no-op
+      work, so a runtime CET-Override re-enable is detected without a reload.
+    locations:
+      - r6/scripts/TDO/Scanning/ScanningTimeDilation.reds
+      - r6/scripts/TDO/Vehicle/Herbie.reds
+    rationale: |
+      Runtime-toggleable features need the poll - stopping the tick on disable
+      would strand the feature off until a reload. Same family as the
+      Quantum/Kurosawa reason-gated re-assert documented in redscript.md.
+      Reviewer must NOT flag "perpetual loop / shipped dead loop."
+    established: 2026-05-18
+    provenance: project_local_established + redscript.md re-assert pattern; W3 batch 12
+
+  - name: intentional-fakesandy-no-wrappedmethod
+    description: |
+      VoidSystemsHook @wrapMethod(UseSandevistanAction) StartAction returns
+      WITHOUT calling wrappedMethod for the Sogimsu/Juggernaut/Pyrolith trio.
+    locations:
+      - r6/scripts/TDO/Sandy/VoidSystemsHook.reds
+    rationale: |
+      Load-bearing intentional vanilla-Sandy-PSM bypass: these "fake Sandy" OS
+      items must NOT receive vanilla Sandevistan time dilation, and the
+      no-wrappedMethod return is the 2nd-press re-entry gate. Meets the
+      redscript.md vanilla-preservation pattern-6 bar (vanilla would apply TD
+      these mechanics are defined to not have). Verified campaign batch 8.
+      Reviewer must NOT flag this as a vanilla-preservation violation.
+    established: 2026-05-18
+    provenance: project_local_established; redscript.md vanilla-preservation pattern-6; W3 batch 8/12
+
+accepted_deviations:
+
+  - rule: yaml-tweaks.lowercase-true-false
+    deviation: TDO uses Capitalized True/False consistently across all 14 YAML files (571 occurrences)
+    rationale: |
+      Modlist sampling shows both forms widespread (~160 capitalized vs ~45 lowercase in
+      sampled 10 mods). yaml-tweaks rule's real concern is mixing within a mod; TDO doesn't mix.
+      Switching to lowercase = churn for no behavioral gain.
+    re_review: 2026-11-15
+    provenance: 2026-05-15 audit; empirical modlist evidence
+
+  - rule: dry-single-source-of-attunement-scaling
+    deviation: |
+      Falcon/Fusillade/Kurosawa-Body attunement per-point multipliers AND cap
+      thresholds are duplicated across attunements.yaml + AttunementTooltip.reds
+      + English.reds prose ("cap X% at <Attr> 20"). Three locations, not DRY.
+    rationale: |
+      Documented redscript.md "TDO attunement multiplier lives in TWO files -
+      edit as a PAIR" hazard (here a third location: human-readable LocKey
+      prose). Structural: TweakDB YAML cannot reference a RedScript constant;
+      the tooltip injector needs its own copy; the prose is localization. W3
+      batch 13 independently verified all three currently consistent. Accept
+      the documented risk; edit as a triad on any attunement balance change.
+    re_review: 2026-11-18
+    provenance: redscript.md "edit as a PAIR" rule; W3 batch 13 consistency-verified
+
+  - rule: no-disabled-or-parked-code-in-ship
+    deviation: |
+      Phase-6 NPC-vs-NPC time dilation (Core/NPCTimeDilation.reds +
+      Core/NPCTimeDilationProbe.reds) ships disabled-and-inert
+      (TDO_P6_Enabled/TDO_P6Probe_Enabled both return false; Arm() early-returns).
+    rationale: |
+      Phase 6 is ON HOLD, superseded by Phoenicia's EnemySandevistanRework
+      (project memory). Owner default 2026-05-17: keep parked for v1.0 - zero
+      runtime cost after the W3 batch-11 probe gate fix, full strip is a
+      post-publish cleanup. The latent m_owned monotonic-growth only matters
+      if Phase 6 is ever re-enabled. Reviewer must NOT flag as ship-blocking
+      dead code.
+    re_review: 2026-11-18
+    provenance: owner default 2026-05-17; project_tdo_redesign Phase 6 ON HOLD; W3 batch 11
+
+forbidden_patterns:
+
+  - name: banner-divider-comments
+    description: |
+      Whole-line comments matching banner-bar or UPPERCASE-titles regex in any .reds/.lua/.yaml.
+    detection: regex; enforced by comment-lint.ps1 hook
+    why_forbidden: |
+      ~1100 lines stripped 2026-05-15. Strongest AI fingerprint in the codebase.
+      Shipped mod style (Limited HUD, Stealthrunner, Equipment-EX) uses blank lines between
+      logical groups instead.
+    enforcement: hook (comment-lint.ps1)
+    cited_examples:
+      - "Pyrolith.reds:3-6 (pre-2026-05-15) - PLAYER FIELDS banner block"
+    provenance:
+      - redscript.md "Anti-patterns" (banner dividers flagged)
+      - lua-cet.md "Anti-patterns" (Ultra+ as cautionary case)
+      - 2026-05-15 owner statement "0 banner comments. anywhere."
+      - 2026-05-15 humanization pass (1,100 lines stripped)
+
+  - name: single-use-dispatcher-class
+    description: |
+      public class TDO_<X>Config (or similar) whose only body is static func Get<Y>(tier)
+      switching over tier and delegating to another module. Class has no state, no behavior
+      beyond namespace dispatch.
+    detection: |
+      AST/regex - find public class X { ... } where every method is static and only returns
+      from a switch over a small enum-like arg.
+    why_forbidden: |
+      Three of these existed (TDO_PyrolithConfig, TDO_JuggernautConfig, TDO_SogimsuConfig).
+      All were pure indirection over TDOConfig getters. Flattened 2026-05-15 to module
+      functions matching existing TDO_Pyrolith_TierForItemTDB style.
+    enforcement: skill-level (no hook yet; recurrence triggers hook proposal)
+    provenance: 2026-05-15 audit + flatten pass; owner ratified
+
+  - name: nativesettings-slider-matrix-loops
+    description: |
+      Lua for-loops generating nativeSettings.add* calls.
+      Pattern, for t = 1, N or for _, k in ipairs(<keys>) wrapped around nativeSettings.addRange*.
+    detection: regex - for-loop within 5 lines of nativeSettings.add
+    why_forbidden: |
+      Five of these existed across createJuggernautMechanic/createPyrolithMechanic/
+      createSogimsuMechanic/createMoshonMechanic/createShrikeMechanic. Flattened 2026-05-15.
+      lua-cet rule, Override chains repetitive on purpose.
+    enforcement: skill-level
+    provenance: lua-cet.md "DRY abstractions over Override chains"
+
+monitored_patterns:
+
+  - name: defensive-isdefined-on-engine-gets
+    description: IsDefined() called on results of GameInstance.Get*, GetScriptableSystemsContainer, etc.
+    last_scan: 2026-05-15
+    last_count: 0
+    promote_threshold: 3
+    provenance: redscript.md "Defensive IsDefined() after engine-guaranteed gets - anti-pattern"
+
+  - name: function-process-handle-manage-prefix
+    description: User-authored (not @wrapMethod) functions named Process*/Handle*/Manage*/Execute*
+    last_scan: 2026-05-15
+    last_count: 0
+    promote_threshold: 2
+    provenance: redscript.md "Cross-cutting style - avoid generic verb prefixes"
+
+  - name: raw-int-maxstacks-in-status-effects
+    description: |
+      TDO StatusEffect YAML records using maxStacks: <raw int> instead of the
+      proven-safe maxStacks: RTDB.StatusEffect_inline0 record reference.
+    last_scan: 2026-05-18
+    last_count: 0
+    promote_threshold: 2
+    note: |
+      SURVEY-ONLY, do not auto-fix - TDO SEs are verified-shipped; a raw-int
+      maxStacks risks silent SE-rejection (yaml-tweaks.md Falcon incident).
+      Juggernaut's sandy-juggernaut.yaml:194 was fixed 1 -> RTDB.StatusEffect_inline0
+      in W3. Remaining TDO SE YAMLs to be surveyed; any raw-int maxStacks
+      surfaced for owner decision, never silently changed on verified records.
+    provenance: yaml-tweaks.md "StatusEffect authoring" + Falcon raw-int incident; W3 batch 9 (Juggernaut)
+
+human_review_only:
+
+  - concern: asymmetry-vs-laziness
+    rationale: |
+      Distinguishing "this Sandy has 7 tiers because the others have 5" (domain) vs
+      "I forgot to update this one" (laziness) requires semantic understanding.
+      Mechanical heuristics produce false positives both ways.
+
+  - concern: local-reasoning-density
+    rationale: |
+      Does this code feel locally motivated? Highest-value check and hardest to mechanize.
+      Partial detectors exist (unused-params, dead-initialization, template-driven guards)
+      but the full check requires reading the function's narrative. Audit surfaces partial
+      signals; owner makes the call.
+    partial_detectors:
+      - unused-function-parameters
+      - initialized-but-never-read-fields
+      - early-return-on-impossible-conditions
+      - role-based-naming-without-specifics
+
+  - concern: abstraction-readiness
+    rationale: |
+      Caller count is not a design rule. Extraction requires semantic identity, a domain
+      boundary, one shared invariant, lifecycle ownership, or a useful pure test seam.
+
+hook_budget:
+  max: 8
+  current_count: 1
+  current_hooks:
+    - comment-lint.ps1
+  policy: |
+    Adding a hook requires either retiring an existing one or explicit budget increase.
+    New hooks must catch 3+ real recurrences before promotion. Hooks that don't fire
+    for 90 days become dormant (logged but not enforcing) for owner re-ratification.
+
+run_history:
+  - date: 2026-05-18
+    scope: full
+    trigger: W8 pre-publish cleanup campaign
+    raw_findings: 0
+    result: AUDIT CLEAN
+    forbidden_recurrences: 0
+    monitored_increments: 0
+    ratified_this_run:
+      - intentional-raw-flush-armor-bypass (calibrated)
+      - intentional-runtime-toggle-polling-tick (calibrated)
+      - intentional-fakesandy-no-wrappedmethod (calibrated)
+      - dry-single-source-of-attunement-scaling (accepted_deviation)
+      - no-disabled-or-parked-code-in-ship / Phase-6 (accepted_deviation)
+      - raw-int-maxstacks-in-status-effects (monitored, survey-only)
+    notes: |
+      Profile pre-existed (2026-05-15 humanization pass, mode:enforcement) so
+      --full not --bootstrap. Zero drift: humanization pass + W3 discipline
+      (dead m_pyrolithPendingClusters removed, Phase-6 probe gated, no banner
+      comments added). Ratifications durably record W3-campaign intentional
+      patterns so the adversarial reviewer stops re-flagging them on every run.

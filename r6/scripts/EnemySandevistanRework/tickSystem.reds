@@ -19,7 +19,7 @@ public class TickSystem extends ScriptableSystem {
     private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
         let player: ref<PlayerPuppet> = GetPlayer(GetGameInstance());
 
-        if IsDefined(player) { 
+        if IsDefined(player) {
             this.player = player;
             this.delaySystem = GameInstance.GetDelaySystem(this.player.GetGame());
             this.statsSystem = GameInstance.GetStatsSystem(this.player.GetGame());
@@ -35,7 +35,7 @@ public class TickSystem extends ScriptableSystem {
         let i = 0;
 
         while i < ArraySize(entities) {
-            
+
             if (this.statsSystem.GetStatValue(Cast<StatsObjectID>(entities[i].GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"ESR_HasSecondWind"))) > 0.0) {
                 this.HandleRhino(entities[i] as NPCPuppet);
             }
@@ -56,7 +56,7 @@ public class TickSystem extends ScriptableSystem {
 
             if (AISubActionApplyTimeDilation_Record_Implementation.GetKerenzikovTier(entities[i] as NPCPuppet) > 0) {
                 this.HandleKerenzikovVsSandevistanActivation(entities[i] as NPCPuppet);
-            } 
+            }
 
             i+= 1;
         }
@@ -65,13 +65,13 @@ public class TickSystem extends ScriptableSystem {
     }
 
     private func HandleSmasherOffensiveSandiActivations(puppet: ref<NPCPuppet>) {
-        if (NPCPuppet.IsInCombatWithTarget(puppet, this.player) && 
+        if (NPCPuppet.IsInCombatWithTarget(puppet, this.player) &&
             this.CommonOffensiveRestrictions(puppet) &&
             !HasSmasherSandevistanBlocker(puppet) &&
             !StatusEffectSystem.ObjectHasStatusEffectWithTag(puppet, n"ESR_Sandi_Buff")) {
                 let baseChance = 5;
                 let distanceToPlayer = Vector4.Distance(puppet.GetWorldPosition(), this.player.GetWorldPosition());
-                
+
                 let isPhase1 = !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Destroyed_Plate") && StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Phase1");
                 let isPhase15 = StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Destroyed_Plate") && StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Phase1");
                 let isLastPhase = StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Emergency");
@@ -81,7 +81,7 @@ public class TickSystem extends ScriptableSystem {
                 } else if (StatusEffectSystem.ObjectHasStatusEffect(puppet, t"AdamSmasher.Shooting")) {
                     baseChance += (isPhase1 || isPhase15 ? 15 : 5);
                     baseChance += (isLastPhase ? 35 : 10);
-                }   
+                }
 
                 if (isPhase1 && (distanceToPlayer < 12.0 || distanceToPlayer > 35.0)) {
                     baseChance += 25;
@@ -115,10 +115,9 @@ public class TickSystem extends ScriptableSystem {
         let playerInSandevistan = StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"SandevistanPlayerBuff");
         let rangeCheck = ((IsLookingAtTarget(puppet, this.player, 90) && distanceToPlayer < 20.0) || distanceToPlayer < 5.0);
 
-
-        if (playerInSandevistan && 
-            NPCPuppet.IsInCombatWithTarget(puppet, this.player) && 
-            rangeCheck && CheckCommonRestrictions(puppet, true, false) && 
+        if (playerInSandevistan &&
+            NPCPuppet.IsInCombatWithTarget(puppet, this.player) &&
+            rangeCheck && CheckCommonRestrictions(puppet, true, false) &&
             !StatusEffectSystem.ObjectHasStatusEffectWithTag(puppet, n"ESR_Sandi_Buff")
             ) {
             let kerenzikovDuration = AISubActionApplyTimeDilation_Record_Implementation.GetBaseKerenzikovDuration(puppet);
@@ -127,7 +126,7 @@ public class TickSystem extends ScriptableSystem {
                 AISubActionApplyTimeDilation_Record_Implementation.ApplyKerenzikovCooldownAndDurationStacks(puppet, Cast<Int32>(kerenzikovDuration));
                 let speed = AISubActionApplyTimeDilation_Record_Implementation.GetKerenzikovVsSandevistanSpeed(puppet);
                 puppet.SetIndividualTimeDilation(n"kerenzikovVsSandi", speed);
-                // puppetBlackBoard.SetFloat(GetAllBlackboardDefs().AIAction.ownerGlobalTimeDilation, AISubActionApplyTimeDilation_Record_Implementation.GetKerenzikovVsSandevistanSpeed(puppet));
+
             }
         }
 
@@ -178,11 +177,11 @@ public class TickSystem extends ScriptableSystem {
     }
 
     private func CommonOffensiveRestrictions(puppet: ref<NPCPuppet>) -> Bool {
-        return IsLookingAtTarget(puppet, this.player, 30) && 
-               CheckCommonRestrictions(puppet, true, false) && 
+        return IsLookingAtTarget(puppet, this.player, 30) &&
+               CheckCommonRestrictions(puppet, true, false) &&
                NPCPuppet.IsInCombatWithTarget(puppet, this.player) &&
-               !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_Stim_Buff") && 
-               !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_Sandi_Buff") && 
+               !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_Stim_Buff") &&
+               !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_Sandi_Buff") &&
                !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_SVS_Buff") &&
                !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_SVK_Buff") &&
                !StatusEffectSystem.ObjectHasStatusEffect(puppet, t"BaseStatusEffect.ESR_Offensive_CD");
@@ -203,7 +202,6 @@ public class TickSystem extends ScriptableSystem {
         let kerenzikovDuration = AISubActionApplyTimeDilation_Record_Implementation.GetBaseKerenzikovDuration(puppet);
         let playerHasSandiCharges = this.statPoolSystem.GetStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.SandevistanCharge) > 50.0;
         let playerHasSandi = this.statsSystem.GetStatValue(Cast<StatsObjectID>(GetPlayer(GetGameInstance()).GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistan"))) > 0.0;
-
 
         if (distanceToPlayer < 20.0 && this.CommonOffensiveRestrictions(puppet) &&
          (pistolOrRevolver || (isMelee && hasSandi) || (hasShotgun && hasSandi))) {
@@ -289,8 +287,6 @@ public class TickSystem extends ScriptableSystem {
         }
     }
 }
-
-
 
 public class EnemySandevistanReworkCallback extends DelayCallback {
   let system: wref<TickSystem>;

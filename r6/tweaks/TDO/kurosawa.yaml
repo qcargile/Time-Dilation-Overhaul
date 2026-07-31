@@ -240,7 +240,7 @@ Items.TDO_Kurosawa_HasSandy:
 
 Items.TDO_Kurosawa_Duration:
   $type: gamedataConstantStatModifier_Record
-  value: 999 # buff cap
+  value: 999
   modifierType: Additive
   statType: BaseStats.TimeDilationSandevistanDuration
 

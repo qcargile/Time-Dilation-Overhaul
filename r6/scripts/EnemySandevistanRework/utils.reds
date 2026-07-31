@@ -4,25 +4,23 @@ public static func IsLookingAtTarget(looker: ref<GameObject>, target: ref<GameOb
     let lookerPos: Vector4 = looker.GetWorldPosition();
     let targetPos: Vector4 = target.GetWorldPosition();
 
-    // Direction from player to target
+
     let dirToTarget: Vector4 = Vector4.Normalize(targetPos - lookerPos);
 
-    // Player look direction (could use camera or body orientation)
+
     let lookDir: Vector4 = Vector4.Normalize(looker.GetWorldForward());
 
-    // Compute dot product
+
     let dotValue: Float = Vector4.Dot(lookDir, dirToTarget);
 
-    // Compare with cosine of allowed angle
+
     let angleCos: Float = CosF(Deg2Rad(maxAngle));
-// GetLookAtObject -todo use this!?
+
     return IsLookingAtTarget(looker, target) || dotValue >= angleCos;
 }
 
-// todo - replace IsLookingAtTarget usages with this one whenever makes sense
-
 public static func IsLookingAtTarget(looker: ref<GameObject>, target: ref<GameObject>) -> Bool {
-    let theGame = GetGameInstance(); // YES, you just lost it
+    let theGame = GetGameInstance();
 
     let lookedAtObect: ref<GameObject> = GameInstance.GetTargetingSystem(theGame).GetLookAtObject(looker, true, true);
 
@@ -79,7 +77,6 @@ public static func CheckCommonRestrictions(npc: ref<NPCPuppet>, blockedByCC: Boo
     if GameInstance.GetBlackboardSystem(GetGameInstance()).GetLocalInstanced(player.GetEntityID(), GetAllBlackboardDefs().PlayerStateMachine).GetInt(GetAllBlackboardDefs().PlayerStateMachine.SceneTier) >1{
         return false;
     };
-
 
     return true;
 }
