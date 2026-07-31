@@ -401,11 +401,6 @@ return {
             textSize = 45
         },
 
-
-
-
-
-
         calcDes ="Values for tiers between the minimum and maximum are calculated automatically by linear interpolation.\\n\\n",
         vanillaDes = "\\n\\nVanilla value: {VALUE}.",
         TDODefaultDes = "\\n\\nTDO default: {VALUE}.",

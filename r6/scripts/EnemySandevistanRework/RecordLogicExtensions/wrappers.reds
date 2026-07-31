@@ -2,8 +2,6 @@ module Phoenicia.EnemySandevistanRework.Wrappers
 
 import Phoenicia.EnemySandevistanRework.Configurations.*
 
-
-
 @wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func Activate(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>) -> Void {
     let suppressOwner = ScriptExecutionContext.GetOwner(context) as ScriptedPuppet;
@@ -37,23 +35,19 @@ public final static func Activate(context: ScriptExecutionContext, record: wref<
         if (!StatusEffectSystem.ObjectHasStatusEffectWithTag(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, n"ESR_Sandi_Buff")) {
           AISubActionApplyTimeDilation_Record_Implementation.ApplyCooldownAndDurationStacks(context, 1, true);
         }
-        
+
         player = GameInstance.GetPlayerSystem(ScriptExecutionContext.GetOwner(context).GetGame()).GetLocalPlayerMainGameObject() as PlayerPuppet;
         if IsDefined(player) {
             let enemyTimeDilation = AISubActionApplyTimeDilation_Record_Implementation.GetSandevistanVsSandevistanSpeed(context);
             blackboard.SetFloat(GetAllBlackboardDefs().AIAction.ownerGlobalTimeDilation, enemyTimeDilation);
-            
+
         };
     } else {
         wrappedMethod(context, record);
     };
 
 
-
-    
 }
-
-
 
 @wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func Deactivate(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>, const duration: Float, interrupted: Bool) -> Void {
@@ -82,8 +76,6 @@ public final static func Deactivate(context: ScriptExecutionContext, record: wre
     }
 }
 
-
-
 @wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func SetTimeDilation(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>) -> Bool {
     let blackboard: ref<IBlackboard>;
@@ -96,7 +88,6 @@ public final static func SetTimeDilation(context: ScriptExecutionContext, record
 
     let sandiBuffActive = StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_Sandi_Buff");
     let kerenzikovBuffActive = StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_SVK_Buff");
-
 
     if (StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_RhinoSandiDebuff")) {
       return false;
@@ -151,7 +142,7 @@ public final static func SetTimeDilation(context: ScriptExecutionContext, record
       ScriptExecutionContext.GetOwner(context).UnsetIndividualTimeDilation();
     };
     duration = record.Duration() < 0.00 ? 600.00 : record.Duration() * dilation;
-    
+
     ScriptExecutionContext.GetOwner(context).SetIndividualTimeDilation(record.Reason(), dilation, duration, record.EaseIn(), record.EaseOut(), false, record.UseRealTime());
     return true;
   }

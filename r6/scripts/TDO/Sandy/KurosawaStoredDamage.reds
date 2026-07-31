@@ -274,7 +274,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
       GameInstance.GetStatPoolsSystem(player.GetGame()).RequestSettingStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.SandevistanCharge, 100.0, null);
       let reCb: ref<TDO_KurosawaReAssertCallback> = new TDO_KurosawaReAssertCallback();
       reCb.m_player = player;
-      reCb.m_interval = 0.2; // re-assert cadence (s)
+      reCb.m_interval = 0.2;
       GameInstance.GetDelaySystem(player.GetGame()).DelayCallback(reCb, reCb.m_interval, false);
     } else {
       player.m_tdoKurosawaSandyActive = false;

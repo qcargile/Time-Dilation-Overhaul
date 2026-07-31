@@ -32,9 +32,8 @@ public final static func ForceDeactivateSandevistan(puppet: ref<ScriptedPuppet>,
     };
 }
 
-// ApplyOffensiveCooldown
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
-public final static func ApplyOffensiveUseCooldown(puppet: ref<ScriptedPuppet>) -> Void {    
+public final static func ApplyOffensiveUseCooldown(puppet: ref<ScriptedPuppet>) -> Void {
     let settings = ESR_Settings();
 
     let i = 0;
@@ -45,9 +44,8 @@ public final static func ApplyOffensiveUseCooldown(puppet: ref<ScriptedPuppet>) 
     }
 }
 
-// ApplyOffensiveCooldown
 @addMethod(AISubActionApplyTimeDilation_Record_Implementation)
-public final static func ApplyDefensiveUseCooldown(puppet: ref<ScriptedPuppet>) -> Void {    
+public final static func ApplyDefensiveUseCooldown(puppet: ref<ScriptedPuppet>) -> Void {
     let settings = ESR_Settings();
 
     let i = 0;

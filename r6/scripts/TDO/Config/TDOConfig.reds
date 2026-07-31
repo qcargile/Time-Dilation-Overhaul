@@ -10,7 +10,6 @@ public class TDOConfig {
     return v1 + (vTop - v1) * t;
   }
 
-
   public static func SandevistanGracePeriodSeconds() -> Float {
     return 0.10;
   }
@@ -27,12 +26,12 @@ public class TDOConfig {
   public static func BulletTrailVelocityAt90() -> Float { return 15.0; }
   public static func BulletTrailVelocityAt99() -> Float { return 5.0; }
 
-  
+
   public static func FusilladeFireRateRealTimeEnabled() -> Bool {
     return true;
   }
 
-  
+
   public static func FusilladeAmmoRefillEnabled() -> Bool {
     return true;
   }
@@ -45,7 +44,7 @@ public class TDOConfig {
     return 50.0;
   }
 
-  
+
   public static func QuantumMaxCharges() -> Int32 {
     return 2;
   }
@@ -61,7 +60,7 @@ public class TDOConfig {
   public static func QuantumDurationMin() -> Float { return 2.0; }
   public static func QuantumDurationMax() -> Float { return 5.0; }
 
-  
+
   public static func DOTEnabled() -> Bool {
     return true;
   }
@@ -103,10 +102,10 @@ public class TDOConfig {
   }
 
   public static func DOTCurveType() -> Int32 {
-    return 0; // 0=Linear, 1=Squared, 2=InverseSquared
+    return 0;
   }
 
-  
+
   public static func KurosawaEnabled() -> Bool {
     return true;
   }
@@ -118,7 +117,6 @@ public class TDOConfig {
   public static func KurosawaAttunementPerAttrCapPct() -> Float {
     return 15.0;
   }
-
 
   public static func KurosawaIndividualSlowMult() -> Float {
     return 0.1;
@@ -147,7 +145,6 @@ public class TDOConfig {
   public static func KurosawaPOPHealPctPlus() -> Float {
     return 10.0;
   }
-
 
   public static func ApogeeEnabled() -> Bool { return true; }
 
@@ -189,7 +186,7 @@ public class TDOConfig {
     return false;
   }
 
-  
+
   public static func TantoEnabled() -> Bool {
     return true;
   }
@@ -250,7 +247,7 @@ public class TDOConfig {
     return 50.0;
   }
 
-  
+
   public static func ShrikeEnabled() -> Bool {
     return true;
   }
@@ -260,11 +257,11 @@ public class TDOConfig {
   }
 
   public static func ShrikeUnmarkHoverTime() -> Float {
-    return 1.0; // wall-clock seconds to confirm unmark
+    return 1.0;
   }
 
   public static func ShrikeRemarkCooldown() -> Float {
-    return 5.0; // wall-clock seconds before a just-unmarked target is taggable again
+    return 5.0;
   }
 
   public static func ShrikeMarkRange() -> Float {
@@ -327,12 +324,12 @@ public class TDOConfig {
     return 15.0;
   }
 
-  
+
   public static func FalconEnabled() -> Bool {
     return true;
   }
 
-  
+
   public static func FalconPhaseRoundEnabled() -> Bool {
     return true;
   }
@@ -365,7 +362,7 @@ public class TDOConfig {
     return 1000.0;
   }
 
-  
+
   public static func FalconTrickShotEnabled() -> Bool {
     return true;
   }
@@ -374,7 +371,7 @@ public class TDOConfig {
     return true;
   }
 
-  
+
   public static func FalconSaturationLockEnabled() -> Bool {
     return true;
   }
@@ -435,7 +432,7 @@ public class TDOConfig {
     return 50.0;
   }
 
-  
+
   public static func WarpDancerEnabled() -> Bool {
     return true;
   }
@@ -508,7 +505,7 @@ public class TDOConfig {
     return true;
   }
 
-  
+
   public static func SogimsuEnabled() -> Bool {
     return true;
   }
@@ -561,7 +558,7 @@ public class TDOConfig {
     return 0.1;
   }
 
-  
+
   public static func JuggernautEnabled() -> Bool {
     return true;
   }
@@ -594,7 +591,7 @@ public class TDOConfig {
     return 5000.0;
   }
 
-  
+
   public static func PyrolithEnabled() -> Bool {
     return true;
   }
@@ -683,7 +680,6 @@ public class TDOConfig {
     return 2.0;
   }
 
-
   public static func ScanningEnabled() -> Bool {
     return true;
   }
@@ -745,11 +741,11 @@ public class TDOConfig {
   }
 
   public static func HerbieTickInterval() -> Float {
-    return 0.025; // 40Hz sampling; impulses auto-scale via dtScale = tickInterval/0.05
+    return 0.025;
   }
 
   public static func HerbieWorldScaleUncommon() -> Float {
-    return 0.80; // world time scale, Uncommon Sandy
+    return 0.80;
   }
 
   public static func HerbieWorldScaleRare() -> Float {
@@ -765,40 +761,39 @@ public class TDOConfig {
   }
 
   public static func HerbieGripForce() -> Float {
-    return 0.20; // P-gain on lateral velocity error (kills drift)
+    return 0.20;
   }
 
   public static func HerbieMaxImpulse() -> Float {
-    return 1000.0; // bike-side per-impulse cap (cars use hardcoded 5000 in ApplyImpulses)
+    return 1000.0;
   }
 
   public static func HerbieDownforce() -> Float {
-    return 0.20; // optional supplemental plant, range 0-1
+    return 0.20;
   }
 
   public static func HerbieBikeYaw() -> Float {
-    return 0.2; // motorcycle steer-gated yaw-couple strength
+    return 0.2;
   }
 
   public static func HerbieBikeGrip() -> Float {
-    return 1.0; // motorcycle lateral-slip grip while steering
+    return 1.0;
   }
 
   public static func HerbieCarYaw() -> Float {
-    return 0.4; // car steer-gated yaw-couple strength
+    return 0.4;
   }
 
   public static func HerbieTraction() -> Float {
-    return 4.0; // forward momentum preservation during turns; restoration rate cap 2.0 × traction m/s/sec
+    return 4.0;
   }
-
 
   public static func QuantumTeleportEnabled() -> Bool {
     return true;
   }
 
   public static func QuantumPlotFreezeStrength() -> Float {
-    return 0.001; // world time scale during plot freeze (~99.9% slow)
+    return 0.001;
   }
 
   public static func QuantumPlayerSlowTimePct() -> Float {
@@ -822,47 +817,47 @@ public class TDOConfig {
   }
 
   public static func QuantumPlotTickInterval() -> Float {
-    return 0.05; // marker reposition tick, real-time seconds
+    return 0.05;
   }
 
   public static func QuantumMarkerLift() -> Float {
-    return 0.1; // teleport landing lift off hit surface, meters
+    return 0.1;
   }
 
   public static func QuantumTeleportGroundSearchBudget() -> Float {
-    return 3.0; // downward floor search budget, meters
+    return 3.0;
   }
 
   public static func QuantumTeleportGroundSearchStartLift() -> Float {
-    return 0.5; // start downward raycast above raw aim point, meters
+    return 0.5;
   }
 
   public static func QuantumTeleportCapsuleWidth() -> Float {
-    return 0.5; // player capsule width for overlap check, meters
+    return 0.5;
   }
 
   public static func QuantumTeleportCapsuleHeight() -> Float {
-    return 1.9; // player capsule height for overlap check, meters
+    return 1.9;
   }
 
   public static func QuantumTeleportCapsuleClearance() -> Float {
-    return 0.1; // foot-to-box-bottom gap during overlap check, meters
+    return 0.1;
   }
 
   public static func QuantumTeleportNavmeshSnapRadius() -> Float {
-    return 0.5; // navmesh point search radius, meters
+    return 0.5;
   }
 
   public static func QuantumTeleportFloorNormalMinZ() -> Float {
-    return 0.7; // floor normal Z minimum, rejects walls and steep slopes
+    return 0.7;
   }
 
   public static func QuantumTeleportFallbackNearOffset() -> Float {
-    return 0.5; // first fallback search offset, meters
+    return 0.5;
   }
 
   public static func QuantumTeleportFallbackFarOffset() -> Float {
-    return 1.0; // second fallback search offset, meters
+    return 1.0;
   }
 
   public static func QuantumLandingStimEnabled() -> Bool {
@@ -870,7 +865,7 @@ public class TDOConfig {
   }
 
   public static func QuantumLandingStimRadius() -> Float {
-    return 20.0; // bump stim radius on landing, meters
+    return 20.0;
   }
 
   public static func UIHideAll() -> Bool {
@@ -893,21 +888,20 @@ public class TDOConfig {
     return TDOConfig.UIHideAll() || TDOConfig.UIHideQuantumMarker();
   }
 
-
   public static func QuantumMalwareEnabled() -> Bool {
     return true;
   }
 
   public static func QuantumMalwareRadiusBase() -> Float {
-    return 2.0; // malware radius at 0 Cool, meters
+    return 2.0;
   }
 
   public static func QuantumMalwareRadiusPerCool() -> Float {
-    return 0.4; // added malware radius per Cool point, meters
+    return 0.4;
   }
 
   public static func QuantumMalwareRadiusCap() -> Float {
-    return 10.0; // max malware radius, meters
+    return 10.0;
   }
 
   public static func QuantumMalwareTargetsMin() -> Float {
@@ -919,7 +913,7 @@ public class TDOConfig {
   }
 
   public static func QuantumMalwareStrength() -> Float {
-    return 0.01; // enemy individual time scale (0.01 = enemies frozen, ~99% slow)
+    return 0.01;
   }
 
   public static func QuantumMalwareFreezeDurMin() -> Float {
@@ -931,11 +925,11 @@ public class TDOConfig {
   }
 
   public static func QuantumMalwareCoolPerPoint() -> Float {
-    return 0.075; // added duration seconds per Cool point (reaches +1.5s at Cool 20)
+    return 0.075;
   }
 
   public static func QuantumMalwareDurationCap() -> Float {
-    return 3.0; // max enemy slow duration, seconds
+    return 3.0;
   }
 
   public static func JuggernautCooldownMin() -> Float { return 35.0; }

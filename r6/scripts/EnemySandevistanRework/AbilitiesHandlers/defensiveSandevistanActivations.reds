@@ -13,10 +13,10 @@ public class SurvivalEffector extends ModifyAttackEffector {
 
   private final func ProcessAction(owner: ref<GameObject>) -> Void {
     let healthPercentage = GameInstance.GetStatPoolsSystem(owner.GetGame()).GetStatPoolValue(Cast<StatsObjectID>(owner.GetEntityID()), gamedataStatPoolType.Health);
-    
-    if (healthPercentage < 30.0 && 
-        CheckCommonRestrictions((owner as NPCPuppet), true, false) && 
-        !StatusEffectSystem.ObjectHasStatusEffect(owner, t"BaseStatusEffect.ESR_Defensive_CD") && 
+
+    if (healthPercentage < 30.0 &&
+        CheckCommonRestrictions((owner as NPCPuppet), true, false) &&
+        !StatusEffectSystem.ObjectHasStatusEffect(owner, t"BaseStatusEffect.ESR_Defensive_CD") &&
         !StatusEffectSystem.ObjectHasStatusEffectWithTag((owner as NPCPuppet), n"ESR_Sandi_Buff")) {
 
         let remainingSandiDuration = AISubActionApplyTimeDilation_Record_Implementation.GetAvailableSandevistanDuration(owner as ScriptedPuppet);
@@ -34,7 +34,6 @@ public class SurvivalEffector extends ModifyAttackEffector {
   }
 }
 
-
 public class MeleeDefenseEffector extends ModifyAttackEffector {
   protected func ActionOn(owner: ref<GameObject>) -> Void {
     this.ProcessAction(owner);
@@ -44,9 +43,9 @@ public class MeleeDefenseEffector extends ModifyAttackEffector {
     this.ProcessAction(owner);
   }
 
-  private final func ProcessAction(owner: ref<GameObject>) -> Void {    
-    if (CheckCommonRestrictions((owner as NPCPuppet), true, false) && 
-        !StatusEffectSystem.ObjectHasStatusEffect(owner, t"BaseStatusEffect.ESR_Defensive_CD") && 
+  private final func ProcessAction(owner: ref<GameObject>) -> Void {
+    if (CheckCommonRestrictions((owner as NPCPuppet), true, false) &&
+        !StatusEffectSystem.ObjectHasStatusEffect(owner, t"BaseStatusEffect.ESR_Defensive_CD") &&
         !StatusEffectSystem.ObjectHasStatusEffectWithTag((owner as NPCPuppet), n"ESR_Sandi_Buff")) {
         if (AISubActionApplyTimeDilation_Record_Implementation.GetAvailableSandevistanDuration(owner as ScriptedPuppet) >= 2.0) {
             if (RandRange(0, 100) > 50) {

@@ -1,4 +1,3 @@
-
 BaseStats.IMSABonusAccuracy:
   $type: Stat
   enumName: IMSABonusAccuracy

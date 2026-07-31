@@ -29,14 +29,14 @@ public let m_tdoScanGraceActive: Bool;
 public func TDO_Scanning_ComputeStrength(player: ref<PlayerPuppet>) -> Float {
   let stats: ref<StatsSystem> = GameInstance.GetStatsSystem(player.GetGame());
   let intel: Float = stats.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.Intelligence);
-  let t: Float = ClampF(intel / 20.0, 0.0, 1.0); // max Intelligence
+  let t: Float = ClampF(intel / 20.0, 0.0, 1.0);
   return LerpF(t, TDOConfig.ScanningStrengthAtMinInt(), TDOConfig.ScanningStrengthAtMaxInt());
 }
 
 public func TDO_Scanning_IntScale(player: ref<PlayerPuppet>) -> Float {
   let stats: ref<StatsSystem> = GameInstance.GetStatsSystem(player.GetGame());
   let intel: Float = stats.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.Intelligence);
-  let t: Float = ClampF(intel / 20.0, 0.0, 1.0); // max Intelligence
+  let t: Float = ClampF(intel / 20.0, 0.0, 1.0);
   return LerpF(t, 1.0, TDOConfig.ScanningIntScaleMax());
 }
 
@@ -157,7 +157,7 @@ public class TDO_ScanningTick extends DelayCallback {
       player.m_tdoScanGraceTimer = 0.0;
 
       if player.m_tdoScanCharge < 1.0 {
-        let step: Float = 0.5; // slow recharge heartbeat interval while scanner closed
+        let step: Float = 0.5;
         player.m_tdoScanCharge += (TDOConfig.ScanningRechargePerSec() * TDO_Scanning_IntScale(player)) * step;
         player.m_tdoScanCharge = ClampF(player.m_tdoScanCharge, 0.0, 1.0);
         if player.m_tdoScanLockedOut && player.m_tdoScanCharge >= 1.0 {
@@ -218,7 +218,7 @@ protected cb func OnGameAttached() -> Bool {
   this.m_tdoScanVisListener = null;
   let setup: ref<TDO_ScanningSetup> = new TDO_ScanningSetup();
   setup.m_playerID = this.GetEntityID();
-  GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(setup, 1.0, false); // defer listener registration until UI blackboards are ready, one-shot
+  GameInstance.GetDelaySystem(this.GetGame()).DelayCallback(setup, 1.0, false);
 }
 
 @wrapMethod(PlayerPuppet)

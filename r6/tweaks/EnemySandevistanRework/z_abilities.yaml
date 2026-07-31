@@ -1,9 +1,3 @@
-# Ability.HasSandevistan_inline1
-# Ability.HasSandevistanTier2_inline1
-# Ability.HasSandevistanTier3_inline1
-# Ability.HasSandevistanTier4_inline1
-# Ability.HasSandevistanTier5_inline1
-
 BaseStats.HasSandevistanTier4:
   $type: Stat
   enumName: HasSandevistanTier4
@@ -24,39 +18,38 @@ Ability.ESR_MeleeSurvivalEffector:
   $type: Effector
   effectorClassName: Phoenicia.EnemySandevistanRework.Effectors.SurvivalEffector
   removeAfterActionCall: true
-  prereqRecord: 
+  prereqRecord:
     $type: MultiPrereq
     prereqClassName: gameMultiPrereq
     aggregationType: AND
-    nestedPrereqs: 
+    nestedPrereqs:
       - $type: HitPrereq
         callbackType: HitReceived
-        conditions: 
+        conditions:
           - $type: HitPrereqCondition
             type: Prereqs.WeaponType
-            weaponType: Ranged       
+            weaponType: Ranged
         ignoreSelfInflictedPressureWave: true
         isSynchronous: true
         pipelineStage: Process
         pipelineType: Damage
         prereqClassName: HitReceivedPrereq
 
-
 Ability.ESR_MeleeDefenseEffector:
   $type: Effector
   effectorClassName: Phoenicia.EnemySandevistanRework.Effectors.MeleeDefenseEffector
   removeAfterActionCall: true
-  prereqRecord: 
+  prereqRecord:
     $type: MultiPrereq
     prereqClassName: gameMultiPrereq
     aggregationType: AND
-    nestedPrereqs: 
+    nestedPrereqs:
       - $type: HitPrereq
         callbackType: HitReceived
-        conditions: 
+        conditions:
           - $type: HitPrereqCondition
             type: Prereqs.WeaponType
-            weaponType: Melee       
+            weaponType: Melee
         ignoreSelfInflictedPressureWave: true
         isSynchronous: true
         pipelineStage: Process
@@ -66,7 +59,7 @@ Ability.ESR_MeleeDefenseEffector:
 Ability.ESR_EmptyAbilityGameplayPackage:
   $type: GameplayLogicPackage
 
-Ability.HasSandevistanTier1_inline1: 
+Ability.HasSandevistanTier1_inline1:
   effectors:
     - !append Ability.ESR_MeleeDefenseEffector
     - !append Ability.ESR_MeleeSurvivalEffector
@@ -77,7 +70,7 @@ Ability.ESR_HasSandevistanTier1:
   loc_key_desc: LocKey#Gameplay-NPC-Abilities-HasSandevistanTier1Desc
   loc_key_name: LocKey#enemySandevistanRework_s1_name
   showInCodex: true
-  prereqsForUse: 
+  prereqsForUse:
     - Ability.HasSandevistanTier1_inline0
 
 UIIcon.Ability.ESR_HasSandevistanTier1:
@@ -85,7 +78,7 @@ UIIcon.Ability.ESR_HasSandevistanTier1:
 
 ESR_HasSandevistanTier1AbilityGroup:
   $type: GameplayAbilityGroup
-  abilities: 
+  abilities:
     - Ability.ESR_HasSandevistanTier1
 
 Ability.ESR_HasSandevistanTier2:
@@ -94,11 +87,11 @@ Ability.ESR_HasSandevistanTier2:
   loc_key_desc: LocKey#Gameplay-NPC-Abilities-HasSandevistanTier2Desc
   loc_key_name: LocKey#enemySandevistanRework_s2_name
   showInCodex: true
-  prereqsForUse: 
+  prereqsForUse:
     - Ability.HasSandevistanTier2_inline0
 
-Ability.HasSandevistanTier2_inline1: 
-  effectors: 
+Ability.HasSandevistanTier2_inline1:
+  effectors:
     - !append Ability.ESR_MeleeDefenseEffector
     - !append Ability.ESR_MeleeSurvivalEffector
 
@@ -107,7 +100,7 @@ UIIcon.Ability.ESR_HasSandevistanTier2:
 
 ESR_HasSandevistanTier2AbilityGroup:
   $type: GameplayAbilityGroup
-  abilities: 
+  abilities:
     - Ability.ESR_HasSandevistanTier2
 
 Ability.ESR_HasSandevistanTier3:
@@ -116,12 +109,11 @@ Ability.ESR_HasSandevistanTier3:
   loc_key_desc: LocKey#Gameplay-NPC-Abilities-HasSandevistanTier3Desc
   loc_key_name: LocKey#enemySandevistanRework_s3_name
   showInCodex: true
-  prereqsForUse: 
+  prereqsForUse:
     - Ability.HasSandevistanTier3_inline0
 
-
-Ability.HasSandevistanTier3_inline1: 
-  effectors: 
+Ability.HasSandevistanTier3_inline1:
+  effectors:
     - !append Ability.ESR_MeleeDefenseEffector
     - !append Ability.ESR_MeleeSurvivalEffector
 
@@ -130,12 +122,12 @@ UIIcon.Ability.ESR_HasSandevistanTier3:
 
 ESR_HasSandevistanTier3AbilityGroup:
   $type: GameplayAbilityGroup
-  abilities: 
+  abilities:
     - Ability.ESR_HasSandevistanTier3
 
 Ability.ESR_HasSandevistanTier4:
   $type: GameplayAbility
-  abilityPackage: 
+  abilityPackage:
     $type: GameplayLogicPackage
     effectors:
       - !append Ability.ESR_MeleeDefenseEffector
@@ -152,14 +144,14 @@ Ability.ESR_HasSandevistanTier4:
   loc_key_desc: LocKey#enemySandevistanRework_s4_description
   loc_key_name: LocKey#enemySandevistanRework_s4_name
   showInCodex: true
-  prereqsForUse: 
+  prereqsForUse:
     - $type: StatPrereq
       comparisonType: Greater
       objectToCheck: Owner
       prereqClassName: StatPrereq
       statType: HasSandevistanTier4
       valueToCheck: 0
-    
+
 UIIcon.Ability.ESR_HasSandevistanTier4:
   $type: UIIcon
   atlasPartName: ICONS_HasSandevistan4
@@ -167,47 +159,45 @@ UIIcon.Ability.ESR_HasSandevistanTier4:
 
 ESR_HasSandevistanTier4AbilityGroup:
   $type: GameplayAbilityGroup
-  abilities: 
+  abilities:
     - Ability.ESR_HasSandevistanTier4
-
 
 Ability.ESR_SmasherSurvivalEffector:
   $type: Effector
   effectorClassName: Phoenicia.EnemySandevistanRework.Smasher.SurvivalSmasherEffector
   removeAfterActionCall: true
-  prereqRecord: 
+  prereqRecord:
     $type: MultiPrereq
     prereqClassName: gameMultiPrereq
     aggregationType: AND
-    nestedPrereqs: 
+    nestedPrereqs:
       - $type: HitPrereq
         callbackType: HitReceived
-        conditions: 
+        conditions:
           - $type: HitPrereqCondition
             type: Prereqs.WeaponType
-            weaponType: Ranged       
+            weaponType: Ranged
         ignoreSelfInflictedPressureWave: true
         isSynchronous: true
         pipelineStage: Process
         pipelineType: Damage
         prereqClassName: HitReceivedPrereq
 
-
 Ability.ESR_MeleeSmasherDefenseEffector:
   $type: Effector
   effectorClassName: Phoenicia.EnemySandevistanRework.Smasher.MeleeDefenseSmasherEffector
   removeAfterActionCall: true
-  prereqRecord: 
+  prereqRecord:
     $type: MultiPrereq
     prereqClassName: gameMultiPrereq
     aggregationType: AND
-    nestedPrereqs: 
+    nestedPrereqs:
       - $type: HitPrereq
         callbackType: HitReceived
-        conditions: 
+        conditions:
           - $type: HitPrereqCondition
             type: Prereqs.WeaponType
-            weaponType: Melee       
+            weaponType: Melee
         ignoreSelfInflictedPressureWave: true
         isSynchronous: true
         pipelineStage: Process
@@ -216,7 +206,7 @@ Ability.ESR_MeleeSmasherDefenseEffector:
 
 Ability.ESR_HasSandevistanTier5:
   $type: GameplayAbility
-  abilityPackage: 
+  abilityPackage:
     $type: GameplayLogicPackage
     effectors:
       - !append Ability.ESR_SmasherSurvivalEffector
@@ -233,7 +223,7 @@ Ability.ESR_HasSandevistanTier5:
   loc_key_desc: LocKey#enemySandevistanRework_s5_description
   loc_key_name: LocKey#enemySandevistanRework_s5_name
   showInCodex: true
-  prereqsForUse: 
+  prereqsForUse:
     - $type: StatPrereq
       comparisonType: Greater
       objectToCheck: Owner
@@ -248,7 +238,7 @@ UIIcon.Ability.ESR_HasSandevistanTier5:
 
 ESR_HasSandevistanTier5AbilityGroup:
   $type: GameplayAbilityGroup
-  abilities: 
+  abilities:
     - Ability.ESR_HasSandevistanTier5
 
 Ability.ESR_HasKerenzikov:
@@ -258,7 +248,7 @@ Ability.ESR_HasKerenzikov:
   loc_key_name: LocKey#enemySandevistanRework_kerenzikov_name
   prereqsForUIValidation:
     - Ability.HasKerenzikov_inline1
-  prereqsForUse: 
+  prereqsForUse:
     - Ability.HasKerenzikov_inline0
   showInCodex: true
 
@@ -267,10 +257,9 @@ UIIcon.Ability.ESR_HasKerenzikov:
 
 ESR_HasKerenzikovAbilityGroup:
   $type: GameplayAbilityGroup
-  abilities: 
+  abilities:
     - Ability.ESR_HasKerenzikov
 
-# Stim Pack
 BaseStats.ESR_HasStimPack:
   $type: Stat
   enumName: ESR_HasStimPack
@@ -281,7 +270,7 @@ BaseStats.ESR_HasStimPack:
 
 Ability.ESR_HasStimPack:
   $type: GameplayAbility
-  abilityPackage: 
+  abilityPackage:
     $type: GameplayLogicPackage
     stats:
       - $type: ConstantStatModifier
@@ -294,7 +283,7 @@ Ability.ESR_HasStimPack:
 
 ESR_HasStimPackAbilityGroup:
   $type: GameplayAbilityGroup
-  abilities: 
+  abilities:
     - Ability.ESR_HasStimPack
 
 UIIcon.Ability.ESR_HasStimPack:
@@ -302,7 +291,6 @@ UIIcon.Ability.ESR_HasStimPack:
   atlasPartName: drugged_icon
   atlasResourcePath: base\gameplay\gui\widgets\healthbar\atlas_buffinfo.inkatlas
 
-# Second Wind
 BaseStats.ESR_HasSecondWind:
   $type: Stat
   enumName: ESR_HasSecondWind
@@ -313,7 +301,7 @@ BaseStats.ESR_HasSecondWind:
 
 Ability.ESR_HasSecondWind:
   $type: GameplayAbility
-  abilityPackage: 
+  abilityPackage:
     $type: GameplayLogicPackage
     effectors:
       - Ability.ESR_SecondWindDefenseEffector
@@ -326,7 +314,6 @@ Ability.ESR_HasSecondWind:
   loc_key_name: LocKey#enemySandevistanRework_secondWind_name
   showInCodex: true
 
-
 UIIcon.Ability.ESR_HasSecondWind:
   $type: UIIcon
   atlasPartName: ICONS_HasSandevistan
@@ -336,13 +323,13 @@ Ability.ESR_SecondWindDefenseEffector:
   $type: Effector
   effectorClassName: Phoenicia.EnemySandevistanRework.Effectors.SecondWindEffector
   removeAfterActionCall: true
-  prereqRecord: 
+  prereqRecord:
     $type: HitPrereq
     callbackType: HitReceived
-    conditions: 
+    conditions:
       - $type: HitPrereqCondition
         type: Prereqs.WeaponType
-        weaponType: Melee       
+        weaponType: Melee
     ignoreSelfInflictedPressureWave: true
     isSynchronous: true
     pipelineStage: Process

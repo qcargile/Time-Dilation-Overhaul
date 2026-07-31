@@ -54,7 +54,7 @@ return {
 		mitigationCap = 0.75,
 		mitigationRefStatCap = 15.0,
 		canKill = true,
-		curveType = 0, -- 0=Linear, 1=Squared, 2=InverseSquared
+		curveType = 0,
 	},
 	ui = {
 		hideAll = false,
