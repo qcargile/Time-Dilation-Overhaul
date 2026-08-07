@@ -70,7 +70,7 @@ No time dilation. Lock down to absorb a set amount of incoming damage with full 
 No time dilation. Ranged hits detonate a thermal explosion on impact, and thrown grenades split into clusters of the same type. Grenade cooldown is slashed and throw range extended while active. (Technical attuned.)
 
 ### Militech "Apogee"
-The vanilla iconic, left stock. An optional Biological Strain mechanic ships **off by default** and can be toggled on in settings.
+Stillpoint slows time hardest while you hold position, then surges back toward real time when you move or act. Planning time builds biological strain, while movement bleeds it off gradually. (Reflexes-attuned.)
 
 ---
 

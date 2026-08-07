@@ -151,4 +151,13 @@ return {
 		"apogee.critDmgMin", "apogee.critDmgMax",
 		"apogee.headshotMin", "apogee.headshotMax",
 	} },
+	{ version = 11.9, resetKeys = {
+		"apogee.strainGrace", "apogee.strainGraceCap",
+		"apogee.strainRampDuration",
+		"apogee.strainBleedRate",
+		"apogee.strainStillGainRate", "apogee.strainLookGainRate", "apogee.strainAimGainRate",
+		"apogee.strainCapPctPerSec", "apogee.strainCanKill",
+		"apogee.strainReflexGraceScale", "apogee.strainReflexRampScale",
+	} },
+	{ version = 12.0, resetKeys = {"scanning.requireImmersiveCyberwareFocus"} },
 }

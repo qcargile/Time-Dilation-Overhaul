@@ -65,6 +65,17 @@ public func TDO_Scanning_IsInBraindance(gi: GameInstance) -> Bool {
   return bb.GetBool(GetAllBlackboardDefs().Braindance.IsActive);
 }
 
+public func TDO_Scanning_PassesImmersiveCyberwareFocus(player: ref<PlayerPuppet>) -> Bool {
+  if !TDOConfig.ScanningRequireImmersiveCyberwareFocus() {
+    return true;
+  }
+  if !IsDefined(TweakDBInterface.GetRecord(t"BaseStats.IMScanningFocus")) {
+    return true;
+  }
+  let stats: ref<StatsSystem> = GameInstance.GetStatsSystem(player.GetGame());
+  return stats.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"IMScanningFocus"))) > 0.0;
+}
+
 public class TDO_ScanningTick extends DelayCallback {
 
   public let m_playerID: EntityID;
@@ -95,6 +106,7 @@ public class TDO_ScanningTick extends DelayCallback {
       let step: Float = TDOConfig.ScanningTickInterval();
       let intScale: Float = TDO_Scanning_IntScale(player);
       let onTarget: Bool = TDO_Scanning_IsLookingAtScannable(gi);
+      let immersiveFocusAllowed: Bool = TDO_Scanning_PassesImmersiveCyberwareFocus(player);
 
       if onTarget {
         player.m_tdoScanGraceActive = true;
@@ -110,7 +122,7 @@ public class TDO_ScanningTick extends DelayCallback {
 
       let effectivelyOnTarget: Bool = onTarget || player.m_tdoScanGraceActive;
       let hasResource: Bool = !player.m_tdoScanLockedOut && player.m_tdoScanCharge > 0.0;
-      let wantTD: Bool = effectivelyOnTarget && hasResource;
+      let wantTD: Bool = immersiveFocusAllowed && effectivelyOnTarget && hasResource;
 
       if wantTD {
         if !player.m_tdoScanTDActive {
@@ -140,11 +152,17 @@ public class TDO_ScanningTick extends DelayCallback {
         player.m_tdoScanLockedOut = false;
       }
 
-      if !IsDefined(player.m_tdoScanBar) {
-        player.m_tdoScanBar = new TDO_ScanningBar();
+      if immersiveFocusAllowed {
+        if !IsDefined(player.m_tdoScanBar) {
+          player.m_tdoScanBar = new TDO_ScanningBar();
+        }
+        player.m_tdoScanBar.EnsureCreated();
+        player.m_tdoScanBar.Update(player.m_tdoScanCharge, true);
+      } else {
+        if IsDefined(player.m_tdoScanBar) {
+          player.m_tdoScanBar.Update(player.m_tdoScanCharge, false);
+        }
       }
-      player.m_tdoScanBar.EnsureCreated();
-      player.m_tdoScanBar.Update(player.m_tdoScanCharge, true);
 
       TDO_Scanning_ArmTick(player, TDOConfig.ScanningTickInterval());
     } else {

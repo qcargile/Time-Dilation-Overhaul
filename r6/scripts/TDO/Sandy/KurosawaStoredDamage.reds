@@ -325,6 +325,10 @@ public final static func ApplyDamage(hitEvent: ref<gameHitEvent>, forReal: Bool,
     wrappedMethod(hitEvent, forReal, valuesLost);
     return;
   }
+  if npc.IsBoss() || Equals(npc.GetNPCRarity(), gamedataNPCRarity.MaxTac) {
+    wrappedMethod(hitEvent, forReal, valuesLost);
+    return;
+  }
   let instigator: wref<GameObject> = hitEvent.attackData.GetInstigator();
   if !IsDefined(instigator) || !instigator.IsPlayer() {
     wrappedMethod(hitEvent, forReal, valuesLost);

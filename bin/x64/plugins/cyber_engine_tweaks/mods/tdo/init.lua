@@ -11,7 +11,7 @@ local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
 
-local TDO_VERSION = "v2.32"
+local TDO_VERSION = "v2.33"
 local ESR_VERSION = "d2026.6.11"
 
 local function lerpTier(v1, vTop, tier, total)
@@ -213,6 +213,11 @@ local function createWarpDancerMechanic(nativeSettings, path, nuiTxt, config, de
 
 	applyWarpDancerTSDurRchrg(config)
 
+	table.insert(handles, nativeSettings.addSwitch(path, nuiTxt[cat]["storedDamageCanKill"]["opt"], nuiTxt[cat]["storedDamageCanKill"]["des"], config.warpDancer.storedDamageCanKill, default.warpDancer.storedDamageCanKill, function(state)
+		config.warpDancer.storedDamageCanKill = state
+		saveSettings(config)
+	end))
+
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMinPct"]["opt"]..nuiTxt[cat]["slowTimeMinPct"]["optUnit"], nuiTxt[cat]["slowTimeMinPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.warpDancer.slowTimeMinPct, default.warpDancer.slowTimeMinPct, function(value) config.warpDancer.slowTimeMinPct = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMaxPct"]["opt"]..nuiTxt[cat]["slowTimeMaxPct"]["optUnit"], nuiTxt[cat]["slowTimeMaxPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.warpDancer.slowTimeMaxPct, default.warpDancer.slowTimeMaxPct, function(value) config.warpDancer.slowTimeMaxPct = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.warpDancer.durationMin, default.warpDancer.durationMin, function(value) config.warpDancer.durationMin = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
@@ -365,6 +370,17 @@ local function createApogeeMechanic(nativeSettings, path, nuiTxt, config, defaul
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["critDmgMax"]["opt"]..nuiTxt[cat]["critDmgMax"]["optUnit"], nuiTxt[cat]["critDmgMax"]["des"], 0.0, 200.0, 1.0, "%.0f", config.apogee.critDmgMax, default.apogee.critDmgMax, function(value) config.apogee.critDmgMax = value applyApogeeTweaks(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["headshotMin"]["opt"]..nuiTxt[cat]["headshotMin"]["optUnit"], nuiTxt[cat]["headshotMin"]["des"], 0.0, 100.0, 1.0, "%.0f", config.apogee.headshotMin, default.apogee.headshotMin, function(value) config.apogee.headshotMin = value applyApogeeTweaks(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["headshotMax"]["opt"]..nuiTxt[cat]["headshotMax"]["optUnit"], nuiTxt[cat]["headshotMax"]["des"], 0.0, 100.0, 1.0, "%.0f", config.apogee.headshotMax, default.apogee.headshotMax, function(value) config.apogee.headshotMax = value applyApogeeTweaks(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainGrace"]["opt"]..nuiTxt[cat]["strainGrace"]["optUnit"], nuiTxt[cat]["strainGrace"]["des"], 0.0, 10.0, 0.25, "%.2f", config.apogee.strainGrace, default.apogee.strainGrace, function(value) config.apogee.strainGrace = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainGraceCap"]["opt"]..nuiTxt[cat]["strainGraceCap"]["optUnit"], nuiTxt[cat]["strainGraceCap"]["des"], 0.0, 15.0, 0.25, "%.2f", config.apogee.strainGraceCap, default.apogee.strainGraceCap, function(value) config.apogee.strainGraceCap = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainRampDuration"]["opt"]..nuiTxt[cat]["strainRampDuration"]["optUnit"], nuiTxt[cat]["strainRampDuration"]["des"], 0.5, 30.0, 0.5, "%.1f", config.apogee.strainRampDuration, default.apogee.strainRampDuration, function(value) config.apogee.strainRampDuration = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainBleedRate"]["opt"]..nuiTxt[cat]["strainBleedRate"]["optUnit"], nuiTxt[cat]["strainBleedRate"]["des"], 0.0, 10.0, 0.25, "%.2f", config.apogee.strainBleedRate, default.apogee.strainBleedRate, function(value) config.apogee.strainBleedRate = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainStillGainRate"]["opt"]..nuiTxt[cat]["strainStillGainRate"]["optUnit"], nuiTxt[cat]["strainStillGainRate"]["des"], 0.0, 10.0, 0.25, "%.2f", config.apogee.strainStillGainRate, default.apogee.strainStillGainRate, function(value) config.apogee.strainStillGainRate = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainLookGainRate"]["opt"]..nuiTxt[cat]["strainLookGainRate"]["optUnit"], nuiTxt[cat]["strainLookGainRate"]["des"], 0.0, 10.0, 0.25, "%.2f", config.apogee.strainLookGainRate, default.apogee.strainLookGainRate, function(value) config.apogee.strainLookGainRate = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainAimGainRate"]["opt"]..nuiTxt[cat]["strainAimGainRate"]["optUnit"], nuiTxt[cat]["strainAimGainRate"]["des"], 0.0, 10.0, 0.25, "%.2f", config.apogee.strainAimGainRate, default.apogee.strainAimGainRate, function(value) config.apogee.strainAimGainRate = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainCapPctPerSec"]["opt"]..nuiTxt[cat]["strainCapPctPerSec"]["optUnit"], nuiTxt[cat]["strainCapPctPerSec"]["des"], 0.0, 20.0, 0.25, "%.2f", config.apogee.strainCapPctPerSec, default.apogee.strainCapPctPerSec, function(value) config.apogee.strainCapPctPerSec = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addSwitch(path, nuiTxt[cat]["strainCanKill"]["opt"], nuiTxt[cat]["strainCanKill"]["des"], config.apogee.strainCanKill, default.apogee.strainCanKill, function(state) config.apogee.strainCanKill = state saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainReflexGraceScale"]["opt"]..nuiTxt[cat]["strainReflexGraceScale"]["optUnit"], nuiTxt[cat]["strainReflexGraceScale"]["des"], 0.0, 1.0, 0.05, "%.2f", config.apogee.strainReflexGraceScale, default.apogee.strainReflexGraceScale, function(value) config.apogee.strainReflexGraceScale = value saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["strainReflexRampScale"]["opt"]..nuiTxt[cat]["strainReflexRampScale"]["optUnit"], nuiTxt[cat]["strainReflexRampScale"]["des"], 0.0, 1.0, 0.05, "%.2f", config.apogee.strainReflexRampScale, default.apogee.strainReflexRampScale, function(value) config.apogee.strainReflexRampScale = value saveSettings(config) end))
 
 	return handles
 end
@@ -1008,6 +1024,11 @@ registerForEvent("onInit", function()
 			saveSettings(config)
 		end)
 
+		nativeSettings.addSwitch("/tdo/scanning", nuiTxt[cat]["requireImmersiveCyberwareFocus"]["opt"], nuiTxt[cat]["requireImmersiveCyberwareFocus"]["des"], config.scanning.requireImmersiveCyberwareFocus, default.scanning.requireImmersiveCyberwareFocus, function(state)
+			config.scanning.requireImmersiveCyberwareFocus = state
+			saveSettings(config)
+		end)
+
 		nativeSettings.addRangeFloat("/tdo/scanning", nuiTxt[cat]["strengthAtMinInt"]["opt"], nuiTxt[cat]["strengthAtMinInt"]["des"], 0.01, 1.0, 0.01, "%.2f", config.scanning.strengthAtMinInt, default.scanning.strengthAtMinInt, function(value)
 			config.scanning.strengthAtMinInt = value
 			saveSettings(config)
@@ -1049,6 +1070,7 @@ registerForEvent("onInit", function()
 		end)
 
 		Override("TDOConfig", "ScanningEnabled;", function() return config.scanning.enabled end)
+		Override("TDOConfig", "ScanningRequireImmersiveCyberwareFocus;", function() return config.scanning.requireImmersiveCyberwareFocus end)
 		Override("TDOConfig", "ScanningTickInterval;", function() return config.scanning.tickInterval end)
 		Override("TDOConfig", "ScanningDrainPerSec;", function() return config.scanning.drainPerSec end)
 		Override("TDOConfig", "ScanningRechargePerSec;", function() return config.scanning.rechargePerSec end)
@@ -1188,6 +1210,17 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "ApogeeCritDmgMax;",     function() return config.apogee.critDmgMax     end)
 		Override("TDOConfig", "ApogeeHeadshotMin;",    function() return config.apogee.headshotMin    end)
 		Override("TDOConfig", "ApogeeHeadshotMax;",    function() return config.apogee.headshotMax    end)
+		Override("TDOConfig", "ApogeeStrainGrace;", function() return config.apogee.strainGrace end)
+		Override("TDOConfig", "ApogeeStrainGraceCap;", function() return config.apogee.strainGraceCap end)
+		Override("TDOConfig", "ApogeeStrainRampDuration;", function() return config.apogee.strainRampDuration end)
+		Override("TDOConfig", "ApogeeStrainBleedRate;", function() return config.apogee.strainBleedRate end)
+		Override("TDOConfig", "ApogeeStrainStillGainRate;", function() return config.apogee.strainStillGainRate end)
+		Override("TDOConfig", "ApogeeStrainLookGainRate;", function() return config.apogee.strainLookGainRate end)
+		Override("TDOConfig", "ApogeeStrainAimGainRate;", function() return config.apogee.strainAimGainRate end)
+		Override("TDOConfig", "ApogeeStrainCapPctPerSec;", function() return config.apogee.strainCapPctPerSec end)
+		Override("TDOConfig", "ApogeeStrainCanKill;", function() return config.apogee.strainCanKill end)
+		Override("TDOConfig", "ApogeeStrainReflexGraceScale;", function() return config.apogee.strainReflexGraceScale end)
+		Override("TDOConfig", "ApogeeStrainReflexRampScale;", function() return config.apogee.strainReflexRampScale end)
 
 		Override("TDOConfig", "QuantumPlayerSlowTimePct;",  function() return config.quantum.playerSlowTimePct  end)
 		Override("TDOConfig", "QuantumMalwareSlowTimePct;", function() return config.quantum.malwareSlowTimePct end)
@@ -1320,6 +1353,7 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "FalconSaturationLockEnabled;", function() return config.falcon.enabled end)
 
 		Override("TDOConfig", "WarpDancerEnabled;", function() return config.warpDancer.enabled end)
+		Override("TDOConfig", "WarpDancerStoredDamageCanKill;", function() return config.warpDancer.storedDamageCanKill end)
 		Override("TDOConfig", "WarpDancerRewindDurationSec;", function() return config.warpDancer.rewindDurationSec end)
 		Override("TDOConfig", "WarpDancerStaggerDurationMinSec;", function() return config.warpDancer.staggerDurationMinSec end)
 		Override("TDOConfig", "WarpDancerStaggerDurationMaxSec;", function() return config.warpDancer.staggerDurationMaxSec end)
