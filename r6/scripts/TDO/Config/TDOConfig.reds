@@ -172,7 +172,10 @@ public class TDOConfig {
   public static func ApogeeStrainGraceCap() -> Float { return 5.0; }
   public static func ApogeeStrainRampDuration() -> Float { return 10.0; }
   public static func ApogeeStrainBleedSpeed() -> Float { return 0.4; }
-  public static func ApogeeStrainBleedRate() -> Float { return 8.0; }
+  public static func ApogeeStrainBleedRate() -> Float { return 1.5; }
+  public static func ApogeeStrainStillGainRate() -> Float { return 1.5; }
+  public static func ApogeeStrainLookGainRate() -> Float { return 0.75; }
+  public static func ApogeeStrainAimGainRate() -> Float { return 0.5; }
   public static func ApogeeStrainCapPctPerSec() -> Float { return 3.0; }
   public static func ApogeeStrainCanKill() -> Bool { return false; }
   public static func ApogeeStrainReflexGraceScale() -> Float { return 0.1; }
@@ -437,6 +440,10 @@ public class TDOConfig {
     return true;
   }
 
+  public static func WarpDancerStoredDamageCanKill() -> Bool {
+    return false;
+  }
+
   public static func WarpDancerDilationStrength() -> Float {
     return 0.01;
   }
@@ -681,6 +688,10 @@ public class TDOConfig {
   }
 
   public static func ScanningEnabled() -> Bool {
+    return true;
+  }
+
+  public static func ScanningRequireImmersiveCyberwareFocus() -> Bool {
     return true;
   }
 

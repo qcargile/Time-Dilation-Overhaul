@@ -157,6 +157,17 @@ return {
             critDmgMax = { opt = "Crit Damage at PlusPlus", optUnit = " (%)", des = "Crit Damage bonus while Apogee is equipped, at Tier 3." },
             headshotMin = { opt = "Headshot Damage at Base", optUnit = " (%)", des = "Headshot Damage bonus while Apogee is equipped, at Tier 1." },
             headshotMax = { opt = "Headshot Damage at PlusPlus", optUnit = " (%)", des = "Headshot Damage bonus while Apogee is equipped, at Tier 3." },
+            strainGrace = { opt = "Strain Grace", optUnit = " (sec)", des = "Base strain time before Stillpoint starts draining Health. Set to 0 for immediate strain damage once enough strain is built." },
+            strainGraceCap = { opt = "Strain Grace Cap", optUnit = " (sec)", des = "Maximum effective grace after Reflexes attunement is added." },
+            strainRampDuration = { opt = "Strain Ramp Duration", optUnit = " (sec)", des = "How much accumulated strain it takes to reach maximum Health drain after grace ends." },
+            strainBleedRate = { opt = "Strain Bleed Rate", optUnit = " (x)", des = "How quickly movement, reloads, attacks, and deflects bleed off accumulated strain." },
+            strainStillGainRate = { opt = "Still Strain Gain", optUnit = " (x)", des = "How quickly strain builds when holding still." },
+            strainLookGainRate = { opt = "Look Strain Gain", optUnit = " (x)", des = "How quickly strain builds while only moving the camera." },
+            strainAimGainRate = { opt = "Aim Strain Gain", optUnit = " (x)", des = "How quickly strain builds while aiming or holding a guard." },
+            strainCapPctPerSec = { opt = "Max Strain Damage", optUnit = " (% HP/sec)", des = "Health drain at full strain, based on resting Health." },
+            strainCanKill = { opt = "Strain Can Kill", des = "If enabled, Apogee strain can flatline you. If disabled, strain stops at 1 HP." },
+            strainReflexGraceScale = { opt = "Reflex Grace", optUnit = " (sec/pt)", des = "Extra grace per Reflexes point before the grace cap is applied." },
+            strainReflexRampScale = { opt = "Reflex Ramp", optUnit = " (sec/pt)", des = "Extra ramp duration per Reflexes point." },
         },
         fusillade = {
             header = "Raven \"Fusillade\" Sandevistan",
@@ -177,6 +188,10 @@ return {
             enabled = {
                 opt = "Enabled",
                 des = "Master toggle for the Warp Dancer Sandevistan line. Off reverts every Warp Dancer tier to vanilla stats, card text, and behavior. Requires a full game relaunch. Slider values also affect enemy netrunners using the same Sandy via ESR.",
+            },
+            storedDamageCanKill = {
+                opt = "Stored Damage Can Kill",
+                des = "If enabled, stored Warp Dancer damage that equals or exceeds an enemy's remaining Health kills them when time resumes. If disabled, fatal stored damage incapacitates them.",
             },
             moveSpeedMin = {
                 opt = "Move Speed Bonus (Lowest Tier)",
@@ -349,6 +364,10 @@ return {
             enabled = {
                 opt = "Enabled",
                 des = "Master toggle for Scanning Time Dilation. Off leaves vanilla focus-mode time dilation alone (no gating or strength override).",
+            },
+            requireImmersiveCyberwareFocus = {
+                opt = "Respect Immersive Cyberware Scanning Focus",
+                des = "When Immersive Cyberware is installed, TDO scanner time dilation only works while its Scanning Focus lens is equipped. Turn this off if you disabled that requirement in Immersive Cyberware.",
             },
             strengthAtMinInt = { opt = "TD Strength at 0 Intelligence", des = "Time dilation factor while scanning at 0 Intelligence. Lower = stronger slow." },
             strengthAtMaxInt = { opt = "TD Strength at 20 Intelligence", des = "Time dilation factor while scanning at 20 Intelligence. Lower = stronger slow." },

@@ -89,7 +89,12 @@ public func TDO_WarpDancer_FlushStoredDamage(player: ref<PlayerPuppet>) -> Void 
       let stored: Float = npc.m_warpDancerStored;
       if stored > 0.0 {
         let id: StatsObjectID = Cast<StatsObjectID>(npc.GetEntityID());
-        pools.RequestChangingStatPoolValue(id, gamedataStatPoolType.Health, -stored, player, false, false);
+        let currentHealth: Float = pools.GetStatPoolValue(id, gamedataStatPoolType.Health, false);
+        if !npc.IsDead() && TDOConfig.WarpDancerStoredDamageCanKill() && stored >= currentHealth {
+          npc.Kill(player, false, false);
+        } else {
+          pools.RequestChangingStatPoolValue(id, gamedataStatPoolType.Health, -stored, player, false, false);
+        }
         npc.m_warpDancerStored = 0.0;
         total += stored;
       }

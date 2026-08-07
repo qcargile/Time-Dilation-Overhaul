@@ -68,7 +68,7 @@ public func TDO_Apogee_ShouldArm(player: ref<PlayerPuppet>) -> Bool {
 public let m_tdoApogeeActive: Bool;
 
 @addField(PlayerPuppet)
-public let m_tdoApogeeStillElapsed: Float;
+public let m_tdoApogeeStrainElapsed: Float;
 
 @addField(PlayerPuppet)
 public let m_tdoApogeeTickID: DelayID;
@@ -113,6 +113,21 @@ public func TDO_Apogee_IsActiveMovementState(loco: Int32) -> Bool {
 public func TDO_Apogee_IsControlLost(player: ref<PlayerPuppet>) -> Bool {
   return StatusEffectSystem.ObjectHasStatusEffectOfType(player, gamedataStatusEffectType.Knockdown)
     || StatusEffectSystem.ObjectHasStatusEffectOfType(player, gamedataStatusEffectType.Stunned);
+}
+
+public func TDO_Apogee_IsUpperBodyActionState(upperBody: Int32) -> Bool {
+  return upperBody == EnumInt(gamePSMUpperBodyStates.SwitchItems)
+    || upperBody == EnumInt(gamePSMUpperBodyStates.SwitchCyberware)
+    || upperBody == EnumInt(gamePSMUpperBodyStates.Reload)
+    || upperBody == EnumInt(gamePSMUpperBodyStates.TemporaryUnequip)
+    || upperBody == EnumInt(gamePSMUpperBodyStates.ForceEmptyHands);
+}
+
+public func TDO_Apogee_IsMeleeActionState(melee: Int32) -> Bool {
+  return melee >= EnumInt(gamePSMMeleeWeapon.Hold)
+    && melee < EnumInt(gamePSMMeleeWeapon.Default)
+    && melee != EnumInt(gamePSMMeleeWeapon.Block)
+    && melee != EnumInt(gamePSMMeleeWeapon.Targeting);
 }
 
 public class TDO_ApogeeTickEvent extends DelayEvent {}
@@ -166,7 +181,7 @@ public final func TDO_Apogee_CancelTick() -> Void {
 @addMethod(PlayerPuppet)
 public final func TDO_Apogee_Disarm() -> Void {
   this.m_tdoApogeeActive = false;
-  this.m_tdoApogeeStillElapsed = 0.0;
+  this.m_tdoApogeeStrainElapsed = 0.0;
   this.m_tdoApogeeLastFireTime = 0.0;
   this.m_tdoApogeeMoveInput = false;
   this.TDO_Apogee_CancelTick();
@@ -232,8 +247,9 @@ protected cb func OnTDO_ApogeeTickEvent(evt: ref<TDO_ApogeeTickEvent>) -> Bool {
   let isAct: Bool = moveInput
     || speed >= TDOConfig.ApogeeMoveThreshold()
     || TDO_Apogee_IsActiveMovementState(loco)
+    || TDO_Apogee_IsUpperBodyActionState(upperBody)
     || recentlyFired
-    || (melee >= EnumInt(gamePSMMeleeWeapon.ComboAttack) && melee < EnumInt(gamePSMMeleeWeapon.Default));
+    || TDO_Apogee_IsMeleeActionState(melee);
   let isAim: Bool = upperBody == EnumInt(gamePSMUpperBodyStates.Aim)
     || melee == EnumInt(gamePSMMeleeWeapon.Block);
 
@@ -264,19 +280,31 @@ protected cb func OnTDO_ApogeeTickEvent(evt: ref<TDO_ApogeeTickEvent>) -> Bool {
   }
 
   let strainRecovering: Bool = isAct || speed >= TDOConfig.ApogeeStrainBleedSpeed() || ctrlLost;
+  let strainRate: Float;
   if strainRecovering {
-    this.m_tdoApogeeStillElapsed = MaxF(this.m_tdoApogeeStillElapsed - tickInterval * TDOConfig.ApogeeStrainBleedRate(), 0.0);
+    strainRate = -TDOConfig.ApogeeStrainBleedRate();
   } else {
-    if !isAim {
-      this.m_tdoApogeeStillElapsed += tickInterval;
+    if isAim {
+      strainRate = TDOConfig.ApogeeStrainAimGainRate();
+    } else {
+      if camMoved {
+        strainRate = TDOConfig.ApogeeStrainLookGainRate();
+      } else {
+        strainRate = TDOConfig.ApogeeStrainStillGainRate();
+      }
     }
+  }
+  if strainRate < 0.0 {
+    this.m_tdoApogeeStrainElapsed = MaxF(this.m_tdoApogeeStrainElapsed + tickInterval * strainRate, 0.0);
+  } else {
+    this.m_tdoApogeeStrainElapsed += tickInterval * strainRate;
   }
 
   let reflexes: Float = stats.GetStatValue(playerID, gamedataStatType.Reflexes);
   let graceEff: Float = MinF(TDOConfig.ApogeeStrainGrace() + reflexes * TDOConfig.ApogeeStrainReflexGraceScale(), TDOConfig.ApogeeStrainGraceCap());
   let rampEff: Float = TDOConfig.ApogeeStrainRampDuration() + reflexes * TDOConfig.ApogeeStrainReflexRampScale();
-  if !strainRecovering && !isAim && this.m_tdoApogeeStillElapsed > graceEff && rampEff > 0.0 {
-    let t: Float = MinF(MaxF((this.m_tdoApogeeStillElapsed - graceEff) / rampEff, 0.0), 1.0);
+  if strainRate > 0.0 && this.m_tdoApogeeStrainElapsed > graceEff && rampEff > 0.0 {
+    let t: Float = MinF(MaxF((this.m_tdoApogeeStrainElapsed - graceEff) / rampEff, 0.0), 1.0);
     let restingHP: Float = stats.GetStatValue(playerID, gamedataStatType.Health);
     let damage: Float = t * (TDOConfig.ApogeeStrainCapPctPerSec() / 100.0) * restingHP * tickInterval;
     if damage > 0.0 {
@@ -312,7 +340,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
     return;
   }
   player.m_tdoApogeeActive = true;
-  player.m_tdoApogeeStillElapsed = 0.0;
+  player.m_tdoApogeeStrainElapsed = 0.0;
   player.m_tdoApogeeLastFireTime = EngineTime.ToFloat(GameInstance.GetEngineTime(player.GetGame())) - 10.0;
   player.m_tdoApogeeMoveInput = false;
   let camSys: ref<CameraSystem> = GameInstance.GetCameraSystem(player.GetGame());

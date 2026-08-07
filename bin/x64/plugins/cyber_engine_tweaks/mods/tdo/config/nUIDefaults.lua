@@ -1,5 +1,5 @@
 return {
-	configVersion = 11.8,
+	configVersion = 12.0,
 	fusilladeShow = true,
 	juggernautShow = true,
 	kurosawaShow = true,
@@ -17,6 +17,7 @@ return {
 	},
 	scanning = {
 		enabled = true,
+		requireImmersiveCyberwareFocus = true,
 		tickInterval = 0.1,
 		drainPerSec = 0.35,
 		rechargePerSec = 0.15,
@@ -80,6 +81,17 @@ return {
 		critDmgMax = 150.0,
 		headshotMin = 33.0,
 		headshotMax = 100.0,
+		strainGrace = 2.0,
+		strainGraceCap = 5.0,
+		strainRampDuration = 10.0,
+		strainBleedRate = 1.5,
+		strainStillGainRate = 1.5,
+		strainLookGainRate = 0.75,
+		strainAimGainRate = 0.5,
+		strainCapPctPerSec = 3.0,
+		strainCanKill = false,
+		strainReflexGraceScale = 0.1,
+		strainReflexRampScale = 0.1,
 	},
 	fusillade = {
 		timeScale = 0.25,
@@ -212,6 +224,7 @@ return {
 	},
 	warpDancer = {
 		enabled = true,
+		storedDamageCanKill = false,
 		moveSpeedMin = 5.0,
 		moveSpeedMax = 20.0,
 		rewindDurationSec = 3.0,

@@ -428,7 +428,7 @@ public func TDO_Attunement_InjectLiveTotal(game: GameInstance, itemTDB: TweakDBI
       if TDOConfig.ApogeeEnabled() {
         while ArraySize(fv) < 2 { ArrayPush(fv, 0.0); }
         fv[0] = TDOConfig.ApogeeStrainReflexGraceScale();
-        fv[1] = MinF(reflexes * TDOConfig.ApogeeStrainReflexGraceScale(), TDOConfig.ApogeeStrainGraceCap() - TDOConfig.ApogeeStrainGrace());
+        fv[1] = MinF(reflexes * TDOConfig.ApogeeStrainReflexGraceScale(), MaxF(TDOConfig.ApogeeStrainGraceCap() - TDOConfig.ApogeeStrainGrace(), 0.0));
       }
       break;
   }
