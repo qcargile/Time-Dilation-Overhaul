@@ -526,6 +526,10 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
     return;
   }
   wrappedMethod(stateContext, scriptInterface);
+  if TDO_Sandy_OwnsCombatTime(player) {
+    TDO_Sandy_PreemptCombatDilation(player);
+    TDO_Sandy_QueueCombatDilationCleanup(player);
+  }
 }
 
 public class TDO_JuggernautReleaseCallback extends DelayCallback {

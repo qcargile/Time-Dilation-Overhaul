@@ -66,7 +66,7 @@ public class TDOConfig {
   }
 
   public static func DOTBaseRatePct() -> Float {
-    return 1.0;
+    return 5.0;
   }
 
   public static func DOTSlowThresholdPct() -> Float {
@@ -74,7 +74,7 @@ public class TDOConfig {
   }
 
   public static func DOTSlowRangeMinPct() -> Float {
-    return 10.0;
+    return 40.0;
   }
 
   public static func DOTSlowRangeMaxPct() -> Float {
@@ -82,19 +82,19 @@ public class TDOConfig {
   }
 
   public static func DOTTickMinInterval() -> Float {
-    return 0.5;
+    return 1.0;
   }
 
   public static func DOTTickMaxInterval() -> Float {
-    return 1.5;
+    return 2.0;
   }
 
   public static func DOTMitigationCap() -> Float {
-    return 0.75;
+    return 0.5;
   }
 
   public static func DOTMitigationRefStatCap() -> Float {
-    return 15.0;
+    return 20.0;
   }
 
   public static func DOTCanKill() -> Bool {

@@ -31,11 +31,20 @@ public func TDO_Sandy_ClearGutsLock(player: ref<PlayerPuppet>) -> Void {
   StatusEffectHelper.RemoveStatusEffect(player, t"BaseStatusEffect.EdgerunnersStun");
 }
 
+public func TDO_Sandy_IsActive(player: ref<PlayerPuppet>) -> Bool {
+  let bb: ref<IBlackboard> = player.GetPlayerStateMachineBlackboard();
+  if !IsDefined(bb) {
+    return false;
+  }
+  let td: Int32 = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.TimeDilation);
+  return td == EnumInt(gamePSMTimeDilation.Sandevistan);
+}
+
 public func TDO_Sandy_ShouldClearGutsLock(player: ref<PlayerPuppet>) -> Bool {
   if !IsDefined(player) {
     return false;
   }
-  if !TDO_BulletTrailVelocity_IsSandyActive(player) {
+  if !TDO_Sandy_IsActive(player) {
     return false;
   }
   return StatusEffectSystem.ObjectHasStatusEffect(player, t"BaseStatusEffect.EdgerunnersStun");
@@ -45,6 +54,9 @@ public func TDO_Sandy_ShouldClearGutsLock(player: ref<PlayerPuppet>) -> Bool {
 protected final func OnUpdate(timeDelta: Float, stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
   wrappedMethod(timeDelta, stateContext, scriptInterface);
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if TDO_Sandy_OwnsCombatTime(player) {
+    TDO_Sandy_PreemptCombatDilation(player);
+  }
   if TDO_Sandy_ShouldClearGutsLock(player) {
     TDO_Sandy_ClearGutsLock(player);
   }

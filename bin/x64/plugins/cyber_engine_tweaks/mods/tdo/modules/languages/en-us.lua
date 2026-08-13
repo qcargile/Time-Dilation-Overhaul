@@ -131,8 +131,8 @@ return {
         },
         bulletTrail = {
             header = "Bullet Trails",
-            enabled = { opt = "Enabled", des = "Slows supported single-projectile bullets during Sandevistan. Deadeye, Tech weapons, multi-projectile weapons, and custom time-dilated attacks keep their original behavior. Turning this off restores normal attacks and projectile speeds." },
-            at10 = { opt = "Bullet speed at 10% TD", optUnit = " (m/s)", des = "Bullet launch speed at 10% slow. Higher = faster bullet. Slow %s in between blend the two nearest sliders. Bullets in flight return to their original speed when Sandevistan ends or Bullet Trails is disabled." },
+            enabled = { opt = "Enabled", des = "Slows supported single-projectile bullets while a TDO Sandevistan or Warp Dancer is active. Deadeye, Tech weapons, multi-projectile weapons, custom time-dilated attacks, and no-slow operating systems keep their original behavior. Turning this off restores normal attacks and projectile speeds." },
+            at10 = { opt = "Bullet speed at 10% TD", optUnit = " (m/s)", des = "Bullet launch speed at 10% slow. Higher = faster bullet. Slow percentages in between blend the two nearest sliders. Bullets in flight return to their original speed when the Sandevistan or Warp Dancer ends, or when Bullet Trails is disabled." },
             at20 = { opt = "Bullet speed at 20% TD", optUnit = " (m/s)", des = "Bullet launch speed at 20% slow." },
             at30 = { opt = "Bullet speed at 30% TD", optUnit = " (m/s)", des = "Bullet launch speed at 30% slow." },
             at40 = { opt = "Bullet speed at 40% TD", optUnit = " (m/s)", des = "Bullet launch speed at 40% slow." },

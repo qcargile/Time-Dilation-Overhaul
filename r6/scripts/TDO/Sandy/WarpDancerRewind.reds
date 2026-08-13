@@ -21,9 +21,10 @@ public func TDO_WarpDancer_Begin(player: ref<PlayerPuppet>) -> Void {
   player.m_warpDancerRewindIdx = 0;
   player.m_warpDancerPhase = 1;
 
-  let strength: Float = TDOConfig.WarpDancerDilationStrength();
-  TimeDilationHelper.SetTimeDilation(player, n"WarpDancer", strength, 999.0, n"Linear", n"Linear", true);
-  TimeDilationHelper.SetIgnoreTimeDilationOnLocalPlayerZero(player, true);
+  let timeSystem: ref<TimeSystem> = GameInstance.GetTimeSystem(player.GetGame());
+  if IsDefined(timeSystem) {
+    timeSystem.SetIgnoreTimeDilationOnLocalPlayerZero(true);
+  }
 
   let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(player.GetGame());
   pools.RequestSettingStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.Stamina, 100.0, player, true);
@@ -74,6 +75,8 @@ public func TDO_WarpDancer_BeginRewind(player: ref<PlayerPuppet>) -> Void {
     player.m_warpDancerTickID = GetInvalidDelayID();
   }
 
+  let strength: Float = TDOConfig.WarpDancerDilationStrength();
+  TimeDilationHelper.SetTimeDilation(player, n"WarpDancer", strength, 999.0, n"Linear", n"Linear", true);
   TimeDilationHelper.SetIgnoreTimeDilationOnLocalPlayerZero(player, false);
 
   GameObject.PlaySoundEvent(player, n"dev_turret_hologram_deactivate");

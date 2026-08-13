@@ -132,6 +132,18 @@ public func TDO_Apogee_IsMeleeActionState(melee: Int32) -> Bool {
 
 public class TDO_ApogeeTickEvent extends DelayEvent {}
 
+@wrapMethod(SandevistanDecisions)
+protected final const func ToTimeDilationReady(const stateContext: ref<StateContext>, const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  if wrappedMethod(stateContext, scriptInterface) {
+    return true;
+  }
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if !IsDefined(player) || !player.m_tdoApogeeActive {
+    return false;
+  }
+  return this.IsInSafeSceneTier(scriptInterface) || this.IsNoCombatActionsForced(scriptInterface);
+}
+
 @addMethod(PlayerPuppet)
 protected cb func OnTDOApogeeShoot(value: Variant) -> Bool {
   if this.m_tdoApogeeActive {

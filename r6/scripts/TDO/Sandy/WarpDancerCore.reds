@@ -29,6 +29,16 @@ public let m_warpDancerStoredNPCs: array<wref<NPCPuppet>>;
 @addField(PlayerPuppet)
 public let m_warpDancerComputedStride: Int32;
 
+public func TDO_WarpDancer_IsTDB(tdb: TweakDBID) -> Bool {
+  return Equals(tdb, t"Items.AdvancedSandevistanC3MK3")
+    || Equals(tdb, t"Items.AdvancedSandevistanC3MK3Plus")
+    || Equals(tdb, t"Items.AdvancedSandevistanC3MK4")
+    || Equals(tdb, t"Items.AdvancedSandevistanC3MK4Plus")
+    || Equals(tdb, t"Items.AdvancedSandevistanC3MK5")
+    || Equals(tdb, t"Items.AdvancedSandevistanC3MK5Plus")
+    || Equals(tdb, t"Items.AdvancedSandevistanC3MK5PlusPlus");
+}
+
 public func TDO_WarpDancer_IsEquipped(player: ref<PlayerPuppet>) -> Bool {
   if !IsDefined(player) {
     return false;
@@ -44,15 +54,8 @@ public func TDO_WarpDancer_IsEquipped(player: ref<PlayerPuppet>) -> Bool {
   let slotIdx: Int32 = 0;
   while slotIdx < 3 {
     let itemID: ItemID = pd.GetItemInEquipSlot(gamedataEquipmentArea.SystemReplacementCW, slotIdx);
-    if ItemID.IsValid(itemID) {
-      let tdb: TweakDBID = ItemID.GetTDBID(itemID);
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK3") { return true; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK3Plus") { return true; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK4") { return true; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK4Plus") { return true; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK5") { return true; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK5Plus") { return true; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK5PlusPlus") { return true; }
+    if ItemID.IsValid(itemID) && TDO_WarpDancer_IsTDB(ItemID.GetTDBID(itemID)) {
+      return true;
     }
     slotIdx += 1;
   }

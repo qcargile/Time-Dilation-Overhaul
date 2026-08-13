@@ -1,6 +1,7 @@
 module TDO.Scanning
 
 import TDO.Logging.*
+import TDO.Sandy.*
 
 @addField(PlayerPuppet)
 public let m_tdoScanCharge: Float;
@@ -122,7 +123,7 @@ public class TDO_ScanningTick extends DelayCallback {
 
       let effectivelyOnTarget: Bool = onTarget || player.m_tdoScanGraceActive;
       let hasResource: Bool = !player.m_tdoScanLockedOut && player.m_tdoScanCharge > 0.0;
-      let wantTD: Bool = immersiveFocusAllowed && effectivelyOnTarget && hasResource;
+      let wantTD: Bool = immersiveFocusAllowed && effectivelyOnTarget && hasResource && !TDO_Sandy_OwnsCombatTime(player);
 
       if wantTD {
         if !player.m_tdoScanTDActive {

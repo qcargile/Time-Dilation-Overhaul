@@ -95,7 +95,9 @@ public func TDO_DOT_ComputeMitigation(player: ref<PlayerPuppet>, refStat: gameda
 @addMethod(PlayerPuppet)
 protected cb func OnTDO_SandyDOTTickEvent(evt: ref<TDO_SandyDOTTickEvent>) -> Bool {
   this.m_tdoDOTTickDelayID = GetInvalidDelayID();
+  TDOTrace("DOTTick", "delivered");
   if !TDOConfig.DOTEnabled() {
+    TDODebug("DOT", "tick stopped because strain is disabled");
     return false;
   }
 
@@ -108,26 +110,24 @@ protected cb func OnTDO_SandyDOTTickEvent(evt: ref<TDO_SandyDOTTickEvent>) -> Bo
     }
   }
 
-  if this.m_warpDancerPhase != 0 {
-    this.TDO_DOT_Reschedule(TDOConfig.DOTTickMaxInterval());
-    return true;
-  }
-
   let stats: ref<StatsSystem> = GameInstance.GetStatsSystem(this.GetGame());
   let playerID: StatsObjectID = Cast<StatsObjectID>(this.GetEntityID());
 
   let hasSandy: Float = stats.GetStatValue(playerID, gamedataStatType.HasSandevistan);
   if hasSandy <= 0.0 {
+    TDODebug("DOT", "tick stopped because HasSandevistan=" + ToString(hasSandy));
     return false;
   }
   let timeScale: Float = stats.GetStatValue(playerID, gamedataStatType.TimeDilationSandevistanTimeScale);
   if timeScale <= 0.0 || timeScale >= 1.0 {
+    TDODebug("DOT", "tick stopped because timeScale=" + ToString(timeScale));
     return false;
   }
   let slowPct: Float = (1.0 - timeScale) * 100.0;
+  let slowThresholdScale: Float = 1.0 - TDOConfig.DOTSlowThresholdPct() / 100.0;
   let nextInterval: Float = TDO_DOT_ComputeTickInterval(slowPct);
 
-  if slowPct < TDOConfig.DOTSlowThresholdPct() {
+  if timeScale > slowThresholdScale {
     TDOTrace("DOTTick", "below slow threshold slowPct=" + ToString(slowPct) + " thr=" + ToString(TDOConfig.DOTSlowThresholdPct()));
     this.TDO_DOT_Reschedule(nextInterval);
     return true;
@@ -148,6 +148,7 @@ protected cb func OnTDO_SandyDOTTickEvent(evt: ref<TDO_SandyDOTTickEvent>) -> Bo
     if !TDOConfig.DOTCanKill() && currentHealth - damage < 1.0 {
       applied = MaxF(currentHealth - 1.0, 0.0);
     }
+    TDOTrace("DOTTick", "health=" + ToString(currentHealth) + " requested=" + ToString(applied));
     if applied > 0.0 {
       pools.RequestChangingStatPoolValue(playerID, gamedataStatPoolType.Health, -applied, null, false);
     }

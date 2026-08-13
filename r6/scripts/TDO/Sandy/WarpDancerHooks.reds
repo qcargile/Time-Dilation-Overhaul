@@ -2,11 +2,15 @@ module TDO.Sandy
 
 @wrapMethod(SandevistanEvents)
 protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(player) {
+    TDO_Sandy_CancelNeurotagTime(player);
+    TDO_Sandy_PreemptCombatDilation(player);
+  }
   wrappedMethod(stateContext, scriptInterface);
   if !TDOConfig.WarpDancerEnabled() {
     return;
   }
-  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   if !IsDefined(player) {
     return;
   }
@@ -38,6 +42,7 @@ protected final func OnForcedExit(stateContext: ref<StateContext>, scriptInterfa
   if !IsDefined(player) {
     return;
   }
+  TDO_Sandy_ClearPSMState(player);
   if player.m_warpDancerPhase != 0 {
     TDO_WarpDancer_Abort(player);
   }
@@ -46,6 +51,7 @@ protected final func OnForcedExit(stateContext: ref<StateContext>, scriptInterfa
 @wrapMethod(PlayerPuppet)
 protected func OnIncapacitated() -> Void {
   wrappedMethod();
+  TDO_Sandy_ClearPSMState(this);
   if this.m_warpDancerPhase != 0 {
     TDO_WarpDancer_Abort(this);
   }
