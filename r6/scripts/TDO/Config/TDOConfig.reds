@@ -160,26 +160,20 @@ public class TDOConfig {
 
   public static func ApogeeTickInterval() -> Float { return 0.05; }
   public static func ApogeeStillSlowPct() -> Float { return 99.0; }
-  public static func ApogeeCamLookSlowPct() -> Float { return 90.0; }
-  public static func ApogeeAimSlowPct() -> Float { return 80.0; }
+  public static func ApogeeCamLookSlowPct() -> Float { return 85.0; }
+  public static func ApogeeAimSlowPct() -> Float { return 30.0; }
   public static func ApogeeMoveThreshold() -> Float { return 0.4; }
   public static func ApogeeCamLookThreshold() -> Float { return 0.005; }
-  public static func ApogeeFireWindow() -> Float { return 0.15; }
-  public static func ApogeeActionSlowPct() -> Float { return 10.0; }
+  public static func ApogeeFireWindow() -> Float { return 0.2; }
+  public static func ApogeeActionSlowPct() -> Float { return 5.0; }
   public static func ApogeeProjectileSpeedMult() -> Float { return 2.5; }
   public static func ApogeeChargeRefillThreshold() -> Float { return 50.0; }
-  public static func ApogeeStrainGrace() -> Float { return 2.0; }
-  public static func ApogeeStrainGraceCap() -> Float { return 5.0; }
-  public static func ApogeeStrainRampDuration() -> Float { return 10.0; }
-  public static func ApogeeStrainBleedSpeed() -> Float { return 0.4; }
-  public static func ApogeeStrainBleedRate() -> Float { return 1.5; }
-  public static func ApogeeStrainStillGainRate() -> Float { return 1.5; }
-  public static func ApogeeStrainLookGainRate() -> Float { return 0.75; }
-  public static func ApogeeStrainAimGainRate() -> Float { return 0.5; }
-  public static func ApogeeStrainCapPctPerSec() -> Float { return 3.0; }
-  public static func ApogeeStrainCanKill() -> Bool { return false; }
-  public static func ApogeeStrainReflexGraceScale() -> Float { return 0.1; }
-  public static func ApogeeStrainReflexRampScale() -> Float { return 0.1; }
+  public static func ApogeeStillSurvivalSec() -> Float { return 10.0; }
+  public static func ApogeeLookSurvivalSec() -> Float { return 15.0; }
+  public static func ApogeeAimSurvivalSec() -> Float { return 20.0; }
+  public static func ApogeeActionSurvivalSec() -> Float { return 25.0; }
+  public static func ApogeeReflexSurvivalPerPoint() -> Float { return 0.25; }
+  public static func ApogeeReflexSurvivalCap() -> Float { return 5.0; }
 
   public static func SandyVFXEnabled() -> Bool {
     return false;

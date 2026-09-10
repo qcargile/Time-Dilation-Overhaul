@@ -160,4 +160,9 @@ return {
 		"apogee.strainReflexGraceScale", "apogee.strainReflexRampScale",
 	} },
 	{ version = 12.0, resetKeys = {"scanning.requireImmersiveCyberwareFocus"} },
+	{ version = 12.1, resetKeys = {
+		"apogee.stillSurvivalSec", "apogee.lookSurvivalSec",
+		"apogee.aimSurvivalSec", "apogee.actionSurvivalSec",
+		"apogee.reflexSurvivalPerPoint", "apogee.reflexSurvivalCap",
+	} },
 }
