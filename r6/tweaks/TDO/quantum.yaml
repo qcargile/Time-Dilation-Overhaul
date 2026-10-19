@@ -237,12 +237,14 @@ Vendors.TDO_QuantumStock:
   item: Items.TDO_Quantum
   generationPrereqs:
     - Prereqs.AfterFirstVisitAtVictor
-    - LootPrereqs.EpicCWLevelAvailabilityAtVendor
+    - Prereqs.TDO_OSLevel30
+    - Prereqs.TDO_QuantumAvailable
   quantity:
     - Vendors.Always_Present
 
 Vendors.pac_wwd_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_QuantumStock
+  - !append-once Vendors.TDO_QuantumStock
+  - !append-once Vendors.TDO_QuantumAdvancedStock
 
 Items.TDO_QuantumAdvanced:
   $type: gamedataItem_Record
@@ -496,12 +498,13 @@ Vendors.TDO_QuantumAdvancedStock:
   item: Items.TDO_QuantumAdvanced
   generationPrereqs:
     - Prereqs.AfterFirstVisitAtVictor
-    - LootPrereqs.LegendaryCWLevelAvailabilityAtVendor
+    - Prereqs.TDO_OSLevel40
+    - Prereqs.TDO_QuantumAvailable
   quantity:
     - Vendors.Always_Present
 
 Vendors.cz_monument_ripperdoc_farida.itemStock:
-  - !append Vendors.TDO_QuantumAdvancedStock
+  - !append-once Vendors.TDO_QuantumAdvancedStock
 
 Items.TDO_QuantumPlus:
   $base: Items.TDO_Quantum

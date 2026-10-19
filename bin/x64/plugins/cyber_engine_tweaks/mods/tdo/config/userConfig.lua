@@ -63,6 +63,7 @@ return {
 		hideQuantumMarker = false,
 	},
 	kurosawa = {
+		available = true,
 		enemySlowMult = 0.1,
 		duration = 8.0,
 		cooldown = 35.0,
@@ -89,6 +90,7 @@ return {
 		reflexSurvivalCap = 5.0,
 	},
 	fusillade = {
+		available = true,
 		timeScale = 0.25,
 		durationMin = 2.0,
 		durationMax = 3.0,
@@ -102,6 +104,7 @@ return {
 		ammoRefillMaxChancePct = 50.0,
 	},
 	juggernaut = {
+		available = true,
 		lockDurationMin = 4.0,
 		lockDurationMax = 12.0,
 		radiusMin = 15.0,
@@ -112,6 +115,7 @@ return {
 		cooldownMax = 60.0,
 	},
 	pyrolith = {
+		available = true,
 		durationMin = 10.0,
 		durationMax = 20.0,
 		explosionDamageMin = 25.0,
@@ -122,6 +126,7 @@ return {
 		cooldownMax = 60.0,
 	},
 	quantum = {
+		available = true,
 		maxCharges = 2,
 		plotFreezeStrength = 0.001,
 		durationMin = 2.0,
@@ -138,6 +143,7 @@ return {
 		malwareSlowTimePct = 99.0,
 	},
 	sogimsu = {
+		available = true,
 		durationMin = 15.0,
 		durationMax = 40.0,
 		cooldownMin = 30.0,

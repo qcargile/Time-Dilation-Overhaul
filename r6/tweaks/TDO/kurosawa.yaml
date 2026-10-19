@@ -273,12 +273,13 @@ Vendors.TDO_KurosawaStock:
   item: Items.TDO_Kurosawa
   generationPrereqs:
     - Prereqs.AfterFirstVisitAtVictor
-    - LootPrereqs.EpicCWLevelAvailabilityAtVendor
+    - Prereqs.TDO_OSLevel30
+    - Prereqs.TDO_KurosawaAvailable
   quantity:
     - Vendors.Always_Present
 
 Vendors.wbr_jpn_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_KurosawaStock
+  - !append-once Vendors.TDO_KurosawaStock
 
 Items.TDO_KurosawaPlus:
   $base: Items.TDO_Kurosawa

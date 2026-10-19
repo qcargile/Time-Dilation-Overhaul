@@ -38,13 +38,29 @@ Attunements.TDO_Tanto_UI:
   stats:
     - BaseStats.AttunementHelper
 
+StatusEffects.TDO_Tanto_MaxStacks:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_Tanto_MaxStacksMod
+
+StatusEffects.TDO_Tanto_MaxStacksMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxStacks
+  value: 1
+
 StatusEffects.TDO_TantoTeleportCrit:
   $type: gamedataStatusEffect_Record
   duration: StatusEffects.TDO_TantoTeleportCrit_Dur
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_Tanto_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -110,7 +126,7 @@ StatusEffects.TDO_TantoChargeIndicator:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_Tanto_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -159,7 +175,7 @@ StatusEffects.TDO_TantoCritChargeUsed:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_Tanto_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False

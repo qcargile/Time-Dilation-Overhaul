@@ -5,6 +5,12 @@ import TDO.Logging.*
 @addField(NPCPuppet)
 public let m_warpDancerStored: Float;
 
+@addField(gameHitEvent)
+public let m_tdoWarpDancerStoresHealth: Bool;
+
+@addField(gameHitEvent)
+public let m_tdoWarpDancerPendingHealth: Float;
+
 @wrapMethod(StatPoolsManager)
 public final static func ApplyDamage(hitEvent: ref<gameHitEvent>, forReal: Bool, out valuesLost: array<SDamageDealt>) -> Void {
   if !forReal {
@@ -46,6 +52,12 @@ public final static func ApplyDamage(hitEvent: ref<gameHitEvent>, forReal: Bool,
     return;
   }
 
+  let storedBefore: Float = npc.m_warpDancerStored;
+  hitEvent.m_tdoWarpDancerStoresHealth = true;
+  wrappedMethod(hitEvent, forReal, valuesLost);
+  hitEvent.m_tdoWarpDancerStoresHealth = false;
+  hitEvent.m_tdoWarpDancerPendingHealth = 0.0;
+
   let attackValues: array<Float> = hitEvent.attackComputed.GetAttackValues();
   let i: Int32 = 0;
   while i < ArraySize(attackValues) {
@@ -54,14 +66,78 @@ public final static func ApplyDamage(hitEvent: ref<gameHitEvent>, forReal: Bool,
   }
   hitEvent.attackComputed.SetAttackValues(attackValues);
 
-  npc.m_warpDancerStored += damageValue;
-  TDOTrace("WarpDancer", "absorbed dmg=" + ToString(damageValue) + " npc=" + ToString(npc.GetEntityID()) + " stored=" + ToString(npc.m_warpDancerStored));
+  if npc.m_warpDancerStored > storedBefore {
+    TDOTrace("WarpDancer", "stored health dmg=" + ToString(npc.m_warpDancerStored - storedBefore) + " npc=" + ToString(npc.GetEntityID()) + " stored=" + ToString(npc.m_warpDancerStored));
+    if !TDO_WarpDancer_TrackedAlready(player, npc) {
+      ArrayPush(player.m_warpDancerStoredNPCs, npc);
+    }
+  }
+}
 
-  if !TDO_WarpDancer_TrackedAlready(player, npc) {
-    ArrayPush(player.m_warpDancerStoredNPCs, npc);
+@wrapMethod(StatPoolsManager)
+private final static func ApplyDamageSingle(hitEvent: ref<gameHitEvent>, dmgType: gamedataDamageType, initialDamageValue: Float, forReal: Bool, valuesLost: script_ref<[SDamageDealt]>) -> Void {
+  if !hitEvent.m_tdoWarpDancerStoresHealth {
+    wrappedMethod(hitEvent, dmgType, initialDamageValue, forReal, valuesLost);
+    return;
   }
 
-  wrappedMethod(hitEvent, forReal, valuesLost);
+  let wasKillingBlow: Bool = hitEvent.attackData.HasFlag(hitFlag.WasKillingBlow);
+  hitEvent.m_tdoWarpDancerPendingHealth = 0.0;
+  wrappedMethod(hitEvent, dmgType, initialDamageValue, forReal, valuesLost);
+  let healthDamage: Float = hitEvent.m_tdoWarpDancerPendingHealth;
+  hitEvent.m_tdoWarpDancerPendingHealth = 0.0;
+  if healthDamage <= 0.0 {
+    return;
+  }
+
+  let absorbed: Float = 0.0;
+  let i: Int32 = 0;
+  while i < ArraySize(Deref(valuesLost)) {
+    if Equals(Deref(valuesLost)[i].affectedStatPool, gamedataStatPoolType.CPO_Armor) || Equals(Deref(valuesLost)[i].affectedStatPool, gamedataStatPoolType.Overshield) {
+      absorbed += Deref(valuesLost)[i].value;
+    }
+    i += 1;
+  }
+
+  if absorbed >= initialDamageValue && healthDamage <= 1.0 {
+    hitEvent.m_tdoWarpDancerStoresHealth = false;
+    StatPoolsManager.DrainStatPool(hitEvent, gamedataStatPoolType.Health, healthDamage);
+    hitEvent.m_tdoWarpDancerStoresHealth = true;
+    return;
+  }
+
+  let npc: ref<NPCPuppet> = hitEvent.target as NPCPuppet;
+  npc.m_warpDancerStored += healthDamage;
+  i = ArraySize(Deref(valuesLost)) - 1;
+  while i >= 0 {
+    if Equals(Deref(valuesLost)[i].affectedStatPool, gamedataStatPoolType.Health) {
+      ArrayErase(Deref(valuesLost), i);
+    }
+    i -= 1;
+  }
+  if !wasKillingBlow {
+    hitEvent.attackData.RemoveFlag(hitFlag.WasKillingBlow);
+  }
+}
+
+@wrapMethod(StatPoolsManager)
+private final static func ApplyLocalizedDamageSingle(hitEvent: ref<gameHitEvent>, dmg: Float, dmgType: gamedataDamageType, poolType: gamedataStatPoolType, forReal: Bool, valuesLost: script_ref<[SDamageDealt]>) -> Void {
+  if hitEvent.m_tdoWarpDancerStoresHealth {
+    ArrayClear(Deref(valuesLost));
+    return;
+  }
+  wrappedMethod(hitEvent, dmg, dmgType, poolType, forReal, valuesLost);
+}
+
+@wrapMethod(StatPoolsManager)
+public final static func DrainStatPool(hitEvent: ref<gameHitEvent>, statPoolType: gamedataStatPoolType, value: Float) -> Void {
+  if hitEvent.m_tdoWarpDancerStoresHealth && Equals(statPoolType, gamedataStatPoolType.Health) {
+    if value > 0.0 {
+      hitEvent.m_tdoWarpDancerPendingHealth += value;
+    }
+    return;
+  }
+  wrappedMethod(hitEvent, statPoolType, value);
 }
 
 public func TDO_WarpDancer_TrackedAlready(player: ref<PlayerPuppet>, npc: ref<NPCPuppet>) -> Bool {

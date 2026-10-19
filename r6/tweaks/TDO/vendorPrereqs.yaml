@@ -1,0 +1,30 @@
+Prereqs.TDO_OSLevel$(level):
+  $instances:
+    - { level: 20 }
+    - { level: 30 }
+    - { level: 40 }
+  $type: gamedataStatPrereq_Record
+  prereqClassName: StatPrereq
+  objectToCheck: Owner
+  statType: Level
+  comparisonType: GreaterOrEqual
+  valueToCheck: $(level)
+  statModifiers: []
+
+Prereqs.TDO_$(family)Available:
+  $instances:
+    - { family: Fusillade }
+    - { family: Juggernaut }
+    - { family: Kurosawa }
+    - { family: Pyrolith }
+    - { family: Quantum }
+    - { family: Sogimsu }
+  $type: gamedataIPrereq_Record
+  prereqClassName: TDO_CustomOSAvailablePrereq
+
+Prereqs.TDO_FusilladeAvailable.available: true
+Prereqs.TDO_JuggernautAvailable.available: true
+Prereqs.TDO_KurosawaAvailable.available: true
+Prereqs.TDO_PyrolithAvailable.available: true
+Prereqs.TDO_QuantumAvailable.available: true
+Prereqs.TDO_SogimsuAvailable.available: true

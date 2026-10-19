@@ -61,6 +61,22 @@ StatusEffects.TDO_WarpDancerMoveSpeed_DurMod:
   statType: BaseStats.MaxDuration
   value: 99999.0
 
+StatusEffects.TDO_WarpDancer_MaxStacks:
+  $type: gamedataStatModifierGroup_Record
+  drawBasedOnStatType: False
+  optimiseCombinedModifiers: False
+  saveBasedOnStatType: False
+  statModsLimit: -1
+  relatedModifierGroups: []
+  statModifiers:
+    - StatusEffects.TDO_WarpDancer_MaxStacksMod
+
+StatusEffects.TDO_WarpDancer_MaxStacksMod:
+  $type: gamedataConstantStatModifier_Record
+  modifierType: Additive
+  statType: BaseStats.MaxStacks
+  value: 1
+
 StatusEffects.TDO_WarpDancerMoveSpeed_MK3_Mod:
   $type: gamedataConstantStatModifier_Record
   modifierType: Multiplier
@@ -179,7 +195,7 @@ StatusEffects.TDO_WarpDancerMoveSpeed_MK3:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -203,7 +219,7 @@ StatusEffects.TDO_WarpDancerMoveSpeed_MK3Plus:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -227,7 +243,7 @@ StatusEffects.TDO_WarpDancerMoveSpeed_MK4:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -251,7 +267,7 @@ StatusEffects.TDO_WarpDancerMoveSpeed_MK4Plus:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -275,7 +291,7 @@ StatusEffects.TDO_WarpDancerMoveSpeed_MK5:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -299,7 +315,7 @@ StatusEffects.TDO_WarpDancerMoveSpeed_MK5Plus:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -323,7 +339,7 @@ StatusEffects.TDO_WarpDancerMoveSpeed_MK5PlusPlus:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -391,7 +407,7 @@ StatusEffects.TDO_WarpDancerStagger_MK3:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -441,7 +457,7 @@ StatusEffects.TDO_WarpDancerStagger_MK3Plus:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -491,7 +507,7 @@ StatusEffects.TDO_WarpDancerStagger_MK4:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -541,7 +557,7 @@ StatusEffects.TDO_WarpDancerStagger_MK4Plus:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -591,7 +607,7 @@ StatusEffects.TDO_WarpDancerStagger_MK5:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -641,7 +657,7 @@ StatusEffects.TDO_WarpDancerStagger_MK5Plus:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False
@@ -691,7 +707,7 @@ StatusEffects.TDO_WarpDancerStagger_MK5PlusPlus:
   dynamicDuration: False
   isAffectedByTimeDilationNPC: False
   isAffectedByTimeDilationPlayer: False
-  maxStacks: 1
+  maxStacks: StatusEffects.TDO_WarpDancer_MaxStacks
   reapplyPackagesOnMaxStacks: False
   removeAllStacksWhenDurationEnds: True
   removeOnStoryTier: False

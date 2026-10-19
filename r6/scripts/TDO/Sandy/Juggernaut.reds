@@ -108,7 +108,7 @@ public func TDO_Juggernaut_Engage(tier: Int32) -> Void {
   TDOInfo("Juggernaut", "Armor Lock engaged tier=" + ToString(tier));
 
   StatusEffectHelper.ApplyStatusEffect(this, t"StatusEffects.TDO_JuggernautActive");
-  StatusEffectHelper.ApplyStatusEffect(this, t"GameplayRestriction.NoCombat");
+  StatusEffectHelper.ApplyStatusEffect(this, t"StatusEffects.TDO_JuggernautRestrictions");
 
   TDO_Juggernaut_SpawnActivationVFX(this);
   this.m_juggernautShieldFx = TDO_Juggernaut_SpawnShieldVFX(this);
@@ -229,7 +229,7 @@ public func TDO_Juggernaut_Release() -> Void {
   }
 
   StatusEffectHelper.RemoveStatusEffect(this, t"StatusEffects.TDO_JuggernautActive");
-  StatusEffectHelper.RemoveStatusEffect(this, t"GameplayRestriction.NoCombat");
+  StatusEffectHelper.RemoveStatusEffect(this, t"StatusEffects.TDO_JuggernautRestrictions");
 
   if IsDefined(this.m_juggernautShieldFx) {
     this.m_juggernautShieldFx.BreakLoop();
@@ -346,6 +346,15 @@ public final static func ApplyDamage(hitEvent: ref<gameHitEvent>, forReal: Bool,
   if player.m_juggernautAbsorbed >= absorbCap {
     player.TDO_Juggernaut_Release();
   }
+}
+
+@wrapMethod(DefaultTransition)
+protected final const func IsNoCombatActionsForced(const scriptInterface: ref<StateGameScriptInterface>) -> Bool {
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(player) && player.m_juggernautActive {
+    return true;
+  }
+  return wrappedMethod(scriptInterface);
 }
 
 @wrapMethod(UseHealChargeAction)
@@ -553,6 +562,6 @@ protected func OnIncapacitated() -> Void {
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {
   let result: Bool = wrappedMethod();
-  StatusEffectHelper.RemoveStatusEffect(this, t"GameplayRestriction.NoCombat");
+  StatusEffectHelper.RemoveStatusEffect(this, t"StatusEffects.TDO_JuggernautRestrictions");
   return result;
 }

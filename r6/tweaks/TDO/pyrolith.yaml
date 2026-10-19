@@ -333,28 +333,32 @@ StatusEffects.TDO_PyrolithCooldown_T5_DurMod:
 
 Vendors.TDO_PyrolithStock$(tier):
   $instances:
-    - { tier: Rare }
-    - { tier: Epic }
-    - { tier: Legendary }
+    - { tier: Rare, prereq: LootPrereqs.RareCWLevelAvailabilityAtVendor }
+    - { tier: Epic, prereq: LootPrereqs.EpicCWLevelAvailabilityAtVendor }
+    - { tier: Legendary, prereq: Prereqs.TDO_OSLevel40 }
   $type: gamedataVendorItem_Record
   item: Items.TDO_Pyrolith$(tier)
   generationPrereqs:
     - Prereqs.AfterFirstVisitAtVictor
-    - LootPrereqs.$(tier)CWLevelAvailabilityAtVendor
+    - $(prereq)
+    - Prereqs.TDO_PyrolithAvailable
   quantity:
     - Vendors.Always_Present
 
 Vendors.wat_lch_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_PyrolithStockRare
+  - !append-once Vendors.TDO_PyrolithStockRare
+  - !append-once Vendors.TDO_PyrolithStockEpic
+  - !append-once Vendors.TDO_PyrolithStockLegendary
 
 Vendors.wat_kab_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_PyrolithStockRare
-  - !append Vendors.TDO_PyrolithStockEpic
+  - !append-once Vendors.TDO_PyrolithStockRare
+  - !append-once Vendors.TDO_PyrolithStockEpic
+  - !append-once Vendors.TDO_PyrolithStockLegendary
 
 Vendors.cz_monument_ripperdoc_farida.itemStock:
-  - !append Vendors.TDO_PyrolithStockEpic
-  - !append Vendors.TDO_PyrolithStockLegendary
+  - !append-once Vendors.TDO_PyrolithStockEpic
+  - !append-once Vendors.TDO_PyrolithStockLegendary
 
 Vendors.pac_wwd_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_PyrolithStockEpic
-  - !append Vendors.TDO_PyrolithStockLegendary
+  - !append-once Vendors.TDO_PyrolithStockEpic
+  - !append-once Vendors.TDO_PyrolithStockLegendary

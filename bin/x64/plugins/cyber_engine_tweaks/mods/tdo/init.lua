@@ -11,7 +11,7 @@ local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
 
-local TDO_VERSION = "v2.35"
+local TDO_VERSION = "v2.36"
 local ESR_VERSION = "d2026.6.11"
 
 local function lerpTier(v1, vTop, tier, total)
@@ -605,38 +605,8 @@ local function createSogimsuMechanic(nativeSettings, path, nuiTxt, config, defau
 	return handles
 end
 
-local function createCustomSandyShowHideMenu(nativeSettings, path, displayName, nuiTxt, config, showFlagKey, mechanicCreator)
-	nativeSettings.addSubcategory(path, displayName)
-
-	local mechanicHandles = nil
-
-	local function clearMechanic()
-		if mechanicHandles ~= nil then
-			for i=1, #mechanicHandles, 1 do
-				nativeSettings.removeOption(mechanicHandles[i])
-				mechanicHandles[i] = nil
-			end
-			mechanicHandles = nil
-		end
-	end
-
-	nativeSettings.addButton(path, nuiTxt.showHide.opt, nuiTxt.showHide.des, nuiTxt.showHide.button, nuiTxt.showHide.textSize, function()
-		if config[showFlagKey] == true then
-			config[showFlagKey] = false
-			clearMechanic()
-		else
-			config[showFlagKey] = true
-			mechanicHandles = mechanicCreator(nativeSettings, path)
-		end
-		saveSettings(config)
-	end, 1)
-
-	if config[showFlagKey] == true then
-		mechanicHandles = mechanicCreator(nativeSettings, path)
-	end
-end
-
-local function createVanillaSandyMenu(nativeSettings, path, displayName, nuiTxt, config, showFlagKey, enableConfigSection, enableLabel, enableDefault, mechanicCreator)
+local function createSandyMenu(nativeSettings, path, displayName, nuiTxt, config, showFlagKey, enableConfigSection, enableLabel, enableDefault, mechanicCreator, enableKey)
+	enableKey = enableKey or "enabled"
 	nativeSettings.addSubcategory(path, displayName)
 
 	local mechanicHandles = nil
@@ -664,8 +634,8 @@ local function createVanillaSandyMenu(nativeSettings, path, displayName, nuiTxt,
 		saveSettings(config)
 	end, 1)
 
-	nativeSettings.addSwitch(path, enableLabel.opt, enableLabel.des, config[enableConfigSection].enabled, enableDefault, function(state)
-		config[enableConfigSection].enabled = state
+	nativeSettings.addSwitch(path, enableLabel.opt, enableLabel.des, config[enableConfigSection][enableKey], enableDefault, function(state)
+		config[enableConfigSection][enableKey] = state
 		saveSettings(config)
 	end)
 
@@ -1149,7 +1119,7 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "HerbieCarYaw;", function() return config.vehicle.carYaw end)
 		Override("TDOConfig", "HerbieTraction;", function() return config.vehicle.traction end)
 
-		createVanillaSandyMenu(nativeSettings, "/tdo/shrike", nuiTxt.zetatech.header, nuiTxt, config, "zetatechShow", "zetatech", nuiTxt.zetatech.enabled, default.zetatech.enabled, function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/shrike", nuiTxt.zetatech.header, nuiTxt, config, "zetatechShow", "zetatech", nuiTxt.zetatech.enabled, default.zetatech.enabled, function(ns, p)
 			return createShrikeMechanic(ns, p, nuiTxt, config, default)
 		end)
 
@@ -1215,26 +1185,26 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "QuantumPlayerSlowTimePct;",  function() return config.quantum.playerSlowTimePct  end)
 		Override("TDOConfig", "QuantumMalwareSlowTimePct;", function() return config.quantum.malwareSlowTimePct end)
 
-		createVanillaSandyMenu(nativeSettings, "/tdo/tanto", nuiTxt.tanto.header, nuiTxt, config, "tantoShow", "tanto", nuiTxt.tanto.enabled, default.tanto.enabled, function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/tanto", nuiTxt.tanto.header, nuiTxt, config, "tantoShow", "tanto", nuiTxt.tanto.enabled, default.tanto.enabled, function(ns, p)
 			return createTantoMechanic(ns, p, nuiTxt, config, default)
 		end)
 
-		createVanillaSandyMenu(nativeSettings, "/tdo/warpDancer", nuiTxt.warpDancer.header, nuiTxt, config, "warpDancerShow", "warpDancer", nuiTxt.warpDancer.enabled, default.warpDancer.enabled, function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/warpDancer", nuiTxt.warpDancer.header, nuiTxt, config, "warpDancerShow", "warpDancer", nuiTxt.warpDancer.enabled, default.warpDancer.enabled, function(ns, p)
 			return createWarpDancerMechanic(ns, p, nuiTxt, config, default)
 		end)
 
-		createVanillaSandyMenu(nativeSettings, "/tdo/falcon", nuiTxt.falcon.header, nuiTxt, config, "falconShow", "falcon", nuiTxt.falcon.enabled, default.falcon.enabled, function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/falcon", nuiTxt.falcon.header, nuiTxt, config, "falconShow", "falcon", nuiTxt.falcon.enabled, default.falcon.enabled, function(ns, p)
 			return createFalconMechanic(ns, p, nuiTxt, config, default)
 		end)
 
-		createVanillaSandyMenu(nativeSettings, "/tdo/apogee", nuiTxt.apogee.header, nuiTxt, config, "apogeeShow", "apogee", nuiTxt.apogee.enabled, default.apogee.enabled, function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/apogee", nuiTxt.apogee.header, nuiTxt, config, "apogeeShow", "apogee", nuiTxt.apogee.enabled, default.apogee.enabled, function(ns, p)
 			return createApogeeMechanic(ns, p, nuiTxt, config, default)
 		end)
 
 
-		createCustomSandyShowHideMenu(nativeSettings, "/tdo/fusillade", nuiTxt.fusillade.header, nuiTxt, config, "fusilladeShow", function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/fusillade", nuiTxt.fusillade.header, nuiTxt, config, "fusilladeShow", "fusillade", { opt = GetLocalizedTextByKey("DisplayName-TDO-EnableOS"), des = GetLocalizedTextByKey("Description-TDO-OSAvailable") }, default.fusillade.available, function(ns, p)
 			return createFusilladeMechanic(ns, p, nuiTxt, config, default)
-		end)
+		end, "available")
 
 		Override("TDOConfig", "FusilladeAmmoRefillMaxChancePct;", function() return config.fusillade.ammoRefillMaxChancePct end)
 		Override("TDOConfig", "FusilladeTimeScale;", function() return config.fusillade.timeScale end)
@@ -1249,9 +1219,9 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "FusilladeRecoilAmount;", function() return config.fusillade.recoil end)
 
 
-		createCustomSandyShowHideMenu(nativeSettings, "/tdo/juggernaut", nuiTxt.juggernaut.header, nuiTxt, config, "juggernautShow", function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/juggernaut", nuiTxt.juggernaut.header, nuiTxt, config, "juggernautShow", "juggernaut", { opt = GetLocalizedTextByKey("DisplayName-TDO-EnableOS"), des = GetLocalizedTextByKey("Description-TDO-OSAvailable") }, default.juggernaut.available, function(ns, p)
 			return createJuggernautMechanic(ns, p, nuiTxt, config, default)
-		end)
+		end, "available")
 
 		Override("TDOConfig", "JuggernautLockDurationMin;", function() return config.juggernaut.lockDurationMin end)
 		Override("TDOConfig", "JuggernautLockDurationMax;", function() return config.juggernaut.lockDurationMax end)
@@ -1263,9 +1233,9 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "JuggernautCooldownMax;", function() return config.juggernaut.cooldownMax end)
 
 
-		createCustomSandyShowHideMenu(nativeSettings, "/tdo/kurosawa", nuiTxt.kurosawa.header, nuiTxt, config, "kurosawaShow", function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/kurosawa", nuiTxt.kurosawa.header, nuiTxt, config, "kurosawaShow", "kurosawa", { opt = GetLocalizedTextByKey("DisplayName-TDO-EnableOS"), des = GetLocalizedTextByKey("Description-TDO-OSAvailable") }, default.kurosawa.available, function(ns, p)
 			return createKurosawaMechanic(ns, p, nuiTxt, config, default)
-		end)
+		end, "available")
 
 		Override("TDOConfig", "KurosawaIndividualSlowMult;", function() return config.kurosawa.enemySlowMult end)
 		Override("TDOConfig", "KurosawaDuration;", function() return config.kurosawa.duration end)
@@ -1276,9 +1246,9 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "KurosawaPOPHealPctPlus;", function() return config.kurosawa.healMax end)
 
 
-		createCustomSandyShowHideMenu(nativeSettings, "/tdo/pyrolith", nuiTxt.pyrolith.header, nuiTxt, config, "pyrolithShow", function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/pyrolith", nuiTxt.pyrolith.header, nuiTxt, config, "pyrolithShow", "pyrolith", { opt = GetLocalizedTextByKey("DisplayName-TDO-EnableOS"), des = GetLocalizedTextByKey("Description-TDO-OSAvailable") }, default.pyrolith.available, function(ns, p)
 			return createPyrolithMechanic(ns, p, nuiTxt, config, default)
-		end)
+		end, "available")
 
 		Override("TDOConfig", "PyrolithDurationMin;", function() return config.pyrolith.durationMin end)
 		Override("TDOConfig", "PyrolithDurationMax;", function() return config.pyrolith.durationMax end)
@@ -1289,9 +1259,9 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "PyrolithCooldownMin;", function() return config.pyrolith.cooldownMin end)
 		Override("TDOConfig", "PyrolithCooldownMax;", function() return config.pyrolith.cooldownMax end)
 
-		createCustomSandyShowHideMenu(nativeSettings, "/tdo/quantum", nuiTxt.quantum.header, nuiTxt, config, "quantumShow", function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/quantum", nuiTxt.quantum.header, nuiTxt, config, "quantumShow", "quantum", { opt = GetLocalizedTextByKey("DisplayName-TDO-EnableOS"), des = GetLocalizedTextByKey("Description-TDO-QuantumAvailable") }, default.quantum.available, function(ns, p)
 			return createQuantumMechanic(ns, p, nuiTxt, config, default)
-		end)
+		end, "available")
 
 		Override("TDOConfig", "QuantumMaxCharges;", function() return config.quantum.maxCharges end)
 		Override("TDOConfig", "QuantumPlotFreezeStrength;", function() return config.quantum.plotFreezeStrength end)
@@ -1306,9 +1276,9 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "QuantumMalwareFreezeDurMin;", function() return config.quantum.malwareFreezeDurMin end)
 		Override("TDOConfig", "QuantumMalwareFreezeDurMax;", function() return config.quantum.malwareFreezeDurMax end)
 
-		createCustomSandyShowHideMenu(nativeSettings, "/tdo/sogimsu", nuiTxt.sogimsu.header, nuiTxt, config, "sogimsuShow", function(ns, p)
+		createSandyMenu(nativeSettings, "/tdo/sogimsu", nuiTxt.sogimsu.header, nuiTxt, config, "sogimsuShow", "sogimsu", { opt = GetLocalizedTextByKey("DisplayName-TDO-EnableOS"), des = GetLocalizedTextByKey("Description-TDO-OSAvailable") }, default.sogimsu.available, function(ns, p)
 			return createSogimsuMechanic(ns, p, nuiTxt, config, default)
-		end)
+		end, "available")
 
 		Override("TDOConfig", "SogimsuDurationMin;", function() return config.sogimsu.durationMin end)
 		Override("TDOConfig", "SogimsuDurationMax;", function() return config.sogimsu.durationMax end)
@@ -1548,6 +1518,13 @@ registerForEvent("onInit", function()
 		config = require("config/userConfig.lua")
 		print("[TDO] CAUTION: Native Settings Not Found")
 	end
+
+	TweakDB:SetFlat("Prereqs.TDO_FusilladeAvailable.available", config.fusillade.available)
+	TweakDB:SetFlat("Prereqs.TDO_JuggernautAvailable.available", config.juggernaut.available)
+	TweakDB:SetFlat("Prereqs.TDO_KurosawaAvailable.available", config.kurosawa.available)
+	TweakDB:SetFlat("Prereqs.TDO_PyrolithAvailable.available", config.pyrolith.available)
+	TweakDB:SetFlat("Prereqs.TDO_QuantumAvailable.available", config.quantum.available)
+	TweakDB:SetFlat("Prereqs.TDO_SogimsuAvailable.available", config.sogimsu.available)
 
 	local turnX = CName.new("TurnX")
 	Observe("PlayerPuppet", "OnAction", function(this, action)

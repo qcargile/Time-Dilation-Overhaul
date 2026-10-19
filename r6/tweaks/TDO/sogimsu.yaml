@@ -466,34 +466,36 @@ StatusEffects.TDO_SogimsuWatchdogCamo_VisionBlockerEffector:
 
 Vendors.TDO_SogimsuStock$(tier):
   $instances:
-    - { tier: Rare }
-    - { tier: Epic }
-    - { tier: Legendary }
+    - { tier: Rare, prereq: LootPrereqs.RareCWLevelAvailabilityAtVendor }
+    - { tier: Epic, prereq: LootPrereqs.EpicCWLevelAvailabilityAtVendor }
+    - { tier: Legendary, prereq: Prereqs.TDO_OSLevel40 }
   $type: gamedataVendorItem_Record
   item: Items.TDO_Sogimsu$(tier)
   generationPrereqs:
     - Prereqs.AfterFirstVisitAtVictor
-    - LootPrereqs.$(tier)CWLevelAvailabilityAtVendor
+    - $(prereq)
+    - Prereqs.TDO_SogimsuAvailable
   quantity:
     - Vendors.Always_Present
 
 Vendors.wat_lch_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_SogimsuStockRare
-  - !append Vendors.TDO_SogimsuStockEpic
-  - !append Vendors.TDO_SogimsuStockLegendary
+  - !append-once Vendors.TDO_SogimsuStockRare
+  - !append-once Vendors.TDO_SogimsuStockEpic
+  - !append-once Vendors.TDO_SogimsuStockLegendary
 
 Vendors.wat_kab_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_SogimsuStockRare
-  - !append Vendors.TDO_SogimsuStockEpic
+  - !append-once Vendors.TDO_SogimsuStockRare
+  - !append-once Vendors.TDO_SogimsuStockEpic
+  - !append-once Vendors.TDO_SogimsuStockLegendary
 
 Vendors.cz_monument_ripperdoc_farida.itemStock:
-  - !append Vendors.TDO_SogimsuStockRare
-  - !append Vendors.TDO_SogimsuStockEpic
-  - !append Vendors.TDO_SogimsuStockLegendary
+  - !append-once Vendors.TDO_SogimsuStockRare
+  - !append-once Vendors.TDO_SogimsuStockEpic
+  - !append-once Vendors.TDO_SogimsuStockLegendary
 
 Vendors.wbr_jpn_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_SogimsuStockEpic
-  - !append Vendors.TDO_SogimsuStockLegendary
+  - !append-once Vendors.TDO_SogimsuStockEpic
+  - !append-once Vendors.TDO_SogimsuStockLegendary
 
 Vendors.hey_spr_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_SogimsuStockLegendary
+  - !append-once Vendors.TDO_SogimsuStockLegendary

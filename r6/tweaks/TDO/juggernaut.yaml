@@ -182,6 +182,17 @@ Items.TDO_Juggernaut$(tier):
       statPools: []
       stats: []
 
+StatusEffects.TDO_JuggernautRestrictions:
+  $base: GameplayRestriction.NoCombat
+  maxStacks: RTDB.StatusEffect_inline0
+  savable: False
+  gameplayTags:
+    - GameplayRestriction
+    - NoWeapons
+    - NoQuickMelee
+    - NoQuickHacks
+    - NoGrenadeOrGadget
+
 StatusEffects.TDO_JuggernautActive:
   $type: gamedataStatusEffect_Record
   duration: StatusEffects.TDO_JuggernautActive_Dur
@@ -442,24 +453,26 @@ StatusEffects.TDO_JuggernautCooldown_T5_DurMod:
 
 Vendors.TDO_JuggernautStock$(tier):
   $instances:
-    - { tier: Rare }
-    - { tier: Epic }
-    - { tier: Legendary }
+    - { tier: Rare, prereq: LootPrereqs.RareCWLevelAvailabilityAtVendor }
+    - { tier: Epic, prereq: LootPrereqs.EpicCWLevelAvailabilityAtVendor }
+    - { tier: Legendary, prereq: Prereqs.TDO_OSLevel40 }
   $type: gamedataVendorItem_Record
   item: Items.TDO_Juggernaut$(tier)
   generationPrereqs:
     - Prereqs.AfterFirstVisitAtVictor
-    - LootPrereqs.$(tier)CWLevelAvailabilityAtVendor
+    - $(prereq)
+    - Prereqs.TDO_JuggernautAvailable
   quantity:
     - Vendors.Always_Present
 
 Vendors.wat_lch_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_JuggernautStockRare
-  - !append Vendors.TDO_JuggernautStockEpic
+  - !append-once Vendors.TDO_JuggernautStockRare
+  - !append-once Vendors.TDO_JuggernautStockEpic
+  - !append-once Vendors.TDO_JuggernautStockLegendary
 
 Vendors.cz_monument_ripperdoc_farida.itemStock:
-  - !append Vendors.TDO_JuggernautStockEpic
-  - !append Vendors.TDO_JuggernautStockLegendary
+  - !append-once Vendors.TDO_JuggernautStockEpic
+  - !append-once Vendors.TDO_JuggernautStockLegendary
 
 Vendors.hey_spr_ripperdoc_01.itemStock:
-  - !append Vendors.TDO_JuggernautStockLegendary
+  - !append-once Vendors.TDO_JuggernautStockLegendary

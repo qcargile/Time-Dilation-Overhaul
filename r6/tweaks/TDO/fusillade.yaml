@@ -274,12 +274,16 @@ Vendors.TDO_FusilladeStock:
   item: Items.TDO_Fusillade
   generationPrereqs:
     - Prereqs.AfterFirstVisitAtVictor
-    - LootPrereqs.RareCWLevelAvailabilityAtVendor
+    - Prereqs.TDO_OSLevel20
+    - Prereqs.TDO_FusilladeAvailable
   quantity:
     - Vendors.Always_Present
 
 Vendors.cz_monument_ripperdoc_farida.itemStock:
-  - !append Vendors.TDO_FusilladeStock
+  - !append-once Vendors.TDO_FusilladeStock
+
+Vendors.wat_lch_ripperdoc_01.itemStock:
+  - !append-once Vendors.TDO_FusilladeStock
 
 Items.TDO_FusilladePlus:
   $base: Items.TDO_Fusillade
