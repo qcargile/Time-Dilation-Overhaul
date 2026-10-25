@@ -111,11 +111,16 @@ public func TDO_Quantum_ClearMarker(player: ref<PlayerPuppet>) -> Void {
 
 public class TDO_QuantumLandingSoundCallback extends DelayCallback {
   public let player: wref<PlayerPuppet>;
+  public let requestedDestination: Vector4;
+  public let departurePosition: Vector4;
 
   public func Call() -> Void {
     let p: ref<PlayerPuppet> = this.player;
     if !IsDefined(p) {
       return;
+    }
+    if TDOConfig.EnableDebugLog() && TDOConfig.DebugLogLevel() >= 4 {
+      TDOTrace("QuantumLanding", "departure=" + TDO_Quantum_Vec3Str(this.departurePosition) + " requested=" + TDO_Quantum_Vec3Str(this.requestedDestination) + " observed=" + TDO_Quantum_Vec3Str(p.GetWorldPosition()));
     }
     GameObject.PlaySoundEvent(p, n"grenade_emp");
   }
@@ -164,6 +169,7 @@ public func TDO_Quantum_EndPlot(player: ref<PlayerPuppet>) -> Void {
 }
 
 public func TDO_Quantum_ExecuteTeleport(player: ref<PlayerPuppet>) -> Bool {
+  TDO_Quantum_UpdateAim(player);
   if !player.m_tdoQDestValid {
     TDODebug("QuantumTeleport", "execute BLOCKED: dest not valid");
     return false;
@@ -171,10 +177,13 @@ public func TDO_Quantum_ExecuteTeleport(player: ref<PlayerPuppet>) -> Bool {
   TDODebug("QuantumTeleport", "execute teleport to " + TDO_Quantum_Vec3Str(player.m_tdoQDest));
   let dest: Vector4 = player.m_tdoQDest;
   let rot: EulerAngles = player.m_tdoQDestRot;
+  let departure: Vector4 = player.GetWorldPosition();
   GameInstance.GetTeleportationFacility(player.GetGame()).Teleport(player, dest, rot);
   GameObject.PlaySoundEvent(player, n"grenade_sonic_bubble_core");
   let landingCb: ref<TDO_QuantumLandingSoundCallback> = new TDO_QuantumLandingSoundCallback();
   landingCb.player = player;
+  landingCb.requestedDestination = dest;
+  landingCb.departurePosition = departure;
   GameInstance.GetDelaySystem(player.GetGame()).DelayCallback(landingCb, 0.3, false);
   TDOInfo("QuantumTeleport", "teleport executed");
   TDO_Quantum_SpawnWarpFx(player, dest);
@@ -198,7 +207,7 @@ public func TDO_Quantum_UpdateAim(player: ref<PlayerPuppet>) -> Void {
     player.m_tdoQDest = hitPos;
     player.m_tdoQDestRot = TDO_Quantum_LevelFacing(player, TDO_Quantum_GetCameraForward(player));
     player.m_tdoQDestValid = true;
-    TDO_Quantum_UpdateMarker(player, aimPos);
+    TDO_Quantum_UpdateMarker(player, hitPos);
   } else {
     player.m_tdoQDestValid = false;
     TDO_Quantum_ClearMarker(player);

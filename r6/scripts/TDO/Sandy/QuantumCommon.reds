@@ -37,6 +37,9 @@ public func TDO_Quantum_SnapToGround(qs: ref<SpatialQueriesSystem>, raw: Vector4
   endPos.Z -= TDOConfig.QuantumTeleportGroundSearchBudget();
   let tr: TraceResult;
   let hit: Bool = qs.SyncRaycastByCollisionGroup(startPos, endPos, n"Static", tr, true, false);
+  if TDOConfig.EnableDebugLog() && TDOConfig.DebugLogLevel() >= 4 {
+    TDOTrace("QuantumGround", "start=" + TDO_Quantum_Vec3Str(startPos) + " end=" + TDO_Quantum_Vec3Str(endPos) + " hit=" + ToString(hit) + " position=" + TDO_Quantum_Vec3Str(Cast<Vector4>(tr.position)) + " normal=" + TDO_Quantum_Vec3Str(Cast<Vector4>(tr.normal)));
+  }
   if !hit {
     return false;
   }
@@ -65,6 +68,9 @@ public func TDO_Quantum_HasCapsuleSpace(qs: ref<SpatialQueriesSystem>, foot: Vec
   QueryFilter.AddGroup(filter, n"Terrain");
   let overlapResult: TraceResult;
   let overlap: Bool = qs.OverlapByQueryFilter(halfExt, boxCenter, identity, filter, overlapResult);
+  if TDOConfig.EnableDebugLog() && TDOConfig.DebugLogLevel() >= 4 {
+    TDOTrace("QuantumClearance", "foot=" + TDO_Quantum_Vec3Str(foot) + " center=" + TDO_Quantum_Vec3Str(boxCenter) + " halfExtents=" + TDO_Quantum_Vec3Str(halfExt) + " overlap=" + ToString(overlap));
+  }
   return !overlap;
 }
 
@@ -80,28 +86,32 @@ public func TDO_Quantum_TryCandidate(player: ref<PlayerPuppet>, qs: ref<SpatialQ
     return false;
   }
   let navResult: NavigationFindPointResult = navSys.FindPointInSphereForCharacter(grounded, TDOConfig.QuantumTeleportNavmeshSnapRadius(), player);
+  if TDOConfig.EnableDebugLog() && TDOConfig.DebugLogLevel() >= 4 {
+    TDOTrace("QuantumNavigation", "ground=" + TDO_Quantum_Vec3Str(grounded) + " status=" + ToString(EnumInt(navResult.status)) + " point=" + TDO_Quantum_Vec3Str(navResult.point));
+  }
   if !Equals(navResult.status, worldNavigationRequestStatus.OK) {
     TDOTrace("QuantumSafety", "navmesh status=" + ToString(EnumInt(navResult.status)) + " rejected");
     return false;
   }
   grounded = navResult.point;
   TDOTrace("QuantumSafety", "navmesh snap OK");
+  grounded.Z += lift;
   if !TDO_Quantum_HasCapsuleSpace(qs, grounded) {
     TDOTrace("QuantumSafety", "capsule overlap rejected");
     return false;
   }
-  grounded.Z += lift;
   finalPos = grounded;
   return true;
 }
 
 public func TDO_Quantum_TryDirectCandidate(qs: ref<SpatialQueriesSystem>, raw: Vector4, lift: Float, out finalPos: Vector4) -> Bool {
-  if !TDO_Quantum_HasCapsuleSpace(qs, raw) {
+  let candidate: Vector4 = raw;
+  candidate.Z += lift;
+  if !TDO_Quantum_HasCapsuleSpace(qs, candidate) {
     TDOTrace("QuantumSafety", "direct capsule overlap rejected");
     return false;
   }
-  finalPos = raw;
-  finalPos.Z += lift;
+  finalPos = candidate;
   return true;
 }
 
@@ -126,6 +136,15 @@ public func TDO_Quantum_ResolveAimPoint(player: ref<PlayerPuppet>, maxRange: Flo
   let lineEnd: Vector4 = camPos + (camFwd * maxRange);
   let tr: TraceResult;
   let hit: Bool = qs.SyncRaycastByCollisionPreset(camPos, lineEnd, n"World Static", tr, true);
+  if TDOConfig.EnableDebugLog() && TDOConfig.DebugLogLevel() >= 4 {
+    let referenceFilter: QueryFilter;
+    QueryFilter.AddGroup(referenceFilter, n"Static");
+    QueryFilter.AddGroup(referenceFilter, n"Terrain");
+    QueryFilter.AddGroup(referenceFilter, n"PlayerBlocker");
+    let referenceTrace: TraceResult;
+    let referenceHit: Bool = qs.SyncRaycastByQueryFilter(camPos, lineEnd, referenceFilter, referenceTrace, true, false);
+    TDOTrace("QuantumAimReference", "primaryHit=" + ToString(hit) + " primaryPosition=" + TDO_Quantum_Vec3Str(Cast<Vector4>(tr.position)) + " primaryNormal=" + TDO_Quantum_Vec3Str(Cast<Vector4>(tr.normal)) + " referenceHit=" + ToString(referenceHit) + " referencePosition=" + TDO_Quantum_Vec3Str(Cast<Vector4>(referenceTrace.position)) + " referenceNormal=" + TDO_Quantum_Vec3Str(Cast<Vector4>(referenceTrace.normal)));
+  }
   let raw: Vector4;
   if hit {
     raw = Cast<Vector4>(tr.position);
@@ -140,6 +159,9 @@ public func TDO_Quantum_ResolveAimPoint(player: ref<PlayerPuppet>, maxRange: Flo
     directAllowed = Vector4.Dot(normal, new Vector4(0.0, 0.0, 1.0, 0.0)) >= TDOConfig.QuantumTeleportFloorNormalMinZ();
   }
   if directAllowed && TDO_Quantum_TryDirectCandidate(qs, raw, lift, candidate) {
+    if TDOConfig.EnableDebugLog() && TDOConfig.DebugLogLevel() >= 4 {
+      TDOTrace("QuantumSafety", "direct accepted hit=" + ToString(hit) + " raw=" + TDO_Quantum_Vec3Str(raw) + " destination=" + TDO_Quantum_Vec3Str(candidate));
+    }
     aimPos = raw;
     hitPos = candidate;
     return true;
