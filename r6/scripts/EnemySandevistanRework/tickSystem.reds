@@ -195,9 +195,10 @@ public class TickSystem extends ScriptableSystem {
         let magFull = WeaponObject.IsMagazineFull(npcWeapon);
         let hasShotgun = npcWeapon.IsShotgun();
         let pistolOrRevolver = WeaponObject.IsOfType(npcWeapon.GetItemID(), gamedataItemType.Wea_Revolver) || WeaponObject.IsOfType(npcWeapon.GetItemID(), gamedataItemType.Wea_Handgun);
-        let bb: ref<IBlackboard> =  GameInstance.GetBlackboardSystem(GetGameInstance()).GetLocalInstanced(puppet.GetEntityID(), GetAllBlackboardDefs().PlayerStateMachine);
+        let bb: ref<IBlackboard> = this.player.GetPlayerStateMachineBlackboard();
         let playerNotLooking = !IsLookingAtTarget(this.player, puppet, 135);
-        let playerReloadingWeapon = Equals(bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.Weapon), Cast<Int32>(EnumValueFromString("gamePSMRangedWeaponStates", "Reload")));
+        let reloadState: Int32 = Cast<Int32>(EnumValueFromString("gamePSMRangedWeaponStates", "Reload"));
+        let playerReloadingWeapon = bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.RightWeapon) == reloadState || bb.GetInt(GetAllBlackboardDefs().PlayerStateMachine.LeftWeapon) == reloadState;
         let playerLowHealth = GameInstance.GetStatPoolsSystem(this.player.GetGame()).GetStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.Health) < 30.0;
         let kerenzikovDuration = AISubActionApplyTimeDilation_Record_Implementation.GetBaseKerenzikovDuration(puppet);
         let playerHasSandiCharges = this.statPoolSystem.GetStatPoolValue(Cast<StatsObjectID>(this.player.GetEntityID()), gamedataStatPoolType.SandevistanCharge) > 50.0;

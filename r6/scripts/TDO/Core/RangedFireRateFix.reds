@@ -135,8 +135,11 @@ public func TDO_Fusillade_TryRefill(player: ref<PlayerPuppet>, rampFraction: Flo
   weapon.QueueEvent(refundEvent);
 }
 
-@wrapMethod(WeaponTransition)
+@wrapMethod(DefaultTransition)
 protected final const func CalcCycleTimeDeltaFactor(cycleTime: Float, scriptInterface: ref<StateGameScriptInterface>) -> Float {
+  if !IsDefined(this as WeaponTransition) && !IsDefined(this as ShootTransition) {
+    return wrappedMethod(cycleTime, scriptInterface);
+  };
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   let globalTimeDilation: Float = scriptInterface.GetTimeSystem().GetActiveTimeDilation();
   if globalTimeDilation <= 0.00 || globalTimeDilation >= 1.00 {
