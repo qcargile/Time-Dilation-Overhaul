@@ -302,7 +302,7 @@ protected cb func OnTDO_ApogeeTickEvent(evt: ref<TDO_ApogeeTickEvent>) -> Bool {
   let reflexBonus: Float = MinF(reflexes * TDOConfig.ApogeeReflexSurvivalPerPoint(), TDOConfig.ApogeeReflexSurvivalCap());
   let restingHP: Float = stats.GetStatValue(playerID, gamedataStatType.Health);
   let damage: Float = restingHP / MaxF(deathTime + reflexBonus, TDOConfig.ApogeeTickInterval()) * elapsed;
-  if damage > 0.0 {
+  if TDOConfig.DOTEnabled() && damage > 0.0 {
     pools.RequestChangingStatPoolValue(playerID, gamedataStatPoolType.Health, -damage, null, false, false);
   }
 

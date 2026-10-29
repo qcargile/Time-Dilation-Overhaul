@@ -5,7 +5,7 @@ return {
             header = "Sandevistan DOT (Biological Strain)",
             enabled = {
                 opt = "Enabled",
-                des = "Activating a Sandevistan drains your health over time. Stronger slows drain faster; your attunement attribute reduces it.",
+                des = "Controls biological strain for all Sandevistans, including Apogee. Off stops strain damage without disabling the operating system's other effects. Apogee uses its own survival-time settings; other Sandys use the settings below.",
             },
             baseRatePct = {
                 opt = "Base DOT Rate",
@@ -147,7 +147,7 @@ return {
             header = "Militech \"Apogee\" — Stillpoint",
             enabled = {
                 opt = "Enabled",
-                des = "Master toggle for the Apogee Sandevistan. Off reverts Apogee to vanilla card text and gameplay. On enables Stillpoint: time slows toward 99% as you hold still and surges back toward real-time as you move or act. Biological strain drains Health immediately, with stronger slow draining it faster. Infinite duration. Requires a full game relaunch.",
+                des = "Master toggle for the Apogee Sandevistan. Off reverts Apogee to vanilla card text and gameplay. On enables Stillpoint: time slows toward 99% as you hold still and surges back toward real-time as you move or act. With Biological Strain enabled, Health drains immediately, with stronger slow draining it faster. Turning Biological Strain off stops that drain. Infinite duration. Requires a full game relaunch.",
             },
             rechargeMin = { opt = "Cooldown at Base", optUnit = " (sec)", des = "Cooldown at Apogee base (Tier 1)." },
             rechargeMax = { opt = "Cooldown at PlusPlus", optUnit = " (sec)", des = "Cooldown at ApogeePlusPlus (Tier 3)." },
@@ -157,10 +157,10 @@ return {
             critDmgMax = { opt = "Crit Damage at PlusPlus", optUnit = " (%)", des = "Crit Damage bonus while Apogee is equipped, at Tier 3." },
             headshotMin = { opt = "Headshot Damage at Base", optUnit = " (%)", des = "Headshot Damage bonus while Apogee is equipped, at Tier 1." },
             headshotMax = { opt = "Headshot Damage at PlusPlus", optUnit = " (%)", des = "Headshot Damage bonus while Apogee is equipped, at Tier 3." },
-            stillSurvivalSec = { opt = "Still Survival", optUnit = " (sec)", des = "Time from full Health to flatline while holding completely still, before the Reflexes bonus." },
-            lookSurvivalSec = { opt = "Look Survival", optUnit = " (sec)", des = "Time from full Health to flatline while only moving the camera, before the Reflexes bonus." },
-            aimSurvivalSec = { opt = "Aim Survival", optUnit = " (sec)", des = "Time from full Health to flatline while aiming or blocking, before the Reflexes bonus." },
-            actionSurvivalSec = { opt = "Action Survival", optUnit = " (sec)", des = "Time from full Health to flatline while moving, firing, reloading, or attacking, before the Reflexes bonus." },
+            stillSurvivalSec = { opt = "Still Survival", optUnit = " (sec)", des = "With Biological Strain enabled, time from full Health to flatline while holding completely still, before the Reflexes bonus." },
+            lookSurvivalSec = { opt = "Look Survival", optUnit = " (sec)", des = "With Biological Strain enabled, time from full Health to flatline while only moving the camera, before the Reflexes bonus." },
+            aimSurvivalSec = { opt = "Aim Survival", optUnit = " (sec)", des = "With Biological Strain enabled, time from full Health to flatline while aiming or blocking, before the Reflexes bonus." },
+            actionSurvivalSec = { opt = "Action Survival", optUnit = " (sec)", des = "With Biological Strain enabled, time from full Health to flatline while moving, firing, reloading, or attacking, before the Reflexes bonus." },
             reflexSurvivalPerPoint = { opt = "Reflex Survival", optUnit = " (sec/pt)", des = "Extra survival time in every Stillpoint state per Reflexes point." },
             reflexSurvivalCap = { opt = "Reflex Survival Cap", optUnit = " (sec)", des = "Maximum survival time added by Reflexes." },
         },
