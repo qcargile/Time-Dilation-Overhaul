@@ -1,6 +1,11 @@
+import Phoenicia.EnemySandevistanRework.Configurations.*
+
 @wrapMethod(NPCPuppet)
 protected cb func OnStatusEffectRemoved(evt: ref<RemoveStatusEffect>) -> Bool {
     let originalResult = wrappedMethod(evt);
+    if !ESRConfig.Enabled() {
+        return originalResult;
+    }
     let gmplTags = evt.staticData.GameplayTags();
 
     if(ArrayContains(gmplTags, n"ESR_Sandi_Buff") && !StatusEffectSystem.ObjectHasStatusEffectWithTag(this, n"ESR_Sandi_Buff")) {

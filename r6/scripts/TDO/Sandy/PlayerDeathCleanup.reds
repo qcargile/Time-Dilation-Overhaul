@@ -33,6 +33,8 @@ protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
   }
 
   this.TDO_DOT_Cancel();
+  this.m_tdoKurosawaSession += 1u;
+  TDO_Kurosawa_End(this);
 
   let i: Int32 = 0;
   while i < ArraySize(this.m_tdoTantoCritMarkedNPCs) {

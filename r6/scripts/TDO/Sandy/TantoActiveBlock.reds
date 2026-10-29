@@ -141,7 +141,9 @@ public func TDO_Tanto_TryTeleport(player: ref<PlayerPuppet>) -> Bool {
     TDODebug("Tanto", "Phantom Strike: no valid target in range");
     return true;
   }
-  TDO_Tanto_ExecuteTeleport(player, target);
+  if !TDO_Tanto_ExecuteTeleport(player, target) {
+    return true;
+  }
   system.ConsumeCharge(player);
   if system.GetCharges(player) <= 0 {
     StatusEffectHelper.RemoveStatusEffect(player, t"StatusEffects.TDO_TantoChargeIndicator");
@@ -166,7 +168,7 @@ public func TDO_Tanto_FindTeleportTarget(player: ref<PlayerPuppet>, range: Float
   return npc;
 }
 
-public func TDO_Tanto_ExecuteTeleport(player: ref<PlayerPuppet>, target: ref<NPCPuppet>) -> Void {
+public func TDO_Tanto_ExecuteTeleport(player: ref<PlayerPuppet>, target: ref<NPCPuppet>) -> Bool {
   let targetPos: Vector4 = target.GetWorldPosition();
   let targetForward: Vector4 = target.GetWorldForward();
   targetForward.Z = 0.0;
@@ -206,17 +208,14 @@ public func TDO_Tanto_ExecuteTeleport(player: ref<PlayerPuppet>, target: ref<NPC
             finalPos = candidate;
             accepted = true;
             TDODebug("Tanto", "Phantom Strike: behind/front/right blocked, used left-side fallback");
-          } else {
-            finalPos = targetPos;
-            accepted = true;
-            TDOWarn("Tanto", "Phantom Strike: all 4 sides blocked, landing on target position (overlap accepted)");
           }
         }
       }
     }
   }
   if !accepted {
-    TDOWarn("Tanto", "Phantom Strike: no SpatialQueriesSystem, using raw behind-target");
+    TDODebug("Tanto", "Phantom Strike refused: no verified destination");
+    return false;
   }
 
   let faceDir: Vector4 = targetPos - finalPos;
@@ -252,6 +251,7 @@ public func TDO_Tanto_ExecuteTeleport(player: ref<PlayerPuppet>, target: ref<NPC
   }
 
   StatusEffectHelper.ApplyStatusEffect(player, t"StatusEffects.TDO_TantoTeleportCrit");
+  return true;
 }
 
 @wrapMethod(DamageSystem)

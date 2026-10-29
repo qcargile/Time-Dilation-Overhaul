@@ -608,7 +608,7 @@ StatusEffects.TDO_QuantumSpareCharge_MaxMod:
   $type: gamedataConstantStatModifier_Record
   modifierType: Additive
   statType: BaseStats.MaxStacks
-  value: 2
+  value: 10
 
 StatusEffects.TDO_QuantumMalware:
   $type: gamedataStatusEffect_Record

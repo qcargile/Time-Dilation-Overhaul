@@ -183,7 +183,7 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
   }
 
   let npc: ref<NPCPuppet> = lookAt as NPCPuppet;
-  if !IsDefined(npc) || npc.IsDead() || ScriptedPuppet.IsDefeated(lookAt) || GameObject.IsFriendlyTowardsPlayer(npc) || ScriptedPuppet.IsPlayerCompanion(npc) {
+  if !TDO_Shrike_IsEligibleTarget(npc) {
     this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
@@ -381,6 +381,10 @@ public func TDO_Shrike_HasLOSToTarget(player: ref<PlayerPuppet>, targetPos: Vect
   return !hitStatic && !hitDynamic;
 }
 
+public func TDO_Shrike_IsEligibleTarget(npc: ref<NPCPuppet>) -> Bool {
+  return IsDefined(npc) && npc.IsEnemy() && !npc.IsDead() && !ScriptedPuppet.IsDefeated(npc) && !ScriptedPuppet.IsUnconscious(npc) && !GameObject.IsFriendlyTowardsPlayer(npc) && !ScriptedPuppet.IsPlayerCompanion(npc);
+}
+
 public func TDO_Shrike_PickBestMarkIndex(player: ref<PlayerPuppet>) -> Int32 {
   let gi: GameInstance = player.GetGame();
   let playerPos: Vector4 = player.GetWorldPosition();
@@ -393,7 +397,7 @@ public func TDO_Shrike_PickBestMarkIndex(player: ref<PlayerPuppet>) -> Int32 {
     let target: ref<GameObject> = entity as GameObject;
     if IsDefined(target) {
       let npc: ref<NPCPuppet> = target as NPCPuppet;
-      if IsDefined(npc) && !npc.IsDead() && !ScriptedPuppet.IsDefeated(target) {
+      if TDO_Shrike_IsEligibleTarget(npc) {
         let chestPos: Vector4 = TDO_Shrike_GetTargetChestPos(target);
         if TDO_Shrike_HasLOSToTarget(player, chestPos) {
           let dist: Float = Vector4.Distance(playerPos, target.GetWorldPosition());
@@ -442,7 +446,7 @@ public func TDO_Shrike_SnapToMarkAtIndex(player: ref<PlayerPuppet>, idx: Int32) 
   let markID: EntityID = player.m_tdoShrikeMarkedNPCs[idx];
   let entity: wref<Entity> = GameInstance.FindEntityByID(gi, markID);
   let target: ref<GameObject> = entity as GameObject;
-  if !IsDefined(target) {
+  if !TDO_Shrike_IsEligibleTarget(target as NPCPuppet) {
     return;
   }
   let chestPos: Vector4 = TDO_Shrike_GetTargetChestPos(target);
@@ -461,8 +465,7 @@ public func TDO_Shrike_ConsumeMark(player: ref<PlayerPuppet>, idx: Int32) -> Voi
 
   if IsDefined(target) {
     let npc: ref<NPCPuppet> = target as NPCPuppet;
-    let isDead: Bool = IsDefined(npc) && npc.IsDead();
-    if !isDead && IsDefined(npc) {
+    if TDO_Shrike_IsEligibleTarget(npc) {
       let pct: Float = TDO_Shrike_GetExecuteDamagePct(target);
       if pct >= 100.0 {
         npc.Kill(player, false, false);

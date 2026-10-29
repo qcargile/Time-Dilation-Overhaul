@@ -183,7 +183,7 @@ public func TDO_Juggernaut_InjectActiveCardLiveValues(itemTDB: TweakDBID, dataPa
   }
   fv[0] = TDO_Juggernaut_LockDurForTier(tier);
   fv[1] = TDO_Juggernaut_MaxRadiusForTier(tier);
-  fv[2] = TDOConfig.JuggernautMaxBurstDamage();
+  fv[2] = TDO_Juggernaut_GetAbsorbCap(tier);
   fv[3] = TDO_Juggernaut_CooldownForTier(tier);
   dataPackage.floatValues = fv;
   dataPackage.InvalidateTextParams();
@@ -312,14 +312,14 @@ public func TDO_Quantum_InjectActiveCardLiveValues(game: GameInstance, itemTDB: 
   while ArraySize(fv) < 8 { ArrayPush(fv, 0.0); }
   let maxTargets: Int32 = Cast<Int32>(TDOConfig.LerpTier(TDOConfig.QuantumMalwareTargetsMin(), TDOConfig.QuantumMalwareTargetsMax(), tier, 5) + 0.5);
   let radius: Float = TDOConfig.QuantumMalwareRadiusBase();
-  let tpRange: Float = TDOConfig.QuantumTeleportRangeMin();
-  let malwareDur: Float = TDOConfig.QuantumMalwareFreezeDurMin();
+  let tpRange: Float = TDOConfig.LerpTier(TDOConfig.QuantumTeleportRangeMin(), TDOConfig.QuantumTeleportRangeMax(), tier, 5);
+  let malwareDur: Float = TDOConfig.LerpTier(TDOConfig.QuantumMalwareFreezeDurMin(), TDOConfig.QuantumMalwareFreezeDurMax(), tier, 5);
   let teleWindow: Float = TDO_Quantum_DurationForTier(tier);
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(game).GetLocalPlayerMainGameObject() as PlayerPuppet;
   if IsDefined(player) {
     radius = TDO_Quantum_GetMalwareRadius(player);
-    tpRange = TDO_Quantum_GetTeleportRange(player);
-    malwareDur = TDO_Quantum_GetMalwareDuration(player);
+    tpRange = TDO_Quantum_GetTeleportRangeForTier(player, tier);
+    malwareDur = TDO_Quantum_GetMalwareDurationForTier(player, tier);
   }
   let cooldown: Float = TDOConfig.LerpTier(TDOConfig.QuantumCooldownMax(), TDOConfig.QuantumCooldownMin(), tier, 5);
   fv[0] = tpRange;

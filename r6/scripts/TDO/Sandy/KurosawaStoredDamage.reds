@@ -14,6 +14,15 @@ public let m_tdoKurosawaPOPed: array<EntityID>;
 @addField(PlayerPuppet)
 public let m_tdoKurosawaRemaining: Float;
 
+@addField(PlayerPuppet)
+public let m_tdoKurosawaTickID: DelayID;
+
+@addField(PlayerPuppet)
+public let m_tdoKurosawaActivation: Uint32;
+
+@addField(PlayerPuppet)
+public let m_tdoKurosawaSession: Uint32;
+
 @wrapMethod(NewPerkFinisherCondition)
 public final const func Test(const activatorObject: wref<GameObject>, const hotSpotObject: wref<GameObject>) -> Bool {
   let result: Bool = wrappedMethod(activatorObject, hotSpotObject);
@@ -152,14 +161,33 @@ public func TDO_Kurosawa_ClearAllSlows(player: ref<PlayerPuppet>) -> Void {
   ArrayClear(player.m_tdoKurosawaSlowedNPCs);
 }
 
+public func TDO_Kurosawa_End(player: ref<PlayerPuppet>) -> Void {
+  player.m_tdoKurosawaSandyActive = false;
+  player.m_tdoKurosawaActivation += 1u;
+  if player.m_tdoKurosawaTickID != GetInvalidDelayID() {
+    GameInstance.GetDelaySystem(player.GetGame()).CancelCallback(player.m_tdoKurosawaTickID);
+    player.m_tdoKurosawaTickID = GetInvalidDelayID();
+  }
+  TDO_Kurosawa_ClearAllSlows(player);
+  ArrayClear(player.m_tdoKurosawaPOPed);
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnDetach() -> Bool {
+  this.m_tdoKurosawaSession += 1u;
+  TDO_Kurosawa_End(this);
+  return wrappedMethod();
+}
+
 public class TDO_KurosawaKillCheck extends DelayCallback {
 
-  public let m_player: ref<PlayerPuppet>;
+  public let m_player: wref<PlayerPuppet>;
+  public let m_session: Uint32;
   public let m_npcID: EntityID;
   public let m_attempt: Int32;
 
   public func Call() -> Void {
-    if !IsDefined(this.m_player) {
+    if !IsDefined(this.m_player) || this.m_player.IsDead() || this.m_session != this.m_player.m_tdoKurosawaSession || !TDOConfig.KurosawaEnabled() || !TDO_Kurosawa_IsEquipped(this.m_player) {
       return;
     }
     let gi: GameInstance = this.m_player.GetGame();
@@ -174,6 +202,7 @@ public class TDO_KurosawaKillCheck extends DelayCallback {
       if this.m_attempt < 3 {
         let retry: ref<TDO_KurosawaKillCheck> = new TDO_KurosawaKillCheck();
         retry.m_player = this.m_player;
+        retry.m_session = this.m_session;
         retry.m_npcID = this.m_npcID;
         retry.m_attempt = this.m_attempt + 1;
         GameInstance.GetDelaySystem(gi).DelayCallback(retry, 0.4, false);
@@ -187,6 +216,7 @@ public class TDO_KurosawaKillCheck extends DelayCallback {
     }
     let pop: ref<TDO_KurosawaPOP> = new TDO_KurosawaPOP();
     pop.m_player = this.m_player;
+    pop.m_session = this.m_session;
     pop.m_npcID = this.m_npcID;
     GameInstance.GetDelaySystem(gi).DelayCallback(pop, TDOConfig.KurosawaPOPDelay(), false);
   }
@@ -194,11 +224,12 @@ public class TDO_KurosawaKillCheck extends DelayCallback {
 
 public class TDO_KurosawaPOP extends DelayCallback {
 
-  public let m_player: ref<PlayerPuppet>;
+  public let m_player: wref<PlayerPuppet>;
+  public let m_session: Uint32;
   public let m_npcID: EntityID;
 
   public func Call() -> Void {
-    if !IsDefined(this.m_player) {
+    if !IsDefined(this.m_player) || this.m_player.IsDead() || this.m_session != this.m_player.m_tdoKurosawaSession || !TDOConfig.KurosawaEnabled() || !TDO_Kurosawa_IsEquipped(this.m_player) {
       return;
     }
     let gi: GameInstance = this.m_player.GetGame();
@@ -229,11 +260,17 @@ public class TDO_KurosawaPOP extends DelayCallback {
 }
 
 public class TDO_KurosawaReAssertCallback extends DelayCallback {
-  public let m_player: ref<PlayerPuppet>;
+  public let m_player: wref<PlayerPuppet>;
+  public let m_activation: Uint32;
   public let m_interval: Float;
 
   public func Call() -> Void {
-    if !IsDefined(this.m_player) || !this.m_player.m_tdoKurosawaSandyActive {
+    if !IsDefined(this.m_player) || this.m_activation != this.m_player.m_tdoKurosawaActivation {
+      return;
+    }
+    this.m_player.m_tdoKurosawaTickID = GetInvalidDelayID();
+    if this.m_player.IsDead() || !TDOConfig.KurosawaEnabled() || !TDO_Kurosawa_IsActive(this.m_player) {
+      TDO_Kurosawa_End(this.m_player);
       return;
     }
     let gi: GameInstance = this.m_player.GetGame();
@@ -255,8 +292,9 @@ public class TDO_KurosawaReAssertCallback extends DelayCallback {
     }
     let next: ref<TDO_KurosawaReAssertCallback> = new TDO_KurosawaReAssertCallback();
     next.m_player = this.m_player;
+    next.m_activation = this.m_activation;
     next.m_interval = this.m_interval;
-    GameInstance.GetDelaySystem(gi).DelayCallback(next, this.m_interval, false);
+    this.m_player.m_tdoKurosawaTickID = GameInstance.GetDelaySystem(gi).DelayCallback(next, this.m_interval, false);
   }
 }
 
@@ -265,19 +303,17 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   wrappedMethod(stateContext, scriptInterface);
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   if IsDefined(player) {
+    TDO_Kurosawa_End(player);
     if TDOConfig.KurosawaEnabled() && TDO_Kurosawa_IsEquipped(player) {
       player.m_tdoKurosawaSandyActive = true;
       TDOInfo("Kurosawa", "Sandevistan active (blade slow-transfer armed)");
-      ArrayClear(player.m_tdoKurosawaSlowedNPCs);
-      ArrayClear(player.m_tdoKurosawaPOPed);
       player.m_tdoKurosawaRemaining = TDOConfig.KurosawaDuration();
       GameInstance.GetStatPoolsSystem(player.GetGame()).RequestSettingStatPoolValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatPoolType.SandevistanCharge, 100.0, null);
       let reCb: ref<TDO_KurosawaReAssertCallback> = new TDO_KurosawaReAssertCallback();
       reCb.m_player = player;
+      reCb.m_activation = player.m_tdoKurosawaActivation;
       reCb.m_interval = 0.2;
-      GameInstance.GetDelaySystem(player.GetGame()).DelayCallback(reCb, reCb.m_interval, false);
-    } else {
-      player.m_tdoKurosawaSandyActive = false;
+      player.m_tdoKurosawaTickID = GameInstance.GetDelaySystem(player.GetGame()).DelayCallback(reCb, reCb.m_interval, false);
     }
   }
 }
@@ -287,10 +323,8 @@ protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<Stat
   wrappedMethod(stateContext, scriptInterface);
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   if IsDefined(player) {
-    player.m_tdoKurosawaSandyActive = false;
     TDOInfo("Kurosawa", "Sandevistan ended, slows cleared");
-    TDO_Kurosawa_ClearAllSlows(player);
-    ArrayClear(player.m_tdoKurosawaPOPed);
+    TDO_Kurosawa_End(player);
   }
 }
 
@@ -299,9 +333,7 @@ protected final func OnForcedExit(stateContext: ref<StateContext>, scriptInterfa
   wrappedMethod(stateContext, scriptInterface);
   let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
   if IsDefined(player) {
-    player.m_tdoKurosawaSandyActive = false;
-    TDO_Kurosawa_ClearAllSlows(player);
-    ArrayClear(player.m_tdoKurosawaPOPed);
+    TDO_Kurosawa_End(player);
   }
 }
 
@@ -348,6 +380,7 @@ public final static func ApplyDamage(hitEvent: ref<gameHitEvent>, forReal: Bool,
 
   let killCheck: ref<TDO_KurosawaKillCheck> = new TDO_KurosawaKillCheck();
   killCheck.m_player = player;
+  killCheck.m_session = player.m_tdoKurosawaSession;
   killCheck.m_npcID = npc.GetEntityID();
   GameInstance.GetDelaySystem(player.GetGame()).DelayCallback(killCheck, 0.15, false);
 

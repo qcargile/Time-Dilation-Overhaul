@@ -10,16 +10,7 @@ public let m_tdoQuantumListener: ref<TDOSandyChargeListener>;
 
 @addMethod(PlayerPuppet)
 public final func TDO_Quantum_IsAdvancedEquipped() -> Bool {
-  let es: ref<EquipmentSystem> = EquipmentSystem.GetInstance(this);
-  if !IsDefined(es) {
-    return false;
-  }
-  let pd: ref<EquipmentSystemPlayerData> = es.GetPlayerData(this);
-  if !IsDefined(pd) {
-    return false;
-  }
-  let osItem: ItemID = pd.GetItemInEquipSlot(gamedataEquipmentArea.SystemReplacementCW, 0);
-  let tdb: TweakDBID = ItemID.GetTDBID(osItem);
+  let tdb: TweakDBID = TDO_Quantum_GetEquippedTDB(this);
   return Equals(tdb, t"Items.TDO_QuantumAdvanced") || Equals(tdb, t"Items.TDO_QuantumAdvancedPlus") || Equals(tdb, t"Items.TDO_QuantumAdvancedPlusPlus");
 }
 

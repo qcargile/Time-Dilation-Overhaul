@@ -85,7 +85,8 @@ function loadSettings()
 		local jsonString = file:read("*all")
 		local validJson, savedSettings = pcall(function() return json.decode(jsonString) end)
 		file:close()
-		if validJson and savedSettings ~= nil then
+		if validJson and type(savedSettings) == "table" then
+			if type(savedSettings.configVersion) ~= "number" then savedSettings.configVersion = nil end
 			print("["..modName.."]: \"config/nUISettings.json\" successfully loaded.")
 			return savedSettings
 		else
@@ -97,122 +98,45 @@ function loadSettings()
 	end
 end
 
-function configUpdate(old, new)
-
-	local updated = {}
-
-	for i,v in pairs(new) do
-		if old[i] == nil then
-			updated[i] = v
+local function mergeSettings(old, defaults, missing, path)
+	local merged = {}
+	if type(old) ~= "table" then old = {} end
+	for key, fallback in pairs(defaults) do
+		local value = old[key]
+		local keyPath = path == "" and tostring(key) or path .. "." .. tostring(key)
+		if type(value) ~= type(fallback) then
+			missing[#missing + 1] = keyPath
+			value = nil
+		end
+		if type(fallback) == "table" then
+			merged[key] = mergeSettings(value, fallback, missing, keyPath)
 		else
-			if type(v) == "table" then
-
-				updated[i] = {}
-				for p,q in pairs(v) do
-					if old[i][p] == nil then
-						updated[i][p] = q
-					else
-						if type(q) == "table" then
-
-							updated[i][p] = {}
-							for r,s in pairs(q) do
-								if old[i][p][r] == nil then
-									updated[i][p][r] = s
-								else
-									if type(s) == "table" then
-
-										updated[i][p][r] = {}
-										for t,u in pairs(s) do
-											if old[i][p][r][t] == nil then
-												updated[i][p][r][t] = u
-											else
-												updated[i][p][r][t] = old[i][p][r][t]
-											end
-										end
-									else
-										updated[i][p][r] = old[i][p][r]
-									end
-								end
-							end
-						else
-							updated[i][p] = old[i][p]
-						end
-					end
-				end
-			else
-				updated[i] = old[i]
-			end
+			if value == nil then value = fallback end
+			merged[key] = value
 		end
 	end
-	updated["configVersion"] = new.configVersion
+	return merged
+end
+
+function configUpdate(old, new)
+	local updated = mergeSettings(old, new, {}, "")
+	updated.configVersion = new.configVersion
 	return updated
 end
 
 function configValidate(old, new)
-
-	local updated = {}
 	local missing = {}
-	local messedUpConfig = false
-	for i,v in pairs(new) do
-		if old[i] == nil then
-			updated[i] = v
-			table.insert(missing, tostring(i))
-		else
-			if type(v) == "table" then
-
-				updated[i] = {}
-				for p,q in pairs(v) do
-					if old[i][p] == nil then
-						updated[i][p] = q
-						table.insert(missing, tostring(i).."."..tostring(p))
-					else
-						if type(q) == "table" then
-
-							updated[i][p] = {}
-							for r,s in pairs(q) do
-								if old[i][p][r] == nil then
-									updated[i][p][r] = s
-									table.insert(missing, tostring(i).."."..tostring(p).."."..tostring(r))
-								else
-									if type(s) == "table" then
-
-										updated[i][p][r] = {}
-										for t,u in pairs(s) do
-											if old[i][p][r][t] == nil then
-												updated[i][p][r][t] = u
-												table.insert(missing, tostring(i).."."..tostring(p).."."..tostring(r).."."..tostring(t))
-											else
-												updated[i][p][r][t] = old[i][p][r][t]
-											end
-										end
-									else
-										updated[i][p][r] = old[i][p][r]
-									end
-								end
-							end
-						else
-							updated[i][p] = old[i][p]
-						end
-					end
-				end
-			else
-				updated[i] = old[i]
-			end
-		end
-	end
-	updated["configVersion"] = new.configVersion
-
+	local updated = mergeSettings(old, new, missing, "")
+	updated.configVersion = new.configVersion
 	if #missing > 0 then
-		print("["..modName.."] ERROR: Config was missing the following entries, which have been populated with defaults:")
-		for i, v in ipairs(missing) do
-			print("		"..tostring(v))
+		print("["..modName.."] ERROR: Config had missing or invalid entries, which have been populated with defaults:")
+		for _, key in ipairs(missing) do
+			print("		" .. key)
 		end
-		messedUpConfig = true
 	else
 		print("["..modName.."] STATUS: Config is valid.")
 	end
-
-	return messedUpConfig, updated
+	return #missing > 0, updated
 end
 
 function has_value(table, find)

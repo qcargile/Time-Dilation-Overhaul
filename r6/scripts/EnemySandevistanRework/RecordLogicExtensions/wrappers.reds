@@ -8,6 +8,10 @@ public final static func Activate(context: ScriptExecutionContext, record: wref<
     if IsDefined(suppressOwner) && StatusEffectSystem.ObjectHasStatusEffectWithTag(suppressOwner, n"TDO_TDSuppress") {
         return;
     }
+    if !ESRConfig.Enabled() {
+        wrappedMethod(context, record);
+        return;
+    }
 
     if (StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_RhinoSandiDebuff")) {
       return;
@@ -51,6 +55,10 @@ public final static func Activate(context: ScriptExecutionContext, record: wref<
 
 @wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func Deactivate(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>, const duration: Float, interrupted: Bool) -> Void {
+    if !ESRConfig.Enabled() {
+        wrappedMethod(context, record, duration, interrupted);
+        return;
+    }
     let sandiBuffActive = StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_Sandi_Buff");
     let kerenzikovBuffActive = StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_SVK_Buff");
     let stimBuffActive = StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_Stim_Buff");
@@ -78,6 +86,9 @@ public final static func Deactivate(context: ScriptExecutionContext, record: wre
 
 @wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func SetTimeDilation(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>) -> Bool {
+    if !ESRConfig.Enabled() {
+        return wrappedMethod(context, record);
+    }
     let blackboard: ref<IBlackboard>;
     let currentDilation: Float;
     let dilation: Float;

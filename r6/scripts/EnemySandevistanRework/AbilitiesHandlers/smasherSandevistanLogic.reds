@@ -1,6 +1,7 @@
 module Phoenicia.EnemySandevistanRework.Smasher
 
 import Phoenicia.EnemySandevistanRework.Utils.*
+import Phoenicia.EnemySandevistanRework.Configurations.*
 
 public func HasSmasherSandevistanBlocker(smasher: ref<NPCPuppet>) -> Bool {
 
@@ -81,6 +82,9 @@ public class MeleeDefenseSmasherEffector extends ModifyAttackEffector {
 
 @wrapMethod(NPCPuppet)
 protected cb func OnStatusEffectApplied(evt: ref<ApplyStatusEffectEvent>) -> Bool {
+    if !ESRConfig.Enabled() {
+        return wrappedMethod(evt);
+    }
 
     if (Equals(this.GetRecordID(), t"Character.q113_boss_smasher")) {
         if (Equals(evt.staticData.GetID(), t"AdamSmasher.Emergency") ||

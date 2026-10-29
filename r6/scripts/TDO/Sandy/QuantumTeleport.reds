@@ -26,14 +26,14 @@ public let m_tdoQDest: Vector4;
 @addField(PlayerPuppet)
 public let m_tdoQDestRot: EulerAngles;
 
-public func TDO_Quantum_GetTeleportRangeBase(player: ref<PlayerPuppet>) -> Float {
-  return TDOConfig.LerpTier(TDOConfig.QuantumTeleportRangeMin(), TDOConfig.QuantumTeleportRangeMax(), TDO_Quantum_GetTier(player), 5);
+public func TDO_Quantum_GetTeleportRange(player: ref<PlayerPuppet>) -> Float {
+  return TDO_Quantum_GetTeleportRangeForTier(player, TDO_Quantum_GetTier(player));
 }
 
-public func TDO_Quantum_GetTeleportRange(player: ref<PlayerPuppet>) -> Float {
+public func TDO_Quantum_GetTeleportRangeForTier(player: ref<PlayerPuppet>, tier: Int32) -> Float {
   let stats: ref<StatsSystem> = GameInstance.GetStatsSystem(player.GetGame());
   let cool: Float = stats.GetStatValue(Cast<StatsObjectID>(player.GetEntityID()), gamedataStatType.Cool);
-  let range: Float = TDO_Quantum_GetTeleportRangeBase(player) + cool * TDOConfig.QuantumTeleportRangePerCool();
+  let range: Float = TDOConfig.LerpTier(TDOConfig.QuantumTeleportRangeMin(), TDOConfig.QuantumTeleportRangeMax(), tier, 5) + cool * TDOConfig.QuantumTeleportRangePerCool();
   return range;
 }
 

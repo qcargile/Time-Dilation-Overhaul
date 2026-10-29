@@ -87,6 +87,7 @@ protected cb func OnTDO_FalconLockTickEvent(evt: ref<TDO_FalconLockTickEvent>) -
   this.m_tdoFalconLockTickID = GetInvalidDelayID();
 
   if !TDOConfig.FalconSaturationLockEnabled() {
+    TDO_Falcon_ClearLocks(this);
     return true;
   }
   if !TDO_Falcon_IsSandyActive(this) {
@@ -100,6 +101,7 @@ protected cb func OnTDO_FalconLockTickEvent(evt: ref<TDO_FalconLockTickEvent>) -
   let weapon: ref<WeaponObject> = TDO_Falcon_GetHeldWeapon(this);
   if !IsDefined(weapon) || !TDO_Falcon_IsSmartWeapon(weapon) {
     TDO_Falcon_ClearLocks(this);
+    TDO_Falcon_ScheduleLockTick(this);
     return true;
   }
   if !TDO_Falcon_IsADS(this) {

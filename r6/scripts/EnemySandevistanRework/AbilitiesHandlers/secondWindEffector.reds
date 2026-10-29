@@ -1,6 +1,7 @@
 module Phoenicia.EnemySandevistanRework.Effectors
 
 import Phoenicia.EnemySandevistanRework.Utils.*
+import Phoenicia.EnemySandevistanRework.Configurations.*
 
 public class SecondWindEffector extends ModifyAttackEffector {
   protected func ActionOn(owner: ref<GameObject>) -> Void {
@@ -12,6 +13,9 @@ public class SecondWindEffector extends ModifyAttackEffector {
   }
 
   private final func ProcessAction(owner: ref<GameObject>) -> Void {
+    if !ESRConfig.Enabled() {
+      return;
+    }
     StatusEffectHelper.ApplyStatusEffect(owner, t"BaseStatusEffect.ESR_RhinoSandiSWBuff");
     StatusEffectHelper.ApplyStatusEffect(owner, t"BaseStatusEffect.ESR_RhinoSandiSWBuff");
 

@@ -10,6 +10,7 @@ public class TickSystem extends ScriptableSystem {
     private let delaySystem: ref<DelaySystem>;
     private let statsSystem: ref<StatsSystem>;
     private let statPoolSystem: ref<StatPoolsSystem>;
+    private let callbackID: DelayID;
 
     public static func GetInstance(gameInstance: GameInstance) -> ref<TickSystem> {
         let system: ref<TickSystem> = GameInstance.GetScriptableSystemsContainer(gameInstance).Get(n"Phoenicia.EnemySandevistanRework.TickSystem.TickSystem") as TickSystem;
@@ -17,6 +18,10 @@ public class TickSystem extends ScriptableSystem {
     }
 
     private final func OnPlayerAttach(request: ref<PlayerAttachRequest>) -> Void {
+        this.StopCallbacks();
+        if !ESRConfig.Enabled() {
+            return;
+        }
         let player: ref<PlayerPuppet> = GetPlayer(GetGameInstance());
 
         if IsDefined(player) {
@@ -29,7 +34,33 @@ public class TickSystem extends ScriptableSystem {
         }
     }
 
+    private final func OnPlayerDetach(request: ref<PlayerDetachRequest>) -> Void {
+        this.StopCallbacks();
+        this.player = null;
+    }
+
+    private func OnDetach() -> Void {
+        this.StopCallbacks();
+        this.player = null;
+    }
+
+    private func StopCallbacks() {
+        if IsDefined(this.delaySystem) && this.callbackID != GetInvalidDelayID() {
+            this.delaySystem.CancelCallback(this.callbackID);
+        }
+        this.callbackID = GetInvalidDelayID();
+    }
+
+    public func OnTick() {
+        this.callbackID = GetInvalidDelayID();
+        this.SetUpNextCallback();
+    }
+
     public func SetUpNextCallback() {
+        this.StopCallbacks();
+        if !ESRConfig.Enabled() || !IsDefined(this.player) {
+            return;
+        }
         let entities = this.player.GetEntitiesAroundObject(32.0, TSF_NPC());
 
         let i = 0;
@@ -61,7 +92,7 @@ public class TickSystem extends ScriptableSystem {
             i+= 1;
         }
 
-        this.delaySystem.DelayCallback(EnemySandevistanReworkCallback.Create(this), 1, true);
+        this.callbackID = this.delaySystem.DelayCallback(EnemySandevistanReworkCallback.Create(this), 1, true);
     }
 
     private func HandleSmasherOffensiveSandiActivations(puppet: ref<NPCPuppet>) {
@@ -299,6 +330,8 @@ public class EnemySandevistanReworkCallback extends DelayCallback {
   }
 
   public func Call() -> Void {
-    this.system.SetUpNextCallback();
+    if IsDefined(this.system) {
+      this.system.OnTick();
+    }
   }
 }
