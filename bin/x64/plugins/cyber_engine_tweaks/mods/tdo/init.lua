@@ -54,6 +54,13 @@ local function createShrikeMechanic(nativeSettings, path, nuiTxt, config, defaul
 
 	applyShrikeTweaks(config)
 
+	table.insert(handles, nativeSettings.addButton(path, nuiTxt[cat]["clearMarks"]["opt"], nuiTxt[cat]["clearMarks"]["des"], nuiTxt[cat]["clearMarks"]["button"], 45, function()
+		local player = Game.GetPlayer()
+		if player ~= nil then
+			player:TDO_Shrike_ClearPreparedMarks()
+		end
+	end))
+
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMinPct"]["opt"]..nuiTxt[cat]["slowTimeMinPct"]["optUnit"], nuiTxt[cat]["slowTimeMinPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.zetatech.slowTimeMinPct, default.zetatech.slowTimeMinPct, function(value) config.zetatech.slowTimeMinPct = value applyShrikeTweaks(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["slowTimeMaxPct"]["opt"]..nuiTxt[cat]["slowTimeMaxPct"]["optUnit"], nuiTxt[cat]["slowTimeMaxPct"]["des"], 0.0, 99.0, 1.0, "%.0f", config.zetatech.slowTimeMaxPct, default.zetatech.slowTimeMaxPct, function(value) config.zetatech.slowTimeMaxPct = value applyShrikeTweaks(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 1.0, 30.0, 0.5, "%.1f", config.zetatech.durationMin, default.zetatech.durationMin, function(value) config.zetatech.durationMin = value applyShrikeTweaks(config) saveSettings(config) end))

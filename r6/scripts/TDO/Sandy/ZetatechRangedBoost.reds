@@ -58,6 +58,95 @@ public let m_tdoShrikeCooldownIDs: array<EntityID>;
 @addField(PlayerPuppet)
 public let m_tdoShrikeCooldownTimes: array<Float>;
 
+@addField(PlayerPuppet)
+public let m_tdoShrikeAimHandled: Bool;
+
+@addField(PlayerPuppet)
+public let m_tdoShrikeUnavailableSince: array<Float>;
+
+@addField(PlayerPuppet)
+public let m_tdoShrikeNextCleanup: Float;
+
+@addField(PlayerPuppet)
+public let m_tdoShrikeTickGeneration: Uint32;
+
+@addField(PlayerPuppet)
+public let m_tdoShrikeHUD: ref<TDO_ShrikeHUD>;
+
+@addField(PlayerPuppet)
+public let m_tdoShrikeFeedback: CName;
+
+@addField(PlayerPuppet)
+public let m_tdoShrikeFeedbackUntil: Float;
+
+public func TDO_Shrike_ResetAim(player: ref<PlayerPuppet>) -> Void {
+  player.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
+  player.m_tdoShrikeAimHandled = false;
+  player.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
+}
+
+public func TDO_Shrike_Feedback(player: ref<PlayerPuppet>, status: CName, now: Float) -> Void {
+  player.m_tdoShrikeFeedback = status;
+  player.m_tdoShrikeFeedbackUntil = now + 1.5;
+}
+
+public func TDO_Shrike_UpdateHUD(player: ref<PlayerPuppet>, now: Float, status: CName, progress: Float, seconds: Int32, isADS: Bool) -> Void {
+  let feedback: Bool = now < player.m_tdoShrikeFeedbackUntil;
+  let visible: Bool = isADS || ArraySize(player.m_tdoShrikeMarkedNPCs) > 0 || feedback;
+  if !visible {
+    if IsDefined(player.m_tdoShrikeHUD) {
+      player.m_tdoShrikeHUD.Update(0, 0, n"", -1.0, 0, false);
+    }
+    return;
+  }
+  let inMenu: Bool = GameInstance.GetBlackboardSystem(player.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsInMenu);
+  visible = visible && !inMenu && !GameInstance.GetPhotoModeSystem(player.GetGame()).IsPhotoModeActive();
+  if !IsDefined(player.m_tdoShrikeHUD) {
+    if !visible || TDOConfig.UIHideAll() {
+      return;
+    }
+    player.m_tdoShrikeHUD = new TDO_ShrikeHUD();
+  }
+  if Equals(status, n"") {
+    if feedback {
+      status = player.m_tdoShrikeFeedback;
+    } else {
+      if TDO_Shrike_IsSandyActive(player) {
+        status = ArraySize(player.m_tdoShrikeMarkedNPCs) > 0 ? n"UI-TDO-ShrikeTracking" : n"UI-TDO-ShrikeNoMarks";
+      } else {
+        status = n"UI-TDO-ShrikeReady";
+      }
+    }
+  }
+  player.m_tdoShrikeHUD.Update(ArraySize(player.m_tdoShrikeMarkedNPCs), TDO_Shrike_GetMaxMarks(player), status, progress, seconds, visible);
+}
+
+public func TDO_Shrike_PruneMarks(player: ref<PlayerPuppet>, now: Float) -> Void {
+  let i: Int32 = ArraySize(player.m_tdoShrikeMarkedNPCs) - 1;
+  while i >= 0 {
+    let npc: ref<NPCPuppet> = GameInstance.FindEntityByID(player.GetGame(), player.m_tdoShrikeMarkedNPCs[i]) as NPCPuppet;
+    let remove: Bool = false;
+    if IsDefined(npc) {
+      player.m_tdoShrikeUnavailableSince[i] = 0.0;
+      remove = !TDO_Shrike_IsEligibleTarget(npc);
+    } else {
+      if player.m_tdoShrikeUnavailableSince[i] <= 0.0 {
+        player.m_tdoShrikeUnavailableSince[i] = now;
+      } else {
+        remove = now - player.m_tdoShrikeUnavailableSince[i] >= 5.0;
+      }
+    }
+    if remove {
+      if IsDefined(npc) {
+        TDO_Shrike_RemoveMarkHighlight(player, npc);
+      }
+      ArrayErase(player.m_tdoShrikeMarkedNPCs, i);
+      ArrayErase(player.m_tdoShrikeUnavailableSince, i);
+    }
+    i -= 1;
+  }
+}
+
 public func TDO_Shrike_PruneCooldowns(player: ref<PlayerPuppet>, now: Float) -> Void {
   let limit: Float = TDOConfig.ShrikeRemarkCooldown();
   let i: Int32 = ArraySize(player.m_tdoShrikeCooldownIDs) - 1;
@@ -112,18 +201,20 @@ public func TDO_Shrike_IsRangedWeaponEquipped(player: ref<PlayerPuppet>) -> Bool
   return weapon.IsRanged();
 }
 
-public class TDO_ShrikeMarkTickEvent extends Event {}
+public class TDO_ShrikeMarkTickEvent extends Event {
+  public let generation: Uint32;
+}
 
 public func TDO_Shrike_ScheduleMarkTick(player: ref<PlayerPuppet>) -> Void {
   let delaySys: ref<DelaySystem> = GameInstance.GetDelaySystem(player.GetGame());
-  if player.m_tdoShrikeMarkTickID != GetInvalidDelayID() {
-    delaySys.CancelDelay(player.m_tdoShrikeMarkTickID);
-  }
+  TDO_Shrike_StopMarkTick(player);
   let evt: ref<TDO_ShrikeMarkTickEvent> = new TDO_ShrikeMarkTickEvent();
+  evt.generation = player.m_tdoShrikeTickGeneration;
   player.m_tdoShrikeMarkTickID = delaySys.DelayEvent(player, evt, 0.05, false);
 }
 
 public func TDO_Shrike_StopMarkTick(player: ref<PlayerPuppet>) -> Void {
+  player.m_tdoShrikeTickGeneration += 1u;
   if player.m_tdoShrikeMarkTickID != GetInvalidDelayID() {
     let delaySys: ref<DelaySystem> = GameInstance.GetDelaySystem(player.GetGame());
     delaySys.CancelDelay(player.m_tdoShrikeMarkTickID);
@@ -133,22 +224,40 @@ public func TDO_Shrike_StopMarkTick(player: ref<PlayerPuppet>) -> Void {
 
 @addMethod(PlayerPuppet)
 protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -> Bool {
+  if evt.generation != this.m_tdoShrikeTickGeneration {
+    return true;
+  }
   this.m_tdoShrikeMarkTickID = GetInvalidDelayID();
 
   let isShrike: Bool = TDO_Zetatech_IsEquipped(this);
   let inSandy: Bool = TDO_Shrike_IsSandyActive(this);
   let isADS: Bool = TDO_Shrike_IsADS(this);
 
-  if !TDOConfig.ShrikeEnabled() {
+  if !TDOConfig.ShrikeEnabled() || !isShrike || this.IsDead() || this.IsReplacer() {
+    TDO_Shrike_Shutdown(this);
     return true;
   }
-  if !isShrike {
+
+  let now: Float = EngineTime.ToFloat(GameInstance.GetEngineTime(this.GetGame()));
+  let inMenu: Bool = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsInMenu);
+  if inMenu || GameInstance.GetPhotoModeSystem(this.GetGame()).IsPhotoModeActive() {
+    TDO_Shrike_ResetAim(this);
+    if IsDefined(this.m_tdoShrikeHUD) {
+      this.m_tdoShrikeHUD.Update(0, 0, n"", -1.0, 0, false);
+    }
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
 
+  if now >= this.m_tdoShrikeNextCleanup {
+    TDO_Shrike_PruneMarks(this, now);
+    TDO_Shrike_PruneCooldowns(this, now);
+    this.m_tdoShrikeNextCleanup = now + 0.25;
+  }
+
   if !TDO_Shrike_IsRangedWeaponEquipped(this) {
-    this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
+    TDO_Shrike_ResetAim(this);
+    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, false);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
@@ -158,18 +267,22 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
     if bestIdx >= 0 {
       TDO_Shrike_SnapToMarkAtIndex(this, bestIdx);
     }
+    TDO_Shrike_ResetAim(this);
+    TDO_Shrike_UpdateHUD(this, now, bestIdx >= 0 ? n"" : n"UI-TDO-ShrikeNoTarget", -1.0, 0, true);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
 
   if inSandy {
-    this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
+    TDO_Shrike_ResetAim(this);
+    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, isADS);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
 
   if !isADS {
-    this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
+    TDO_Shrike_ResetAim(this);
+    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, false);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
@@ -177,37 +290,33 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
   let targetingSystem: ref<TargetingSystem> = GameInstance.GetTargetingSystem(this.GetGame());
   let lookAt: ref<GameObject> = targetingSystem.GetLookAtObject(this, true, true);
   if !IsDefined(lookAt) {
-    this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
+    TDO_Shrike_ResetAim(this);
+    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
 
   let npc: ref<NPCPuppet> = lookAt as NPCPuppet;
   if !TDO_Shrike_IsEligibleTarget(npc) {
-    this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
-    TDO_Shrike_ScheduleMarkTick(this);
-    return true;
-  }
-
-  let dist: Float = Vector4.Distance(this.GetWorldPosition(), lookAt.GetWorldPosition());
-  if dist > MinF(TDOConfig.ShrikeMarkRange(), 30.0) {
-    let deniedID: EntityID = lookAt.GetEntityID();
-    if !Equals(this.m_tdoShrikeLastDeniedTarget, deniedID) {
-      this.m_tdoShrikeLastDeniedTarget = deniedID;
-      GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_crafting_fail");
-    }
-    this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
+    TDO_Shrike_ResetAim(this);
+    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
 
   let targetID: EntityID = lookAt.GetEntityID();
-  let now: Float = EngineTime.ToFloat(GameInstance.GetEngineTime(this.GetGame()));
-  TDO_Shrike_PruneCooldowns(this, now);
 
   if !Equals(this.m_tdoShrikeHoveredNPC, targetID) {
     this.m_tdoShrikeHoveredNPC = targetID;
     this.m_tdoShrikeHoverStartTime = now;
+    this.m_tdoShrikeAimHandled = false;
+    this.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
+  }
+
+  if this.m_tdoShrikeAimHandled {
+    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
+    TDO_Shrike_ScheduleMarkTick(this);
+    return true;
   }
 
   let elapsed: Float = now - this.m_tdoShrikeHoverStartTime;
@@ -217,13 +326,28 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
     if elapsed >= TDOConfig.ShrikeUnmarkHoverTime() {
       TDO_Shrike_RemoveMarkHighlight(this, lookAt);
       ArrayErase(this.m_tdoShrikeMarkedNPCs, existingIdx);
+      ArrayErase(this.m_tdoShrikeUnavailableSince, existingIdx);
       TDO_Shrike_RecordCooldown(this, targetID, now);
       GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_disassemble");
       this.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
       TDODebug("Shrike", "mark removed " + ToString(ArraySize(this.m_tdoShrikeMarkedNPCs)) + "/" + ToString(TDO_Shrike_GetMaxMarks(this)));
-      this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
+      this.m_tdoShrikeAimHandled = true;
+      TDO_Shrike_Feedback(this, n"UI-TDO-ShrikeRemoved", now);
+      TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
+    } else {
+      TDO_Shrike_UpdateHUD(this, now, n"UI-TDO-ShrikeRemoving", elapsed / TDOConfig.ShrikeUnmarkHoverTime(), 0, true);
     }
   } else {
+    let dist: Float = Vector4.Distance(this.GetWorldPosition(), lookAt.GetWorldPosition());
+    if dist > TDO_Shrike_GetMarkRange() {
+      if !Equals(this.m_tdoShrikeLastDeniedTarget, targetID) {
+        this.m_tdoShrikeLastDeniedTarget = targetID;
+        GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_crafting_fail");
+      }
+      TDO_Shrike_UpdateHUD(this, now, n"UI-TDO-ShrikeOutOfRange", -1.0, 0, true);
+      TDO_Shrike_ScheduleMarkTick(this);
+      return true;
+    }
     if elapsed >= TDOConfig.ShrikeHoverTime() {
       if TDO_Shrike_IsOnCooldown(this, targetID, now) {
         if !Equals(this.m_tdoShrikeLastDeniedTarget, targetID) {
@@ -231,23 +355,30 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
           GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_crafting_fail");
           TDODebug("Shrike", "mark denied (cooldown)");
         }
-        this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
+        let cooldownIdx: Int32 = ArrayFindFirst(this.m_tdoShrikeCooldownIDs, targetID);
+        let remaining: Float = TDOConfig.ShrikeRemarkCooldown() - (now - this.m_tdoShrikeCooldownTimes[cooldownIdx]);
+        TDO_Shrike_UpdateHUD(this, now, n"UI-TDO-ShrikeCooldown", -1.0, CeilF(remaining), true);
       } else {
         let maxMarks: Int32 = TDO_Shrike_GetMaxMarks(this);
+        TDO_Shrike_PruneMarks(this, now);
         if ArraySize(this.m_tdoShrikeMarkedNPCs) < maxMarks {
           ArrayPush(this.m_tdoShrikeMarkedNPCs, targetID);
+          ArrayPush(this.m_tdoShrikeUnavailableSince, 0.0);
           TDO_Shrike_ApplyMarkHighlight(this, lookAt);
           GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_loot_rarity_legendary");
           this.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
           TDODebug("Shrike", "mark added " + ToString(ArraySize(this.m_tdoShrikeMarkedNPCs)) + "/" + ToString(maxMarks));
+          this.m_tdoShrikeAimHandled = true;
+          TDO_Shrike_Feedback(this, n"UI-TDO-ShrikeMarked", now);
+          TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
         } else {
           if !Equals(this.m_tdoShrikeLastDeniedTarget, targetID) {
             this.m_tdoShrikeLastDeniedTarget = targetID;
             GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_crafting_fail");
             TDODebug("Shrike", "mark denied (max " + ToString(maxMarks) + " reached)");
           }
+          TDO_Shrike_UpdateHUD(this, now, n"UI-TDO-ShrikeFull", -1.0, 0, true);
         }
-        this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
       }
     }
   }
@@ -287,6 +418,10 @@ public func TDO_Shrike_GetMaxMarks(player: ref<PlayerPuppet>) -> Int32 {
   return TDO_Shrike_MarksForTier(tier);
 }
 
+public func TDO_Shrike_GetMarkRange() -> Float {
+  return MinF(TDOConfig.ShrikeMarkRange(), 30.0);
+}
+
 public func TDO_Shrike_ApplyMarkHighlight(player: ref<PlayerPuppet>, target: ref<GameObject>) -> Void {
   let highlightData: ref<FocusForcedHighlightData> = new FocusForcedHighlightData();
   highlightData.sourceID = player.GetEntityID();
@@ -316,7 +451,7 @@ public func TDO_Shrike_RemoveMarkHighlight(player: ref<PlayerPuppet>, target: re
   target.QueueEvent(evt);
 }
 
-public func TDO_Shrike_ClearMarks(player: ref<PlayerPuppet>) -> Void {
+public func TDO_Shrike_ClearPreparedState(player: ref<PlayerPuppet>) -> Void {
   let gi: GameInstance = player.GetGame();
   let i: Int32 = 0;
   while i < ArraySize(player.m_tdoShrikeMarkedNPCs) {
@@ -328,11 +463,55 @@ public func TDO_Shrike_ClearMarks(player: ref<PlayerPuppet>) -> Void {
     i += 1;
   }
   ArrayClear(player.m_tdoShrikeMarkedNPCs);
+  ArrayClear(player.m_tdoShrikeUnavailableSince);
   ArrayClear(player.m_tdoShrikeCooldownIDs);
   ArrayClear(player.m_tdoShrikeCooldownTimes);
+  TDO_Shrike_ResetAim(player);
+  player.m_tdoShrikeNextCleanup = 0.0;
+  player.m_tdoShrikeFeedback = n"";
+  player.m_tdoShrikeFeedbackUntil = 0.0;
+  if IsDefined(player.m_tdoShrikeHUD) {
+    player.m_tdoShrikeHUD.Remove();
+    player.m_tdoShrikeHUD = null;
+  }
+}
+
+public func TDO_Shrike_ClearMarks(player: ref<PlayerPuppet>) -> Void {
+  TDO_Shrike_ClearPreparedState(player);
   player.m_tdoShrikePendingHitscanBullets = 0;
-  player.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
-  player.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
+}
+
+public func TDO_Shrike_Shutdown(player: ref<PlayerPuppet>) -> Void {
+  TDO_Shrike_StopMarkTick(player);
+  if TDO_Shrike_IsSandyActive(player) && ArraySize(player.m_tdoShrikeMarkedNPCs) > 0 {
+    GameInstance.GetTargetingSystem(player.GetGame()).BreakLookAt(player);
+  }
+  TDO_Shrike_ClearMarks(player);
+}
+
+public func TDO_Shrike_Refresh(player: ref<PlayerPuppet>) -> Void {
+  if TDOConfig.ShrikeEnabled() && TDO_Zetatech_IsEquipped(player) && !player.IsDead() && !player.IsReplacer() {
+    TDO_Shrike_ScheduleMarkTick(player);
+  } else {
+    TDO_Shrike_Shutdown(player);
+  }
+}
+
+@addMethod(PlayerPuppet)
+public final func TDO_Shrike_ClearPreparedMarks() -> Bool {
+  let now: Float = EngineTime.ToFloat(GameInstance.GetEngineTime(this.GetGame()));
+  if TDO_Shrike_IsSandyActive(this) {
+    TDO_Shrike_Feedback(this, n"UI-TDO-ShrikeClearBlocked", now);
+    GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_crafting_fail");
+    return false;
+  }
+  TDO_Shrike_ClearPreparedState(this);
+  GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_disassemble");
+  if TDOConfig.ShrikeEnabled() && TDO_Zetatech_IsEquipped(this) && !this.IsDead() && !this.IsReplacer() {
+    TDO_Shrike_Feedback(this, n"UI-TDO-ShrikeCleared", now);
+    TDO_Shrike_ScheduleMarkTick(this);
+  }
+  return true;
 }
 
 public func TDO_Shrike_GetExecuteDamagePct(target: ref<GameObject>) -> Float {
@@ -488,6 +667,7 @@ public func TDO_Shrike_ConsumeMark(player: ref<PlayerPuppet>, idx: Int32) -> Voi
   }
 
   ArrayErase(player.m_tdoShrikeMarkedNPCs, idx);
+  ArrayErase(player.m_tdoShrikeUnavailableSince, idx);
 
   if ArraySize(player.m_tdoShrikeMarkedNPCs) == 0 {
     GameInstance.GetTargetingSystem(gi).BreakLookAt(player);
@@ -518,11 +698,11 @@ protected final func OnEnter(stateContext: ref<StateContext>, scriptInterface: r
     return;
   }
 
+  TDO_Shrike_PruneMarks(player, EngineTime.ToFloat(GameInstance.GetEngineTime(player.GetGame())));
   let bestIdx: Int32 = TDO_Shrike_PickBestMarkIndex(player);
   if bestIdx < 0 {
     return;
   }
-
   TDO_Shrike_ConsumeMark(player, bestIdx);
   player.m_tdoShrikePendingHitscanBullets += 1;
 }
@@ -558,14 +738,56 @@ protected final func OnForcedExit(stateContext: ref<StateContext>, scriptInterfa
 @wrapMethod(PlayerPuppet)
 protected cb func OnGameAttached() -> Bool {
   let result: Bool = wrappedMethod();
-  ArrayClear(this.m_tdoShrikeMarkedNPCs);
-  ArrayClear(this.m_tdoShrikeCooldownIDs);
-  ArrayClear(this.m_tdoShrikeCooldownTimes);
-  this.m_tdoShrikePendingHitscanBullets = 0;
-  this.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
-  this.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
-  if TDOConfig.ShrikeEnabled() {
-    TDO_Shrike_ScheduleMarkTick(this);
-  }
+  TDO_Shrike_Shutdown(this);
+  TDO_Shrike_Refresh(this);
   return result;
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+private final func EquipItem(itemID: ItemID, slotIndex: Int32, opt blockActiveSlotsUpdate: Bool, opt forceEquipWeapon: Bool) -> Void {
+  wrappedMethod(itemID, slotIndex, blockActiveSlotsUpdate, forceEquipWeapon);
+  let player: ref<PlayerPuppet> = this.m_owner as PlayerPuppet;
+  if IsDefined(player) {
+    TDO_Shrike_Refresh(player);
+  }
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+private final func UnequipItem(equipAreaIndex: Int32, slotIndex: Int32, opt forceRemove: Bool) -> Void {
+  wrappedMethod(equipAreaIndex, slotIndex, forceRemove);
+  let player: ref<PlayerPuppet> = this.m_owner as PlayerPuppet;
+  if IsDefined(player) {
+    TDO_Shrike_Refresh(player);
+  }
+}
+
+@wrapMethod(EquipmentSystemPlayerData)
+public final func OnRestored() -> Void {
+  wrappedMethod();
+  let player: ref<PlayerPuppet> = this.m_owner as PlayerPuppet;
+  if IsDefined(player) {
+    TDO_Shrike_Refresh(player);
+  }
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnDetach() -> Bool {
+  TDO_Shrike_Shutdown(this);
+  return wrappedMethod();
+}
+
+@wrapMethod(PlayerPuppet)
+protected cb func OnDeath(evt: ref<gameDeathEvent>) -> Bool {
+  TDO_Shrike_Shutdown(this);
+  return wrappedMethod(evt);
+}
+
+@wrapMethod(SandevistanEvents)
+protected final func OnExitToTimeDilationPhotomode(stateContext: ref<StateContext>, scriptInterface: ref<StateGameScriptInterface>) -> Void {
+  wrappedMethod(stateContext, scriptInterface);
+  let player: ref<PlayerPuppet> = scriptInterface.executionOwner as PlayerPuppet;
+  if IsDefined(player) && TDO_Zetatech_IsEquipped(player) {
+    GameInstance.GetTargetingSystem(player.GetGame()).BreakLookAt(player);
+    TDO_Shrike_ClearMarks(player);
+  }
 }

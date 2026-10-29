@@ -470,7 +470,7 @@ public func TDO_Shrike_InjectActiveCardLiveValues(game: GameInstance, itemTDB: T
   fv[4] = TDOConfig.LerpTier(10.0, 30.0, tier, 9);
   fv[5] = Cast<Float>(TDO_Shrike_MarksForTier(tier));
   fv[6] = TDOConfig.LerpTier(TDOConfig.ShrikeDurationMin(), TDOConfig.ShrikeDurationMax(), tier, 9);
-  fv[7] = TDOConfig.ShrikeMarkRange();
+  fv[7] = TDO_Shrike_GetMarkRange();
   dataPackage.floatValues = fv;
   dataPackage.InvalidateTextParams();
 }

@@ -229,7 +229,12 @@ return {
             markRange = {
                 opt = "Mark Range",
                 optUnit = " (m)",
-                des = "Maximum distance a target can be marked. Beyond this, no mark fires even with line of sight.",
+                des = "Maximum marking distance, capped at 30m. ADS at a visible hostile while Sandevistan is inactive or recharging to mark it. Look away, then aim at a mark for 1 second to remove it. Removed targets cannot be marked again for 5 seconds. Mark capacity increases from 2 to 5 with cyberware tier.",
+            },
+            clearMarks = {
+                opt = "Clear prepared marks",
+                des = "Remove all prepared Shrike marks while Sandevistan is inactive. End Sandevistan before clearing marks.",
+                button = "Clear",
             },
             slowTimeMinPct = {
                 opt = "Slow Time at MK1",
