@@ -829,6 +829,10 @@ public class TDOConfig {
     return 0.1;
   }
 
+  public static func QuantumTeleportSurfaceTolerance() -> Float {
+    return 0.1;
+  }
+
   public static func QuantumTeleportGroundSearchBudget() -> Float {
     return 3.0;
   }
@@ -855,14 +859,6 @@ public class TDOConfig {
 
   public static func QuantumTeleportFloorNormalMinZ() -> Float {
     return 0.7;
-  }
-
-  public static func QuantumTeleportFallbackNearOffset() -> Float {
-    return 0.5;
-  }
-
-  public static func QuantumTeleportFallbackFarOffset() -> Float {
-    return 1.0;
   }
 
   public static func QuantumLandingStimEnabled() -> Bool {

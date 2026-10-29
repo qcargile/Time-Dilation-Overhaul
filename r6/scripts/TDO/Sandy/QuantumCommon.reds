@@ -104,106 +104,128 @@ public func TDO_Quantum_TryCandidate(player: ref<PlayerPuppet>, qs: ref<SpatialQ
   return true;
 }
 
-public func TDO_Quantum_TryDirectCandidate(qs: ref<SpatialQueriesSystem>, raw: Vector4, lift: Float, out finalPos: Vector4) -> Bool {
-  let candidate: Vector4 = raw;
-  candidate.Z += lift;
-  if !TDO_Quantum_HasCapsuleSpace(qs, candidate) {
-    TDOTrace("QuantumSafety", "direct capsule overlap rejected");
-    return false;
+public func TDO_Quantum_GetCollisionFilter() -> QueryFilter {
+  let filter: QueryFilter;
+  QueryFilter.AddGroup(filter, n"Static");
+  QueryFilter.AddGroup(filter, n"Terrain");
+  QueryFilter.AddGroup(filter, n"PlayerBlocker");
+  QueryFilter.AddGroup(filter, n"Vehicle");
+  QueryFilter.AddGroup(filter, n"VehicleBlocker");
+  QueryFilter.AddGroup(filter, n"Dynamic");
+  QueryFilter.AddGroup(filter, n"Collider");
+  QueryFilter.AddGroup(filter, n"Destructible");
+  return filter;
+}
+
+public func TDO_Quantum_HasSurfaceSupport(qs: ref<SpatialQueriesSystem>, filter: QueryFilter, surface: Vector4, normal: Vector4, radius: Float) -> Bool {
+  let tolerance: Float = TDOConfig.QuantumTeleportSurfaceTolerance();
+  let i: Int32 = 0;
+  while i < 5 {
+    let sample: Vector4 = surface;
+    if i > 0 {
+      let offsetX: Float = i <= 2 ? -radius : radius;
+      let offsetY: Float = i == 1 || i == 3 ? -radius : radius;
+      sample.X += offsetX;
+      sample.Y += offsetY;
+      sample.Z -= (normal.X * offsetX + normal.Y * offsetY) / normal.Z;
+    }
+    let startPos: Vector4 = sample;
+    startPos.Z += tolerance;
+    let endPos: Vector4 = sample;
+    endPos.Z -= tolerance;
+    let tr: TraceResult;
+    if !qs.SyncRaycastByQueryFilter(startPos, endPos, filter, tr, true, false) {
+      TDOTrace("QuantumSafety", "support missing at sample=" + ToString(i));
+      return false;
+    }
+    let supportNormal: Vector4 = Cast<Vector4>(tr.normal);
+    if !(supportNormal.Z >= TDOConfig.QuantumTeleportFloorNormalMinZ()) || !(Vector4.Distance(sample, Cast<Vector4>(tr.position)) <= tolerance) {
+      TDOTrace("QuantumSafety", "support disagrees with selected surface at sample=" + ToString(i));
+      return false;
+    }
+    i += 1;
   }
-  finalPos = candidate;
   return true;
 }
 
-public func TDO_Quantum_ResolveAimPoint(player: ref<PlayerPuppet>, maxRange: Float, lift: Float, out aimPos: Vector4, out hitPos: Vector4) -> Bool {
+public func TDO_Quantum_HasTravelSpace(player: ref<PlayerPuppet>, scriptInterface: ref<StateGameScriptInterface>, qs: ref<SpatialQueriesSystem>, filter: QueryFilter, foot: Vector4, radius: Float) -> Bool {
+  let height: Float = TDOConfig.QuantumTeleportCapsuleHeight();
+  let halfExt: Vector4 = new Vector4(radius, radius, height * 0.5, 0.0);
+  let center: Vector4 = foot;
+  center.Z += halfExt.Z;
+  let identity: Quaternion;
+  Quaternion.SetIdentity(identity);
+  let tr: TraceResult;
+  if qs.OverlapByQueryFilter(halfExt, center, identity, filter, tr) {
+    TDOTrace("QuantumSafety", "landing box obstructed");
+    return false;
+  }
+  let capsule: Vector4 = new Vector4(radius, halfExt.Z - radius, -1.0, 0.0);
+  let rotation: EulerAngles;
+  rotation.Roll = 90.0;
+  if scriptInterface.LocomotionOverlapTest(capsule, center, rotation, tr) {
+    TDOTrace("QuantumSafety", "landing capsule obstructed");
+    return false;
+  }
+  let startPos: Vector4 = player.GetWorldPosition();
+  startPos.Z += halfExt.Z + TDOConfig.QuantumMarkerLift();
+  let travel: Vector4 = center - startPos;
+  let distance: Float = Vector4.Length(travel);
+  if !(distance > 0.0) {
+    return false;
+  }
+  if scriptInterface.LocomotionSweepTest(capsule, startPos, rotation, Vector4.Normalize(travel), distance, false, tr) {
+    TDOTrace("QuantumSafety", "travel capsule obstructed");
+    return false;
+  }
+  return true;
+}
+
+public func TDO_Quantum_ResolveAimPoint(player: ref<PlayerPuppet>, scriptInterface: ref<StateGameScriptInterface>, maxRange: Float, lift: Float, out hitPos: Vector4) -> Bool {
   let gi: GameInstance = player.GetGame();
   let qs: ref<SpatialQueriesSystem> = GameInstance.GetSpatialQueriesSystem(gi);
   if !IsDefined(qs) {
     return false;
   }
+  let physicsRadius: Float = FromVariant<Float>(scriptInterface.GetStateVectorParameter(physicsStateValue.Radius));
+  if !(physicsRadius > 0.0 && physicsRadius <= TDOConfig.QuantumTeleportCapsuleHeight() * 0.5) {
+    TDOTrace("QuantumSafety", "player radius unavailable value=" + ToString(physicsRadius));
+    return false;
+  }
+  let radius: Float = MaxF(physicsRadius, 0.4);
+  let filter: QueryFilter = TDO_Quantum_GetCollisionFilter();
   let camPos: Vector4 = TDO_Quantum_GetCameraPosition(player);
   let camFwd: Vector4 = TDO_Quantum_GetCameraForward(player);
-  let camFwdFlat: Vector4 = camFwd;
-  camFwdFlat.Z = 0.0;
-  if Vector4.Length(camFwdFlat) < 0.01 {
-    camFwdFlat = player.GetWorldForward();
-    camFwdFlat.Z = 0.0;
-  }
-  if Vector4.Length(camFwdFlat) < 0.01 {
-    camFwdFlat = new Vector4(0.0, 1.0, 0.0, 0.0);
-  }
-  camFwdFlat = Vector4.Normalize(camFwdFlat);
   let lineEnd: Vector4 = camPos + (camFwd * maxRange);
   let tr: TraceResult;
-  let hit: Bool = qs.SyncRaycastByCollisionPreset(camPos, lineEnd, n"World Static", tr, true);
-  if TDOConfig.EnableDebugLog() && TDOConfig.DebugLogLevel() >= 4 {
-    let referenceFilter: QueryFilter;
-    QueryFilter.AddGroup(referenceFilter, n"Static");
-    QueryFilter.AddGroup(referenceFilter, n"Terrain");
-    QueryFilter.AddGroup(referenceFilter, n"PlayerBlocker");
-    let referenceTrace: TraceResult;
-    let referenceHit: Bool = qs.SyncRaycastByQueryFilter(camPos, lineEnd, referenceFilter, referenceTrace, true, false);
-    TDOTrace("QuantumAimReference", "primaryHit=" + ToString(hit) + " primaryPosition=" + TDO_Quantum_Vec3Str(Cast<Vector4>(tr.position)) + " primaryNormal=" + TDO_Quantum_Vec3Str(Cast<Vector4>(tr.normal)) + " referenceHit=" + ToString(referenceHit) + " referencePosition=" + TDO_Quantum_Vec3Str(Cast<Vector4>(referenceTrace.position)) + " referenceNormal=" + TDO_Quantum_Vec3Str(Cast<Vector4>(referenceTrace.normal)));
+  if !qs.SyncRaycastByQueryFilter(camPos, lineEnd, filter, tr, true, false) {
+    TDOTrace("QuantumSafety", "aim has no surface");
+    return false;
   }
-  let raw: Vector4;
-  if hit {
-    raw = Cast<Vector4>(tr.position);
-  } else {
-    raw = lineEnd;
+  let raw: Vector4 = Cast<Vector4>(tr.position);
+  let normal: Vector4 = Cast<Vector4>(tr.normal);
+  if !(Vector4.Distance(camPos, raw) <= maxRange) || !(normal.Z >= TDOConfig.QuantumTeleportFloorNormalMinZ()) || !(Vector4.Length(normal) <= 1.01) {
+    TDOTrace("QuantumSafety", "aim surface invalid or too steep");
+    return false;
   }
-  TDOTrace("QuantumAim", "hit=" + ToString(hit) + " range=" + ToString(maxRange) + " camPos=" + TDO_Quantum_Vec3Str(camPos) + " camFwd=" + TDO_Quantum_Vec3Str(camFwd) + " raw=" + TDO_Quantum_Vec3Str(raw));
-  let candidate: Vector4;
-  let directAllowed: Bool = !hit;
-  if hit {
-    let normal: Vector4 = Cast<Vector4>(tr.normal);
-    directAllowed = Vector4.Dot(normal, new Vector4(0.0, 0.0, 1.0, 0.0)) >= TDOConfig.QuantumTeleportFloorNormalMinZ();
+  if !TDO_Quantum_HasSurfaceSupport(qs, filter, raw, normal, radius) {
+    return false;
   }
-  if directAllowed && TDO_Quantum_TryDirectCandidate(qs, raw, lift, candidate) {
-    if TDOConfig.EnableDebugLog() && TDOConfig.DebugLogLevel() >= 4 {
-      TDOTrace("QuantumSafety", "direct accepted hit=" + ToString(hit) + " raw=" + TDO_Quantum_Vec3Str(raw) + " destination=" + TDO_Quantum_Vec3Str(candidate));
-    }
-    aimPos = raw;
-    hitPos = candidate;
-    return true;
+  let navSys: ref<AINavigationSystem> = GameInstance.GetAINavigationSystem(gi);
+  if !IsDefined(navSys) {
+    return false;
   }
-  if TDO_Quantum_TryCandidate(player, qs, raw, lift, candidate) {
-    aimPos = raw;
-    hitPos = candidate;
-    return true;
+  let navResult: NavigationFindPointResult = navSys.FindPointInSphereForCharacter(raw, TDOConfig.QuantumTeleportNavmeshSnapRadius(), player);
+  if !Equals(navResult.status, worldNavigationRequestStatus.OK) || !(Vector4.Distance(raw, navResult.point) <= TDOConfig.QuantumTeleportNavmeshSnapRadius()) || !(AbsF(raw.Z - navResult.point.Z) <= TDOConfig.QuantumTeleportSurfaceTolerance()) {
+    TDOTrace("QuantumSafety", "navigation disagrees with selected surface");
+    return false;
   }
-  TDODebug("QuantumSafety", "primary rejected, trying fallbacks");
-  let camRightFlat: Vector4 = Vector4.Cross(camFwdFlat, new Vector4(0.0, 0.0, 1.0, 0.0));
-  camRightFlat = Vector4.Normalize(camRightFlat);
-  let nearOff: Float = TDOConfig.QuantumTeleportFallbackNearOffset();
-  let farOff: Float = TDOConfig.QuantumTeleportFallbackFarOffset();
-  let attempt: Vector4 = raw - camFwdFlat * nearOff;
-  if TDO_Quantum_TryCandidate(player, qs, attempt, lift, candidate) {
-    aimPos = raw;
-    hitPos = candidate;
-    TDODebug("QuantumSafety", "fallback back-near accepted");
-    return true;
+  let candidate: Vector4 = raw;
+  candidate.Z += lift;
+  if !(Vector4.Distance(camPos, candidate) <= maxRange) || !TDO_Quantum_HasTravelSpace(player, scriptInterface, qs, filter, candidate, radius) {
+    return false;
   }
-  attempt = raw - camFwdFlat * farOff;
-  if TDO_Quantum_TryCandidate(player, qs, attempt, lift, candidate) {
-    aimPos = raw;
-    hitPos = candidate;
-    TDODebug("QuantumSafety", "fallback back-far accepted");
-    return true;
-  }
-  attempt = raw + camRightFlat * nearOff;
-  if TDO_Quantum_TryCandidate(player, qs, attempt, lift, candidate) {
-    aimPos = raw;
-    hitPos = candidate;
-    TDODebug("QuantumSafety", "fallback right-near accepted");
-    return true;
-  }
-  attempt = raw - camRightFlat * nearOff;
-  if TDO_Quantum_TryCandidate(player, qs, attempt, lift, candidate) {
-    aimPos = raw;
-    hitPos = candidate;
-    TDODebug("QuantumSafety", "fallback left-near accepted");
-    return true;
-  }
-  TDODebug("QuantumSafety", "all candidates rejected");
-  return false;
+  hitPos = candidate;
+  TDOTrace("QuantumSafety", "verified surface destination=" + TDO_Quantum_Vec3Str(candidate));
+  return true;
 }
