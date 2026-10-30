@@ -70,55 +70,10 @@ public let m_tdoShrikeNextCleanup: Float;
 @addField(PlayerPuppet)
 public let m_tdoShrikeTickGeneration: Uint32;
 
-@addField(PlayerPuppet)
-public let m_tdoShrikeHUD: ref<TDO_ShrikeHUD>;
-
-@addField(PlayerPuppet)
-public let m_tdoShrikeFeedback: CName;
-
-@addField(PlayerPuppet)
-public let m_tdoShrikeFeedbackUntil: Float;
-
 public func TDO_Shrike_ResetAim(player: ref<PlayerPuppet>) -> Void {
   player.m_tdoShrikeHoveredNPC = EMPTY_ENTITY_ID();
   player.m_tdoShrikeAimHandled = false;
   player.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
-}
-
-public func TDO_Shrike_Feedback(player: ref<PlayerPuppet>, status: CName, now: Float) -> Void {
-  player.m_tdoShrikeFeedback = status;
-  player.m_tdoShrikeFeedbackUntil = now + 1.5;
-}
-
-public func TDO_Shrike_UpdateHUD(player: ref<PlayerPuppet>, now: Float, status: CName, progress: Float, seconds: Int32, isADS: Bool) -> Void {
-  let feedback: Bool = now < player.m_tdoShrikeFeedbackUntil;
-  let visible: Bool = isADS || ArraySize(player.m_tdoShrikeMarkedNPCs) > 0 || feedback;
-  if !visible {
-    if IsDefined(player.m_tdoShrikeHUD) {
-      player.m_tdoShrikeHUD.Update(0, 0, n"", -1.0, 0, false);
-    }
-    return;
-  }
-  let inMenu: Bool = GameInstance.GetBlackboardSystem(player.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsInMenu);
-  visible = visible && !inMenu && !GameInstance.GetPhotoModeSystem(player.GetGame()).IsPhotoModeActive();
-  if !IsDefined(player.m_tdoShrikeHUD) {
-    if !visible || TDOConfig.UIHideAll() {
-      return;
-    }
-    player.m_tdoShrikeHUD = new TDO_ShrikeHUD();
-  }
-  if Equals(status, n"") {
-    if feedback {
-      status = player.m_tdoShrikeFeedback;
-    } else {
-      if TDO_Shrike_IsSandyActive(player) {
-        status = ArraySize(player.m_tdoShrikeMarkedNPCs) > 0 ? n"UI-TDO-ShrikeTracking" : n"UI-TDO-ShrikeNoMarks";
-      } else {
-        status = n"UI-TDO-ShrikeReady";
-      }
-    }
-  }
-  player.m_tdoShrikeHUD.Update(ArraySize(player.m_tdoShrikeMarkedNPCs), TDO_Shrike_GetMaxMarks(player), status, progress, seconds, visible);
 }
 
 public func TDO_Shrike_PruneMarks(player: ref<PlayerPuppet>, now: Float) -> Void {
@@ -242,9 +197,6 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
   let inMenu: Bool = GameInstance.GetBlackboardSystem(this.GetGame()).Get(GetAllBlackboardDefs().UI_System).GetBool(GetAllBlackboardDefs().UI_System.IsInMenu);
   if inMenu || GameInstance.GetPhotoModeSystem(this.GetGame()).IsPhotoModeActive() {
     TDO_Shrike_ResetAim(this);
-    if IsDefined(this.m_tdoShrikeHUD) {
-      this.m_tdoShrikeHUD.Update(0, 0, n"", -1.0, 0, false);
-    }
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
@@ -257,7 +209,6 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
 
   if !TDO_Shrike_IsRangedWeaponEquipped(this) {
     TDO_Shrike_ResetAim(this);
-    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, false);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
@@ -268,21 +219,18 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
       TDO_Shrike_SnapToMarkAtIndex(this, bestIdx);
     }
     TDO_Shrike_ResetAim(this);
-    TDO_Shrike_UpdateHUD(this, now, bestIdx >= 0 ? n"" : n"UI-TDO-ShrikeNoTarget", -1.0, 0, true);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
 
   if inSandy {
     TDO_Shrike_ResetAim(this);
-    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, isADS);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
 
   if !isADS {
     TDO_Shrike_ResetAim(this);
-    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, false);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
@@ -291,7 +239,6 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
   let lookAt: ref<GameObject> = targetingSystem.GetLookAtObject(this, true, true);
   if !IsDefined(lookAt) {
     TDO_Shrike_ResetAim(this);
-    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
@@ -299,7 +246,6 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
   let npc: ref<NPCPuppet> = lookAt as NPCPuppet;
   if !TDO_Shrike_IsEligibleTarget(npc) {
     TDO_Shrike_ResetAim(this);
-    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
@@ -314,7 +260,6 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
   }
 
   if this.m_tdoShrikeAimHandled {
-    TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
     TDO_Shrike_ScheduleMarkTick(this);
     return true;
   }
@@ -332,10 +277,6 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
       this.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
       TDODebug("Shrike", "mark removed " + ToString(ArraySize(this.m_tdoShrikeMarkedNPCs)) + "/" + ToString(TDO_Shrike_GetMaxMarks(this)));
       this.m_tdoShrikeAimHandled = true;
-      TDO_Shrike_Feedback(this, n"UI-TDO-ShrikeRemoved", now);
-      TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
-    } else {
-      TDO_Shrike_UpdateHUD(this, now, n"UI-TDO-ShrikeRemoving", elapsed / TDOConfig.ShrikeUnmarkHoverTime(), 0, true);
     }
   } else {
     let dist: Float = Vector4.Distance(this.GetWorldPosition(), lookAt.GetWorldPosition());
@@ -344,7 +285,6 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
         this.m_tdoShrikeLastDeniedTarget = targetID;
         GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_crafting_fail");
       }
-      TDO_Shrike_UpdateHUD(this, now, n"UI-TDO-ShrikeOutOfRange", -1.0, 0, true);
       TDO_Shrike_ScheduleMarkTick(this);
       return true;
     }
@@ -355,9 +295,6 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
           GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_crafting_fail");
           TDODebug("Shrike", "mark denied (cooldown)");
         }
-        let cooldownIdx: Int32 = ArrayFindFirst(this.m_tdoShrikeCooldownIDs, targetID);
-        let remaining: Float = TDOConfig.ShrikeRemarkCooldown() - (now - this.m_tdoShrikeCooldownTimes[cooldownIdx]);
-        TDO_Shrike_UpdateHUD(this, now, n"UI-TDO-ShrikeCooldown", -1.0, CeilF(remaining), true);
       } else {
         let maxMarks: Int32 = TDO_Shrike_GetMaxMarks(this);
         TDO_Shrike_PruneMarks(this, now);
@@ -369,15 +306,12 @@ protected cb func OnTDO_ShrikeMarkTickEvent(evt: ref<TDO_ShrikeMarkTickEvent>) -
           this.m_tdoShrikeLastDeniedTarget = EMPTY_ENTITY_ID();
           TDODebug("Shrike", "mark added " + ToString(ArraySize(this.m_tdoShrikeMarkedNPCs)) + "/" + ToString(maxMarks));
           this.m_tdoShrikeAimHandled = true;
-          TDO_Shrike_Feedback(this, n"UI-TDO-ShrikeMarked", now);
-          TDO_Shrike_UpdateHUD(this, now, n"", -1.0, 0, true);
         } else {
           if !Equals(this.m_tdoShrikeLastDeniedTarget, targetID) {
             this.m_tdoShrikeLastDeniedTarget = targetID;
             GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_crafting_fail");
             TDODebug("Shrike", "mark denied (max " + ToString(maxMarks) + " reached)");
           }
-          TDO_Shrike_UpdateHUD(this, now, n"UI-TDO-ShrikeFull", -1.0, 0, true);
         }
       }
     }
@@ -468,12 +402,6 @@ public func TDO_Shrike_ClearPreparedState(player: ref<PlayerPuppet>) -> Void {
   ArrayClear(player.m_tdoShrikeCooldownTimes);
   TDO_Shrike_ResetAim(player);
   player.m_tdoShrikeNextCleanup = 0.0;
-  player.m_tdoShrikeFeedback = n"";
-  player.m_tdoShrikeFeedbackUntil = 0.0;
-  if IsDefined(player.m_tdoShrikeHUD) {
-    player.m_tdoShrikeHUD.Remove();
-    player.m_tdoShrikeHUD = null;
-  }
 }
 
 public func TDO_Shrike_ClearMarks(player: ref<PlayerPuppet>) -> Void {
@@ -499,16 +427,13 @@ public func TDO_Shrike_Refresh(player: ref<PlayerPuppet>) -> Void {
 
 @addMethod(PlayerPuppet)
 public final func TDO_Shrike_ClearPreparedMarks() -> Bool {
-  let now: Float = EngineTime.ToFloat(GameInstance.GetEngineTime(this.GetGame()));
   if TDO_Shrike_IsSandyActive(this) {
-    TDO_Shrike_Feedback(this, n"UI-TDO-ShrikeClearBlocked", now);
     GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_crafting_fail");
     return false;
   }
   TDO_Shrike_ClearPreparedState(this);
   GameInstance.GetAudioSystem(this.GetGame()).Play(n"ui_menu_item_disassemble");
   if TDOConfig.ShrikeEnabled() && TDO_Zetatech_IsEquipped(this) && !this.IsDead() && !this.IsReplacer() {
-    TDO_Shrike_Feedback(this, n"UI-TDO-ShrikeCleared", now);
     TDO_Shrike_ScheduleMarkTick(this);
   }
   return true;

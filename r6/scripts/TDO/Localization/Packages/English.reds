@@ -14,7 +14,7 @@ public class English extends ModLocalizationPackage {
 
     
     this.Text("Item-TDO-C1Shrike-Flavor", "Zetatech precision-execution subroutine — paint your targets while time crawls, then watch them all drop at once.");
-    this.Text("Item-TDO-C1Shrike-Active-Desc", "Press <Input context=\"Abilities\" actionName=\"IconicCyberware\" color=\"MainColors.Blue\" hold=\"Hide\"></> to <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">activate</>.\n\nWhile inactive or recharging, ADS at a visible hostile within <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">{float_7}m</> (maximum 30m) to mark it instantly. Holds up to <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">{float_5}</> marks (2–5 by tier). Look away, then aim at a marked target for 1 second to remove it. Removed targets have a 5-second re-mark cooldown. Use Clear prepared marks in Shrike settings to clear your selection while inactive.\n\nWhen active:\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Slows time by {float_0}%</> (you are not slowed)\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">ADS</> to track the closest <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">mark</> with an <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">aimbot-like</> effect. Pull the trigger to <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">execute</> the target.\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">+{float_4}% headshot damage</>\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">+{float_4}% weakspot damage</>\n\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Duration:</> {float_6} sec.\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Cooldown:</> {float_3} sec.");
+    this.Text("Item-TDO-C1Shrike-Active-Desc", "Press <Input context=\"Abilities\" actionName=\"IconicCyberware\" color=\"MainColors.Blue\" hold=\"Hide\"></> to <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">activate</>.\n\nWhile inactive:\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Aim</> to mark enemies within <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">{float_7}m</>.\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Max marks:</> {float_5}\nRe-aim and hold for <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">1 sec</> to unmark.\n\nWhen active:\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Slows time by {float_0}%</> (you are not slowed)\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">ADS</> to track the closest <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">mark</> with an <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">aimbot-like</> effect. Pull the trigger to <Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">execute</> the target.\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">+{float_4}% headshot damage</>\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">+{float_4}% weakspot damage</>\n\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Duration:</> {float_6} sec.\n<Rich color=\"TooltipText.cyberwareDescriptionHighlightColor\" style=\"Semi-Bold\">Cooldown:</> {float_3} sec.");
 
     
     this.Text("Item-TDO-C2Tanto-Flavor", "Dynalar blade discipline. Parry the strike, vanish into time, finish from behind.");
@@ -56,20 +56,6 @@ public class English extends ModLocalizationPackage {
     this.Text("SE-TDO-ZetatechRangedBuff-Name", "Zetatech Mark & Execute");
     this.Text("SE-TDO-ZetatechRangedBuff-Desc", "Mark & Execute active. ADS to track the closest prepared mark, then pull the trigger to execute. Prepare marks while Sandevistan is inactive or recharging, within the configured range up to 30m.");
 
-    this.Text("UI-TDO-ShrikeMarks", "SHRIKE");
-    this.Text("UI-TDO-ShrikeMarked", "Marked");
-    this.Text("UI-TDO-ShrikeRemoved", "Mark removed");
-    this.Text("UI-TDO-ShrikeFull", "Mark slots full");
-    this.Text("UI-TDO-ShrikeOutOfRange", "Out of marking range");
-    this.Text("UI-TDO-ShrikeCooldown", "Re-mark cooldown");
-    this.Text("UI-TDO-ShrikeRemoving", "Hold aim to remove");
-    this.Text("UI-TDO-ShrikeReady", "Aim to mark");
-    this.Text("UI-TDO-ShrikeTracking", "Aim and fire to execute");
-    this.Text("UI-TDO-ShrikeNoMarks", "Prepare marks before activation");
-    this.Text("UI-TDO-ShrikeNoTarget", "No marked target available");
-    this.Text("UI-TDO-ShrikeCleared", "Marks cleared");
-    this.Text("UI-TDO-ShrikeClearBlocked", "End Sandevistan before clearing marks");
-    this.Text("UI-TDO-ShrikeSeconds", "s");
 
     
     this.Text("SE-TDO-FalconRangedBuff-Name", "Militech Targeting Subroutine");
