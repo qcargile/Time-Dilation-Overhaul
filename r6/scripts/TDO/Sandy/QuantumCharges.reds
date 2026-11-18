@@ -104,7 +104,7 @@ public class TDOSandyChargeListener extends ScriptStatPoolsListener {
     if !IsDefined(p) {
       return;
     }
-    if !p.TDO_Quantum_IsAdvancedEquipped() {
+    if !TDO_Quantum_IsEquipped(p) || !p.TDO_Quantum_IsAdvancedEquipped() {
       return;
     }
 
@@ -146,7 +146,7 @@ protected func OnEnter(stateContext: ref<StateContext>, scriptInterface: ref<Sta
   if !IsDefined(player) {
     return;
   }
-  if !player.TDO_Quantum_IsAdvancedEquipped() {
+  if !TDO_Quantum_IsEquipped(player) || !player.TDO_Quantum_IsAdvancedEquipped() {
     return;
   }
 
@@ -169,7 +169,7 @@ protected func OnExit(stateContext: ref<StateContext>, scriptInterface: ref<Stat
   if !IsDefined(player) {
     return;
   }
-  if !player.TDO_Quantum_IsAdvancedEquipped() {
+  if !TDO_Quantum_IsEquipped(player) || !player.TDO_Quantum_IsAdvancedEquipped() {
     return;
   }
 
@@ -186,7 +186,7 @@ protected final func OnForcedExit(stateContext: ref<StateContext>, scriptInterfa
   if !IsDefined(player) {
     return;
   }
-  if !player.TDO_Quantum_IsAdvancedEquipped() {
+  if !TDO_Quantum_IsEquipped(player) || !player.TDO_Quantum_IsAdvancedEquipped() {
     return;
   }
 

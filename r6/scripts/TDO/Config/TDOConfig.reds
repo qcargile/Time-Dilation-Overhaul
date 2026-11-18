@@ -57,8 +57,7 @@ public class TDOConfig {
     return 15.0;
   }
 
-  public static func QuantumDurationMin() -> Float { return 2.0; }
-  public static func QuantumDurationMax() -> Float { return 5.0; }
+  public static func QuantumPlanningTimeSec() -> Float { return 10.0; }
 
 
   public static func DOTEnabled() -> Bool {
@@ -462,14 +461,6 @@ public class TDOConfig {
     return 1.0;
   }
 
-  public static func WarpDancerStaggerDurationMinSec() -> Float {
-    return 0.3;
-  }
-
-  public static func WarpDancerStaggerDurationMaxSec() -> Float {
-    return 2.0;
-  }
-
   public static func WarpDancerSlowTimeMinPct() -> Float {
     return 99.0;
   }
@@ -826,10 +817,6 @@ public class TDOConfig {
   }
 
   public static func QuantumMarkerLift() -> Float {
-    return 0.1;
-  }
-
-  public static func QuantumTeleportSurfaceTolerance() -> Float {
     return 0.1;
   }
 

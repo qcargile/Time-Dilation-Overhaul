@@ -289,10 +289,6 @@ public func TDO_Kurosawa_InjectActiveCardLiveValues(itemTDB: TweakDBID, dataPack
   dataPackage.InvalidateTextParams();
 }
 
-public func TDO_Quantum_DurationForTier(tier: Int32) -> Float {
-  return TDOConfig.LerpTier(TDOConfig.QuantumDurationMin(), TDOConfig.QuantumDurationMax(), tier, 5);
-}
-
 public func TDO_Quantum_InjectActiveCardLiveValues(game: GameInstance, itemTDB: TweakDBID, dataPackage: ref<UILocalizationDataPackage>) -> Void {
   if !IsDefined(dataPackage) {
     return;
@@ -314,7 +310,7 @@ public func TDO_Quantum_InjectActiveCardLiveValues(game: GameInstance, itemTDB: 
   let radius: Float = TDOConfig.QuantumMalwareRadiusBase();
   let tpRange: Float = TDOConfig.LerpTier(TDOConfig.QuantumTeleportRangeMin(), TDOConfig.QuantumTeleportRangeMax(), tier, 5);
   let malwareDur: Float = TDOConfig.LerpTier(TDOConfig.QuantumMalwareFreezeDurMin(), TDOConfig.QuantumMalwareFreezeDurMax(), tier, 5);
-  let teleWindow: Float = TDO_Quantum_DurationForTier(tier);
+  let teleWindow: Float = TDOConfig.QuantumPlanningTimeSec();
   let player: ref<PlayerPuppet> = GameInstance.GetPlayerSystem(game).GetLocalPlayerMainGameObject() as PlayerPuppet;
   if IsDefined(player) {
     radius = TDO_Quantum_GetMalwareRadius(player);
@@ -546,7 +542,6 @@ public func TDO_WarpDancer_InjectActiveCardLiveValues(itemTDB: TweakDBID, dataPa
   fv[0] = TDOConfig.LerpTier(TDOConfig.WarpDancerSlowTimeMinPct(), TDOConfig.WarpDancerSlowTimeMaxPct(), tier, 7);
   fv[4] = TDOConfig.LerpTier(TDOConfig.WarpDancerDurationMin(), TDOConfig.WarpDancerDurationMax(), tier, 7);
   fv[5] = TDOConfig.LerpTier(TDOConfig.WarpDancerMoveSpeedMin(), TDOConfig.WarpDancerMoveSpeedMax(), tier, 7);
-  fv[6] = TDOConfig.WarpDancerStaggerDurationMaxSec() - (TDOConfig.WarpDancerStaggerDurationMaxSec() - TDOConfig.WarpDancerStaggerDurationMinSec()) * (Cast<Float>(tier - 1) / 6.0);
   fv[7] = TDOConfig.LerpTier(TDOConfig.WarpDancerRechargeMin(), TDOConfig.WarpDancerRechargeMax(), tier, 7);
   fv[8] = TDOConfig.WarpDancerRewindDurationSec();
   dataPackage.floatValues = fv;

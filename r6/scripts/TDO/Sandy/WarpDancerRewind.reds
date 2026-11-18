@@ -75,6 +75,7 @@ public func TDO_WarpDancer_BeginRewind(player: ref<PlayerPuppet>) -> Void {
     player.m_warpDancerTickID = GetInvalidDelayID();
   }
 
+  TDO_WarpDancer_ClearMovementLocks(player);
   let strength: Float = TDOConfig.WarpDancerDilationStrength();
   TimeDilationHelper.SetTimeDilation(player, n"WarpDancer", strength, 999.0, n"Linear", n"Linear", true);
   TimeDilationHelper.SetIgnoreTimeDilationOnLocalPlayerZero(player, false);
@@ -124,6 +125,7 @@ protected cb func OnTDO_WarpDancerRewindTickEvent(evt: ref<TDO_WarpDancerRewindT
   if this.m_warpDancerPhase != 2 {
     return false;
   }
+  TDO_WarpDancer_ClearMovementLocksThrottled(this);
 
   let idx: Int32 = this.m_warpDancerRewindIdx;
   if idx < 0 {
@@ -181,6 +183,7 @@ public func TDO_WarpDancer_Release(player: ref<PlayerPuppet>) -> Void {
     return;
   }
   TDOInfo("WarpDancer", "rewind complete, releasing");
+  TDO_WarpDancer_ClearMovementLocks(player);
   TimeDilationHelper.UnSetTimeDilation(player, n"WarpDancer", n"Linear");
 
   GameObject.PlaySoundEvent(player, n"lcm_player_intcloak_activated");
@@ -191,12 +194,6 @@ public func TDO_WarpDancer_Release(player: ref<PlayerPuppet>) -> Void {
   let pools: ref<StatPoolsSystem> = GameInstance.GetStatPoolsSystem(player.GetGame());
   let pid: StatsObjectID = Cast<StatsObjectID>(player.GetEntityID());
   pools.RequestSettingStatPoolValue(pid, gamedataStatPoolType.SandevistanCharge, 0.0, player, false);
-
-  let staggerIdx: Int32 = TDO_WarpDancer_GetEquippedTierIndex(player);
-  if staggerIdx >= 0 {
-    let staggerSEID: TweakDBID = TDO_WarpDancer_GetStaggerSEID(player);
-    StatusEffectHelper.ApplyStatusEffect(player, staggerSEID);
-  }
 
   ArrayClear(player.m_warpDancerRecord);
   player.m_warpDancerRewindIdx = 0;

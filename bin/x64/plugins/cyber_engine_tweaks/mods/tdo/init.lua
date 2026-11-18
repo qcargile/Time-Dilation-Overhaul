@@ -11,7 +11,7 @@ local isLoaded = false
 local Initialized = false
 local ExternalMods = {}
 
-local TDO_VERSION = "v2.38.1"
+local TDO_VERSION = "v2.39"
 local ESR_VERSION = "d2026.6.11"
 
 local function lerpTier(v1, vTop, tier, total)
@@ -170,17 +170,6 @@ end
 local WARPDANCER_TIER_SUFFIXES = {"MK3", "MK3Plus", "MK4", "MK4Plus", "MK5", "MK5Plus", "MK5PlusPlus"}
 local WARPDANCER_ACTIVATION_INLINE = { MK3 = 8, MK3Plus = 8, MK4 = 8, MK4Plus = 8, MK5 = 1, MK5Plus = 1, MK5PlusPlus = 1 }
 
-local function applyWarpDancerStaggerPerTier(config)
-	if config.warpDancer == nil or config.warpDancer.enabled == false then return end
-	local sMin = config.warpDancer.staggerDurationMinSec
-	local sMax = config.warpDancer.staggerDurationMaxSec
-	for i, suffix in ipairs(WARPDANCER_TIER_SUFFIXES) do
-		local t = (i - 1) / 6.0
-		local staggerSec = sMax - (sMax - sMin) * t
-		TweakDB:SetFlat("StatusEffects.TDO_WarpDancerStagger_" .. suffix .. "_DurMod.value", staggerSec)
-	end
-end
-
 local function applyWarpDancerMoveSpeed(config)
 	if config.warpDancer == nil or config.warpDancer.enabled == false then return end
 	local msMin = config.warpDancer.moveSpeedMin
@@ -196,19 +185,15 @@ local function applyWarpDancerCardValues(config)
 	if config.warpDancer == nil or config.warpDancer.enabled == false then return end
 	local msMin = config.warpDancer.moveSpeedMin
 	local msMax = config.warpDancer.moveSpeedMax
-	local stgMin = config.warpDancer.staggerDurationMinSec
-	local stgMax = config.warpDancer.staggerDurationMaxSec
 	for i, suffix in ipairs(WARPDANCER_TIER_SUFFIXES) do
 		local t = (i - 1) / 6.0
 		local msPct = msMin + (msMax - msMin) * t
-		local stgSec = stgMax - (stgMax - stgMin) * t
 		local inlineNum = WARPDANCER_ACTIVATION_INLINE[suffix]
 		local floatPath = "Items.AdvancedSandevistanC3" .. suffix .. "_inline" .. tostring(inlineNum) .. ".floatValues"
 		local floats = TweakDB:GetFlat(floatPath)
 		if type(floats) == "table" then
-			while #floats < 7 do table.insert(floats, 0.0) end
+			while #floats < 6 do table.insert(floats, 0.0) end
 			floats[6] = msPct
-			floats[7] = stgSec
 			TweakDB:SetFlat(floatPath, floats)
 		end
 	end
@@ -232,7 +217,6 @@ local function createWarpDancerMechanic(nativeSettings, path, nuiTxt, config, de
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMin"]["opt"]..nuiTxt[cat]["rechargeMin"]["optUnit"], nuiTxt[cat]["rechargeMin"]["des"], 5.0, 120.0, 1.0, "%.0f", config.warpDancer.rechargeMin, default.warpDancer.rechargeMin, function(value) config.warpDancer.rechargeMin = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rechargeMax"]["opt"]..nuiTxt[cat]["rechargeMax"]["optUnit"], nuiTxt[cat]["rechargeMax"]["des"], 5.0, 120.0, 1.0, "%.0f", config.warpDancer.rechargeMax, default.warpDancer.rechargeMax, function(value) config.warpDancer.rechargeMax = value applyWarpDancerTSDurRchrg(config) saveSettings(config) end))
 
-	applyWarpDancerStaggerPerTier(config)
 	applyWarpDancerMoveSpeed(config)
 	applyWarpDancerCardValues(config)
 
@@ -252,20 +236,6 @@ local function createWarpDancerMechanic(nativeSettings, path, nuiTxt, config, de
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["rewindDurationSec"]["opt"]..nuiTxt[cat]["rewindDurationSec"]["optUnit"], nuiTxt[cat]["rewindDurationSec"]["des"], 0.5, 10.0, 0.1, "%.1f", config.warpDancer.rewindDurationSec, default.warpDancer.rewindDurationSec, function(value)
 		config.warpDancer.rewindDurationSec = value
-		saveSettings(config)
-	end))
-
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["staggerDurationMinSec"]["opt"]..nuiTxt[cat]["staggerDurationMinSec"]["optUnit"], nuiTxt[cat]["staggerDurationMinSec"]["des"], 0.0, 5.0, 0.05, "%.2f", config.warpDancer.staggerDurationMinSec, default.warpDancer.staggerDurationMinSec, function(value)
-		config.warpDancer.staggerDurationMinSec = value
-		applyWarpDancerStaggerPerTier(config)
-		applyWarpDancerCardValues(config)
-		saveSettings(config)
-	end))
-
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["staggerDurationMaxSec"]["opt"]..nuiTxt[cat]["staggerDurationMaxSec"]["optUnit"], nuiTxt[cat]["staggerDurationMaxSec"]["des"], 0.0, 5.0, 0.05, "%.2f", config.warpDancer.staggerDurationMaxSec, default.warpDancer.staggerDurationMaxSec, function(value)
-		config.warpDancer.staggerDurationMaxSec = value
-		applyWarpDancerStaggerPerTier(config)
-		applyWarpDancerCardValues(config)
 		saveSettings(config)
 	end))
 
@@ -513,11 +483,11 @@ end
 
 local function applyQuantumDurations(config)
 	if config.quantum == nil then return end
-	TweakDB:SetFlat("Items.TDO_Quantum_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 1, 5))
-	TweakDB:SetFlat("Items.TDO_QuantumPlus_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 2, 5))
-	TweakDB:SetFlat("Items.TDO_QuantumAdvanced_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 3, 5))
-	TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlus_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 4, 5))
-	TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlusPlus_Duration.value", lerpTier(config.quantum.durationMin, config.quantum.durationMax, 5, 5))
+	TweakDB:SetFlat("Items.TDO_Quantum_Duration.value", config.quantum.planningTimeSec)
+	TweakDB:SetFlat("Items.TDO_QuantumPlus_Duration.value", config.quantum.planningTimeSec)
+	TweakDB:SetFlat("Items.TDO_QuantumAdvanced_Duration.value", config.quantum.planningTimeSec)
+	TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlus_Duration.value", config.quantum.planningTimeSec)
+	TweakDB:SetFlat("Items.TDO_QuantumAdvancedPlusPlus_Duration.value", config.quantum.planningTimeSec)
 end
 
 local function applyQuantumRecharge(config)
@@ -545,8 +515,7 @@ local function createQuantumMechanic(nativeSettings, path, nuiTxt, config, defau
 	applyQuantumDurations(config)
 	applyQuantumRecharge(config)
 
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMin"]["opt"]..nuiTxt[cat]["durationMin"]["optUnit"], nuiTxt[cat]["durationMin"]["des"], 0.5, 15.0, 0.25, "%.2f", config.quantum.durationMin, default.quantum.durationMin, function(value) config.quantum.durationMin = value applyQuantumDurations(config) saveSettings(config) end))
-	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["durationMax"]["opt"]..nuiTxt[cat]["durationMax"]["optUnit"], nuiTxt[cat]["durationMax"]["des"], 0.5, 15.0, 0.25, "%.2f", config.quantum.durationMax, default.quantum.durationMax, function(value) config.quantum.durationMax = value applyQuantumDurations(config) saveSettings(config) end))
+	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["planningTimeSec"]["opt"]..nuiTxt[cat]["planningTimeSec"]["optUnit"], nuiTxt[cat]["planningTimeSec"]["des"], 2.0, 15.0, 0.5, "%.1f", config.quantum.planningTimeSec, default.quantum.planningTimeSec, function(value) config.quantum.planningTimeSec = value applyQuantumDurations(config) saveSettings(config) end))
 
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMin"]["opt"]..nuiTxt[cat]["cooldownMin"]["optUnit"], nuiTxt[cat]["cooldownMin"]["des"], 1.0, 120.0, 0.5, "%.1f", config.quantum.cooldownMin, default.quantum.cooldownMin, function(value) config.quantum.cooldownMin = value applyQuantumRecharge(config) saveSettings(config) end))
 	table.insert(handles, nativeSettings.addRangeFloat(path, nuiTxt[cat]["cooldownMax"]["opt"]..nuiTxt[cat]["cooldownMax"]["optUnit"], nuiTxt[cat]["cooldownMax"]["des"], 1.0, 120.0, 0.5, "%.1f", config.quantum.cooldownMax, default.quantum.cooldownMax, function(value) config.quantum.cooldownMax = value applyQuantumRecharge(config) saveSettings(config) end))
@@ -802,6 +771,11 @@ registerForEvent("onInit", function()
 
 		if config.quantum ~= nil then
 			local qtClamped = false
+			local planningTime = math.max(2.0, math.min(15.0, config.quantum.planningTimeSec))
+			if planningTime ~= config.quantum.planningTimeSec then
+				config.quantum.planningTimeSec = planningTime
+				qtClamped = true
+			end
 			if type(config.quantum.teleportRangeMin) == "number" and config.quantum.teleportRangeMin > 30.0 then
 				config.quantum.teleportRangeMin = 30.0
 				qtClamped = true
@@ -822,7 +796,6 @@ registerForEvent("onInit", function()
 		applyShrikeTweaks(config)
 		applyTantoTweaks(config)
 		applyWarpDancerTSDurRchrg(config)
-		applyWarpDancerStaggerPerTier(config)
 		applyWarpDancerMoveSpeed(config)
 		applyWarpDancerCardValues(config)
 		applyFalconTweaks(config)
@@ -1272,8 +1245,7 @@ registerForEvent("onInit", function()
 
 		Override("TDOConfig", "QuantumMaxCharges;", function() return config.quantum.maxCharges end)
 		Override("TDOConfig", "QuantumPlotFreezeStrength;", function() return config.quantum.plotFreezeStrength end)
-		Override("TDOConfig", "QuantumDurationMin;", function() return config.quantum.durationMin end)
-		Override("TDOConfig", "QuantumDurationMax;", function() return config.quantum.durationMax end)
+		Override("TDOConfig", "QuantumPlanningTimeSec;", function() return config.quantum.planningTimeSec end)
 		Override("TDOConfig", "QuantumCooldownMin;", function() return config.quantum.cooldownMin end)
 		Override("TDOConfig", "QuantumCooldownMax;", function() return config.quantum.cooldownMax end)
 		Override("TDOConfig", "QuantumTeleportRangeMin;", function() return config.quantum.teleportRangeMin end)
@@ -1322,18 +1294,9 @@ registerForEvent("onInit", function()
 		Override("TDOConfig", "WarpDancerEnabled;", function() return config.warpDancer.enabled end)
 		Override("TDOConfig", "WarpDancerStoredDamageCanKill;", function() return config.warpDancer.storedDamageCanKill end)
 		Override("TDOConfig", "WarpDancerRewindDurationSec;", function() return config.warpDancer.rewindDurationSec end)
-		Override("TDOConfig", "WarpDancerStaggerDurationMinSec;", function() return config.warpDancer.staggerDurationMinSec end)
-		Override("TDOConfig", "WarpDancerStaggerDurationMaxSec;", function() return config.warpDancer.staggerDurationMaxSec end)
 
 		if config.warpDancer.enabled then
 			local warpDancerTierSuffixes = {"MK3", "MK3Plus", "MK4", "MK4Plus", "MK5", "MK5Plus", "MK5PlusPlus"}
-			local sMin = config.warpDancer.staggerDurationMinSec
-			local sMax = config.warpDancer.staggerDurationMaxSec
-			for i, suffix in ipairs(warpDancerTierSuffixes) do
-				local t = (i - 1) / 6.0
-				local staggerSec = sMax - (sMax - sMin) * t
-				TweakDB:SetFlat("StatusEffects.TDO_WarpDancerStagger_" .. suffix .. "_DurMod.value", staggerSec)
-			end
 			local warpDancerActivationInline = { MK3 = 8, MK3Plus = 8, MK4 = 8, MK4Plus = 8, MK5 = 1, MK5Plus = 1, MK5PlusPlus = 1 }
 			local msMin = config.warpDancer.moveSpeedMin
 			local msMax = config.warpDancer.moveSpeedMax
@@ -1341,14 +1304,12 @@ registerForEvent("onInit", function()
 				local t = (i - 1) / 6.0
 				local msPct = msMin + (msMax - msMin) * t
 				TweakDB:SetFlat("StatusEffects.TDO_WarpDancerMoveSpeed_" .. suffix .. "_Mod.value", 1.0 + msPct / 100.0)
-				local stgSec = sMax - (sMax - sMin) * t
 				local inlineNum = warpDancerActivationInline[suffix]
 				local floatPath = "Items.AdvancedSandevistanC3" .. suffix .. "_inline" .. tostring(inlineNum) .. ".floatValues"
 				local floats = TweakDB:GetFlat(floatPath)
 				if type(floats) == "table" then
-					while #floats < 7 do table.insert(floats, 0.0) end
+					while #floats < 6 do table.insert(floats, 0.0) end
 					floats[6] = msPct
-					floats[7] = stgSec
 					TweakDB:SetFlat(floatPath, floats)
 				end
 			end

@@ -162,8 +162,9 @@ public func TDO_Quantum_ExecuteTeleport(player: ref<PlayerPuppet>, scriptInterfa
   if StatusEffectSystem.ObjectHasStatusEffect(player, t"BaseStatusEffect.PlayerInFinisherWorkspot") {
     return false;
   }
-  TDO_Quantum_UpdateAim(player, scriptInterface);
-  if !player.m_tdoQDestValid {
+  if !player.m_tdoQDestValid || !TDO_Quantum_ValidateDestination(player, scriptInterface, player.m_tdoQDest, TDO_Quantum_GetTeleportRange(player)) {
+    player.m_tdoQDestValid = false;
+    TDO_Quantum_ClearMarker(player);
     TDODebug("QuantumTeleport", "execute BLOCKED: dest not valid");
     return false;
   }

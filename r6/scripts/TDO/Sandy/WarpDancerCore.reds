@@ -40,67 +40,24 @@ public func TDO_WarpDancer_IsTDB(tdb: TweakDBID) -> Bool {
 }
 
 public func TDO_WarpDancer_IsEquipped(player: ref<PlayerPuppet>) -> Bool {
-  if !IsDefined(player) {
-    return false;
-  }
-  let es: ref<EquipmentSystem> = EquipmentSystem.GetInstance(player);
-  if !IsDefined(es) {
-    return false;
-  }
-  let pd: ref<EquipmentSystemPlayerData> = es.GetPlayerData(player);
-  if !IsDefined(pd) {
-    return false;
-  }
-  let slotIdx: Int32 = 0;
-  while slotIdx < 3 {
-    let itemID: ItemID = pd.GetItemInEquipSlot(gamedataEquipmentArea.SystemReplacementCW, slotIdx);
-    if ItemID.IsValid(itemID) && TDO_WarpDancer_IsTDB(ItemID.GetTDBID(itemID)) {
-      return true;
-    }
-    slotIdx += 1;
-  }
-  return false;
+  let itemID: ItemID = TDO_Sandy_GetSelectedItem(player);
+  return ItemID.IsValid(itemID) && TDO_WarpDancer_IsTDB(ItemID.GetTDBID(itemID));
 }
 
 public func TDO_WarpDancer_GetEquippedTierIndex(player: ref<PlayerPuppet>) -> Int32 {
-  if !IsDefined(player) {
+  let itemID: ItemID = TDO_Sandy_GetSelectedItem(player);
+  if !ItemID.IsValid(itemID) {
     return -1;
   }
-  let es: ref<EquipmentSystem> = EquipmentSystem.GetInstance(player);
-  if !IsDefined(es) {
-    return -1;
-  }
-  let pd: ref<EquipmentSystemPlayerData> = es.GetPlayerData(player);
-  if !IsDefined(pd) {
-    return -1;
-  }
-  let slotIdx: Int32 = 0;
-  while slotIdx < 3 {
-    let itemID: ItemID = pd.GetItemInEquipSlot(gamedataEquipmentArea.SystemReplacementCW, slotIdx);
-    if ItemID.IsValid(itemID) {
-      let tdb: TweakDBID = ItemID.GetTDBID(itemID);
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK3") { return 0; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK3Plus") { return 1; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK4") { return 2; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK4Plus") { return 3; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK5") { return 4; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK5Plus") { return 5; }
-      if Equals(tdb, t"Items.AdvancedSandevistanC3MK5PlusPlus") { return 6; }
-    }
-    slotIdx += 1;
-  }
+  let tdb: TweakDBID = ItemID.GetTDBID(itemID);
+  if Equals(tdb, t"Items.AdvancedSandevistanC3MK3") { return 0; }
+  if Equals(tdb, t"Items.AdvancedSandevistanC3MK3Plus") { return 1; }
+  if Equals(tdb, t"Items.AdvancedSandevistanC3MK4") { return 2; }
+  if Equals(tdb, t"Items.AdvancedSandevistanC3MK4Plus") { return 3; }
+  if Equals(tdb, t"Items.AdvancedSandevistanC3MK5") { return 4; }
+  if Equals(tdb, t"Items.AdvancedSandevistanC3MK5Plus") { return 5; }
+  if Equals(tdb, t"Items.AdvancedSandevistanC3MK5PlusPlus") { return 6; }
   return -1;
-}
-
-public func TDO_WarpDancer_GetStaggerSEID(player: ref<PlayerPuppet>) -> TweakDBID {
-  let idx: Int32 = TDO_WarpDancer_GetEquippedTierIndex(player);
-  if idx == 0 { return t"StatusEffects.TDO_WarpDancerStagger_MK3"; }
-  if idx == 1 { return t"StatusEffects.TDO_WarpDancerStagger_MK3Plus"; }
-  if idx == 2 { return t"StatusEffects.TDO_WarpDancerStagger_MK4"; }
-  if idx == 3 { return t"StatusEffects.TDO_WarpDancerStagger_MK4Plus"; }
-  if idx == 4 { return t"StatusEffects.TDO_WarpDancerStagger_MK5"; }
-  if idx == 5 { return t"StatusEffects.TDO_WarpDancerStagger_MK5Plus"; }
-  return t"StatusEffects.TDO_WarpDancerStagger_MK5PlusPlus";
 }
 
 public func TDO_WarpDancer_IsActive(player: ref<PlayerPuppet>) -> Bool {

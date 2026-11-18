@@ -192,13 +192,13 @@ Items.TDO_Quantum_HasSandy:
 
 Items.TDO_Quantum_Duration:
   $type: gamedataConstantStatModifier_Record
-  value: 2
+  value: 10
   modifierType: Additive
   statType: BaseStats.TimeDilationSandevistanDuration
 
 Items.TDO_QuantumPlus_Duration:
   $type: gamedataConstantStatModifier_Record
-  value: 2.75
+  value: 10
   modifierType: Additive
   statType: BaseStats.TimeDilationSandevistanDuration
 
@@ -441,19 +441,19 @@ Items.TDO_QuantumAdvanced_HasSandy:
 
 Items.TDO_QuantumAdvanced_Duration:
   $type: gamedataConstantStatModifier_Record
-  value: 3.5
+  value: 10
   modifierType: Additive
   statType: BaseStats.TimeDilationSandevistanDuration
 
 Items.TDO_QuantumAdvancedPlus_Duration:
   $type: gamedataConstantStatModifier_Record
-  value: 4.25
+  value: 10
   modifierType: Additive
   statType: BaseStats.TimeDilationSandevistanDuration
 
 Items.TDO_QuantumAdvancedPlusPlus_Duration:
   $type: gamedataConstantStatModifier_Record
-  value: 5
+  value: 10
   modifierType: Additive
   statType: BaseStats.TimeDilationSandevistanDuration
 
