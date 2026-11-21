@@ -1,6 +1,23 @@
 module Phoenicia.EnemySandevistanRework.Wrappers
 
 import Phoenicia.EnemySandevistanRework.Configurations.*
+import Phoenicia.EnemySandevistanRework.Utils.*
+
+@wrapMethod(NPCPuppet)
+protected cb func OnResetTimeDilation(evt: ref<ResetTimeDilation>) -> Bool {
+    if !ESR_ProtectsExternalSandevistan(this) {
+        return wrappedMethod(evt);
+    }
+    let ai = this.GetAIControllerComponent();
+    let blackboard: ref<IBlackboard> = IsDefined(ai) ? ai.GetActionBlackboard() : null;
+    if IsDefined(blackboard) {
+        blackboard.SetFloat(GetAllBlackboardDefs().AIAction.ownerTimeDilation, -1.00);
+        if evt.global {
+            blackboard.SetFloat(GetAllBlackboardDefs().AIAction.ownerGlobalTimeDilation, -1.00);
+        }
+    }
+    return false;
+}
 
 @wrapMethod(AISubActionApplyTimeDilation_Record_Implementation)
 public final static func Activate(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>) -> Void {
@@ -18,6 +35,9 @@ public final static func Activate(context: ScriptExecutionContext, record: wref<
     }
 
     if Equals(record.Reason(), n"sandevistanVersusSandevistan") {
+        if ESR_EnemyAbilityBusy(ScriptExecutionContext.GetOwner(context) as NPCPuppet) {
+            return;
+        }
         let blackboard: ref<IBlackboard>;
         let player: ref<PlayerPuppet>;
         let playerTimeDilation: Float;
@@ -57,6 +77,9 @@ public final static func Activate(context: ScriptExecutionContext, record: wref<
 public final static func Deactivate(context: ScriptExecutionContext, record: wref<AISubActionApplyTimeDilation_Record>, const duration: Float, interrupted: Bool) -> Void {
     if !ESRConfig.Enabled() {
         wrappedMethod(context, record, duration, interrupted);
+        return;
+    }
+    if ESR_ProtectsExternalSandevistan(ScriptExecutionContext.GetOwner(context) as NPCPuppet) {
         return;
     }
     let sandiBuffActive = StatusEffectSystem.ObjectHasStatusEffect(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, t"BaseStatusEffect.ESR_Sandi_Buff");
@@ -118,6 +141,9 @@ public final static func SetTimeDilation(context: ScriptExecutionContext, record
     globalDilation = blackboard.GetFloat(GetAllBlackboardDefs().AIAction.ownerGlobalTimeDilation);
     isGlobalSandevistan = Equals(record.Reason(), n"sandevistanVersusSandevistan");
     if isGlobalSandevistan {
+      if ESR_EnemyAbilityBusy(ScriptExecutionContext.GetOwner(context) as NPCPuppet) {
+        return false;
+      }
       dilation = globalDilation;
         if (!StatusEffectSystem.ObjectHasStatusEffectWithTag(ScriptExecutionContext.GetOwner(context) as ScriptedPuppet, n"ESR_Sandi_Buff")) {
               if (AISubActionApplyTimeDilation_Record_Implementation.GetAvailableSandevistanDuration(context) < 1.0 && AISubActionApplyTimeDilation_Record_Implementation.GetAvailableKerenzikovDuration(context) < 1.0) {

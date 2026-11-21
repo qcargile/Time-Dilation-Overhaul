@@ -142,6 +142,9 @@ public class TickSystem extends ScriptableSystem {
     }
 
     public func HandleKerenzikovVsSandevistanActivation(puppet: ref<NPCPuppet>) {
+        if ESR_EnemyAbilityBusy(puppet) {
+            return;
+        }
         let distanceToPlayer = Vector4.Distance(puppet.GetWorldPosition(), this.player.GetWorldPosition());
         let playerInSandevistan = StatusEffectSystem.ObjectHasStatusEffectWithTag(this.player, n"SandevistanPlayerBuff");
         let rangeCheck = ((IsLookingAtTarget(puppet, this.player, 90) && distanceToPlayer < 20.0) || distanceToPlayer < 5.0);
@@ -174,6 +177,9 @@ public class TickSystem extends ScriptableSystem {
     }
 
     public func ConsiderStimPack(puppet: ref<NPCPuppet>) {
+        if ESR_EnemyAbilityBusy(puppet) {
+            return;
+        }
         let distanceToPlayer = Vector4.Distance(puppet.GetWorldPosition(), this.player.GetWorldPosition());
 
         let npcWeapon = NPCPuppet.GetActiveWeapon(puppet);
@@ -219,6 +225,13 @@ public class TickSystem extends ScriptableSystem {
     }
 
     public func TriggerOffensiveAction(puppet: ref<NPCPuppet>, hasSandi: Bool, hasKerenzikov: Bool) {
+        if ESR_EnemyAbilityBusy(puppet) {
+            return;
+        }
+        let delegated = ESR_DelegatesSandevistan(puppet);
+        if delegated && !hasKerenzikov {
+            return;
+        }
         let distanceToPlayer = Vector4.Distance(puppet.GetWorldPosition(), this.player.GetWorldPosition());
         let npcWeapon = NPCPuppet.GetActiveWeapon(puppet);
 
@@ -236,7 +249,7 @@ public class TickSystem extends ScriptableSystem {
         let playerHasSandi = this.statsSystem.GetStatValue(Cast<StatsObjectID>(GetPlayer(GetGameInstance()).GetEntityID()), IntEnum<gamedataStatType>(EnumValueFromName(n"gamedataStatType", n"HasSandevistan"))) > 0.0;
 
         if (distanceToPlayer < 20.0 && this.CommonOffensiveRestrictions(puppet) &&
-         (pistolOrRevolver || (isMelee && hasSandi) || (hasShotgun && hasSandi))) {
+         (pistolOrRevolver || !delegated && hasSandi && (isMelee || hasShotgun))) {
             let baseChance = 0;
 
             if (distanceToPlayer < 5.0) {
@@ -289,7 +302,7 @@ public class TickSystem extends ScriptableSystem {
                         let speed = AISubActionApplyTimeDilation_Record_Implementation.GetBaseKerenzikovSpeed(puppet);
                         puppet.SetIndividualTimeDilation(n"kerenzikovAbility", speed);
                         AISubActionApplyTimeDilation_Record_Implementation.ApplyOffensiveUseCooldown(puppet);
-                    } else if (AISubActionApplyTimeDilation_Record_Implementation.GetAvailableSandevistanDuration(puppet) >= 2.0) {
+                    } else if (!delegated && AISubActionApplyTimeDilation_Record_Implementation.GetAvailableSandevistanDuration(puppet) >= 2.0) {
                         let speed = AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanSpeed(puppet);
                         puppet.SetIndividualTimeDilation(n"sandevistanAbility", speed);
                         AISubActionApplyTimeDilation_Record_Implementation.ApplyCooldownAndDurationStacks(puppet, 2, false);
@@ -297,7 +310,7 @@ public class TickSystem extends ScriptableSystem {
                     }
                 }
 
-                if (hasShotgun) {
+                if (hasShotgun && !delegated) {
                     if (AISubActionApplyTimeDilation_Record_Implementation.GetAvailableSandevistanDuration(puppet) >= 2.0) {
                         let speed = AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanSpeed(puppet);
                         AISubActionApplyTimeDilation_Record_Implementation.ApplyCooldownAndDurationStacks(puppet, 2, false);
@@ -306,7 +319,7 @@ public class TickSystem extends ScriptableSystem {
                     }
                 }
 
-                if (isMelee) {
+                if (isMelee && !delegated) {
                     if (AISubActionApplyTimeDilation_Record_Implementation.GetAvailableSandevistanDuration(puppet) >= 4.0) {
                         let speed = AISubActionApplyTimeDilation_Record_Implementation.GetBaseSandevistanSpeed(puppet);
                         AISubActionApplyTimeDilation_Record_Implementation.ApplyCooldownAndDurationStacks(puppet, 4, false);

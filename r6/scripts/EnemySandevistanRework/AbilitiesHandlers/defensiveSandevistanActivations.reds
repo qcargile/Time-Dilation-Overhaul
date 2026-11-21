@@ -12,6 +12,9 @@ public class SurvivalEffector extends ModifyAttackEffector {
   }
 
   private final func ProcessAction(owner: ref<GameObject>) -> Void {
+    if ESR_DelegatesSandevistan(owner as NPCPuppet) || ESR_EnemyAbilityBusy(owner as NPCPuppet) {
+      return;
+    }
     let healthPercentage = GameInstance.GetStatPoolsSystem(owner.GetGame()).GetStatPoolValue(Cast<StatsObjectID>(owner.GetEntityID()), gamedataStatPoolType.Health);
 
     if (healthPercentage < 30.0 &&
@@ -44,6 +47,9 @@ public class MeleeDefenseEffector extends ModifyAttackEffector {
   }
 
   private final func ProcessAction(owner: ref<GameObject>) -> Void {
+    if ESR_DelegatesSandevistan(owner as NPCPuppet) || ESR_EnemyAbilityBusy(owner as NPCPuppet) {
+      return;
+    }
     if (CheckCommonRestrictions((owner as NPCPuppet), true, false) &&
         !StatusEffectSystem.ObjectHasStatusEffect(owner, t"BaseStatusEffect.ESR_Defensive_CD") &&
         !StatusEffectSystem.ObjectHasStatusEffectWithTag((owner as NPCPuppet), n"ESR_Sandi_Buff")) {
